@@ -1,0 +1,2696 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: CoMEA 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-12 16:43+0000\n"
+"PO-Revision-Date: 2026-01-23 14:00+0000\n"
+"Last-Translator: CoMEA Team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: comea_app/models.py:682
+msgid ""
+"The following topics were not present in your concept map, and could be "
+"further studied:"
+msgstr ""
+
+#: comea_app/models.py:688
+msgid "The following topics had some misunderstanding:"
+msgstr ""
+
+#: comea_app/models.py:717
+msgid "Your concept map was classified as "
+msgstr ""
+
+#: comea_app/models.py:720
+msgid "Meaning: "
+msgstr ""
+
+#: comea_app/models.py:725
+msgid ""
+"To improve your concept map structure, consider the following suggestions:"
+msgstr ""
+
+#: comea_app/models.py:727
+msgid ""
+" - Reduce the number of concepts with long text descriptions. Aim for "
+"concise and clear labels. The following concepts have too long descriptions:"
+msgstr ""
+
+#: comea_app/models.py:730
+msgid ""
+" - Ensure all connections between concepts have linking phrases, this will "
+"show how the concepts are related. The following connections are missing "
+"linking phrases:"
+msgstr ""
+
+#: comea_app/models.py:733
+msgid ""
+" - Add more cross-links in your concept map to enhance connectivity by "
+"connecting concepts in different branches of the concept map."
+msgstr ""
+
+#: comea_app/models.py:735
+msgid ""
+" - Try to increase the depth of your concept map by adding more connections "
+"on the on different levels of hierarchy."
+msgstr ""
+
+#: comea_app/models.py:737
+msgid ""
+" - Add more branching points in your concept map to improve the organization "
+"and clarity of concepts."
+msgstr ""
+
+#: comea_app/models.py:756
+msgid ""
+"The connections and concepts in the green dotted lines are suggestions for "
+"improving your concept map."
+msgstr ""
+"The connections and concepts in the green dotted lines are suggestions for "
+"improving your concept map."
+
+#: comea_app/models.py:762
+msgid ""
+"The white concepts are classified as network because they are well-connected "
+"across different levels of the concept map. Good job!"
+msgstr ""
+
+#: comea_app/models.py:765
+msgid ""
+"The following concepts are classified as spokes (orange) because they don't "
+"have sufficient connections between different levels of the concept map, try "
+"adding more connections to these concepts to improve your structure:"
+msgstr ""
+
+#: comea_app/models.py:770
+msgid ""
+"The following concepts are classified as chains (blue) because they are "
+"connected in a linear way, so there is little to no connections between "
+"concepts on different hierarchy levels, try adding more connections to these "
+"concepts to improve your structure:"
+msgstr ""
+
+#: comea_app/utils.py:15 comea_theme/templates/concept_map.html:149
+#: comea_theme/templates/print_rubric.html:425
+msgid "Structure Absent"
+msgstr ""
+
+#: comea_app/utils.py:16 comea_theme/templates/concept_map.html:158
+#: comea_theme/templates/print_rubric.html:470
+msgid "Initial Structure"
+msgstr ""
+
+#: comea_app/utils.py:17 comea_theme/templates/concept_map.html:167
+#: comea_theme/templates/print_rubric.html:516
+msgid "Basic Structure"
+msgstr ""
+
+#: comea_app/utils.py:18 comea_theme/templates/concept_map.html:176
+#: comea_theme/templates/print_rubric.html:562
+msgid "Emerging Structure"
+msgstr ""
+
+#: comea_app/utils.py:19 comea_theme/templates/concept_map.html:185
+#: comea_theme/templates/print_rubric.html:609
+msgid "Consolidated Structure"
+msgstr ""
+
+#: comea_app/utils.py:20 comea_theme/templates/concept_map.html:194
+#: comea_theme/templates/print_rubric.html:655
+msgid "Integrated Structure"
+msgstr ""
+
+#: comea_app/utils.py:21 comea_theme/templates/concept_map.html:203
+#: comea_theme/templates/print_rubric.html:701
+msgid "Advanced Structure"
+msgstr ""
+
+#: comea_app/utils.py:23 comea_theme/templates/concept_map.html:150
+msgid ""
+"The map is not yet a concept map; it is a block of text with scattered "
+"lines. There are no linking words, and the nodes contain long explanations. "
+"The concept map is abscent of the desired attribute (conceptual structure)."
+msgstr ""
+
+#: comea_app/utils.py:24 comea_theme/templates/concept_map.html:159
+msgid ""
+"The student begins to use short concepts, but most connections still lack "
+"linking words. The structure is still linear. The concept map is an initial "
+"approach, but far from ideal."
+msgstr ""
+
+#: comea_app/utils.py:25 comea_theme/templates/concept_map.html:168
+msgid ""
+"Concepts now predominate over long texts. Linking words are present, with "
+"less than half missing. There is little branching. The concept map meets the "
+"minimum, but is inconsistent."
+msgstr ""
+
+#: comea_app/utils.py:26 comea_theme/templates/concept_map.html:177
+msgid ""
+"The map is free of long texts. All linking words are present. Branching is "
+"noticeable (3–4 points), but hierarchical depth is still limited (< 3 "
+"levels). The concept map presents a functional structure, although not very "
+"deep."
+msgstr ""
+
+#: comea_app/utils.py:27 comea_theme/templates/concept_map.html:186
+msgid ""
+"The map meets the criteria of level 3, but now with high branching (5–6 "
+"points) and developed hierarchy (≥ 3 levels). Still no cross-links. The "
+"concept map presents a solid structure, but without integration between "
+"branches."
+msgstr ""
+
+#: comea_app/utils.py:28 comea_theme/templates/concept_map.html:195
+msgid ""
+"Everything level 4 offers, plus 1 to 2 cross-links. The student can now "
+"establish relationships between different parts of the map. The concept map "
+"presents a robust structure with evidence of relational thinking."
+msgstr ""
+
+#: comea_app/utils.py:29 comea_theme/templates/concept_map.html:204
+msgid ""
+"Maximum level. It presents very high branching (≥ 7 points), developed "
+"hierarchy, and multiple cross-links (> 2). Indicates high capacity for "
+"conceptual integration and differentiation. The concept map presents a full "
+"mastery of the tool and knowledge structuring."
+msgstr ""
+
+#: comea_app/utils.py:130 comea_app/utils.py:319
+msgid "Não foi possível identificar o conceito no mapa extraído"
+msgstr ""
+
+#: comea_app/utils.py:167 comea_app/utils.py:360
+msgid "is related to"
+msgstr ""
+
+#: comea_app/views.py:45
+msgid "Missing rubric ID"
+msgstr ""
+
+#: comea_app/views.py:50
+msgid "Rubric not found"
+msgstr ""
+
+#: comea_app/views.py:55
+msgid "Rubric deleted successfully"
+msgstr ""
+
+#: comea_app/views.py:58 comea_app/views.py:88
+msgid "Invalid method"
+msgstr ""
+
+#: comea_app/views.py:68
+msgid "Missing concept map ID"
+msgstr ""
+
+#: comea_app/views.py:73
+msgid "Concept map not found"
+msgstr ""
+
+#: comea_app/views.py:85
+msgid "Concept map deleted successfully"
+msgstr ""
+
+#: comea_app/views.py:165
+msgid ""
+"You already have 3 evaluations in progress. Please wait for them to complete "
+"before uploading a new concept map."
+msgstr ""
+
+#: comea_app/views.py:169 comea_app/views.py:173
+msgid "No file uploaded"
+msgstr ""
+
+#: comea_app/views.py:188
+msgid "Unsupported file type. Please upload .excalidraw or .cxl files."
+msgstr ""
+
+#: comea_app/views.py:296
+msgid "Invalid file type. Please select a PDF file."
+msgstr ""
+
+#: comea_app/views.py:583
+msgid "pending"
+msgstr ""
+
+#: comea_theme/templates/base.html:5
+msgid "Concept Map Evaluation Assistant"
+msgstr "Concept Map Evaluation Assistant"
+
+#: comea_theme/templates/base.html:28
+msgid "CoMEA"
+msgstr "CoMEA"
+
+#: comea_theme/templates/base.html:29
+#: comea_theme/templates/evaluation_history.html:92
+msgid "Concept Map"
+msgstr ""
+
+#: comea_theme/templates/base.html:30
+msgid "Dashboard"
+msgstr ""
+
+#: comea_theme/templates/base.html:65
+msgid "Welcome"
+msgstr "Welcome"
+
+#: comea_theme/templates/base.html:68
+msgid "Logout"
+msgstr "Logout"
+
+#: comea_theme/templates/base.html:72
+msgid "Login"
+msgstr "Login"
+
+#: comea_theme/templates/base.html:88
+msgid "What is CoMEA?"
+msgstr "What is CoMEA?"
+
+#: comea_theme/templates/base.html:90
+msgid ""
+"CoMEA (Concept Map Evaluation Assistant) uses LLMs for the qualitative "
+"assessment of concept maps, and combines this type of evaluation with other "
+"techniques found in the literature for the quantitative evaluation, allowing "
+"the educator to combine the methods to <strong>assess Concept Maps "
+"automatically.</strong>"
+msgstr ""
+
+#: comea_theme/templates/base.html:93
+msgid ""
+" Acknowledging the critical ethical and educational dimensions of automated "
+"assessment, CoMEA is designed with a <strong>human-in-the-loop approach</"
+"strong>, ensuring that <strong>educators retain ultimate control over every "
+"stage of the evaluation process.</strong>"
+msgstr ""
+
+#: comea_theme/templates/base.html:97
+msgid "CoMEA Tutorial"
+msgstr ""
+
+#: comea_theme/templates/base.html:104
+msgid "Your browser does not support HTML5 video."
+msgstr ""
+
+#: comea_theme/templates/base.html:109
+#: comea_theme/templates/evaluation_config.html:448
+msgid "Go to Dashboard"
+msgstr ""
+
+#: comea_theme/templates/base.html:111
+msgid "Login to Get Started"
+msgstr ""
+
+#: comea_theme/templates/base.html:136
+msgid "Research"
+msgstr "Research"
+
+#: comea_theme/templates/base.html:137
+msgid "About us"
+msgstr "About us"
+
+#: comea_theme/templates/base.html:138 comea_theme/templates/contact.html:7
+msgid "Contact"
+msgstr "Contact"
+
+#: comea_theme/templates/base.html:141
+msgid "Legal"
+msgstr "Legal"
+
+#: comea_theme/templates/base.html:142 comea_theme/templates/privacy.html:7
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+#: comea_theme/templates/concept_map.html:25
+msgid "Concept Map Evaluation Methods Available"
+msgstr "Concept Map Evaluation Methods Available"
+
+# Rubric names
+#: comea_theme/templates/concept_map.html:27
+#: comea_theme/templates/concept_map.html:29
+#: comea_theme/templates/evaluation_rubric_config.html:259
+msgid "Topological Taxonomy"
+msgstr "Topological Taxonomy"
+
+#: comea_theme/templates/concept_map.html:33
+msgid "What is it?"
+msgstr "What is it?"
+
+#: comea_theme/templates/concept_map.html:35
+msgid ""
+"The Topological Taxonomy is a classification tool developed by the Conéctate "
+"al Conocimiento Project in Panama to assess the structural complexity of "
+"concept maps. It consists of 7 levels (0 to 6) that analyze the external "
+"structure of the map, not its semantic content. It is inspired by Bloom's "
+"Taxonomy and aims to provide a 'common language' to describe the evolution "
+"of students' concept maps."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:42
+msgid "How is it measured?"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:44
+#: comea_theme/templates/print_rubric.html:323
+msgid "The taxonomy evaluates 5 structural criteria:"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:50
+#: comea_theme/templates/print_rubric.html:329
+msgid "Example"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:51
+#: comea_theme/templates/print_rubric.html:271
+#: comea_theme/templates/print_rubric.html:330
+msgid "Criterion"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:52
+#: comea_theme/templates/evaluation_rubric_config.html:204
+#: comea_theme/templates/print_rubric.html:331
+msgid "Description"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:60
+#: comea_theme/templates/concept_map.html:72
+#: comea_theme/templates/concept_map.html:84
+#: comea_theme/templates/concept_map.html:96
+#: comea_theme/templates/concept_map.html:108
+#: comea_theme/templates/concept_map.html:320
+#: comea_theme/templates/print_rubric.html:339
+#: comea_theme/templates/print_rubric.html:351
+#: comea_theme/templates/print_rubric.html:363
+#: comea_theme/templates/print_rubric.html:375
+#: comea_theme/templates/print_rubric.html:387
+msgid "Example image of a spoke structure inside a table cell."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:65
+#: comea_theme/templates/evaluation_rubric_config.html:268
+#: comea_theme/templates/print_rubric.html:344
+msgid "Concept vs. Long Texts"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:66
+#: comea_theme/templates/evaluation_rubric_config.html:269
+#: comea_theme/templates/print_rubric.html:345
+msgid "Checks whether nodes contain short concepts or long explanations."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:77
+#: comea_theme/templates/print_rubric.html:356
+msgid "Linking words"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:78
+#: comea_theme/templates/print_rubric.html:357
+msgid "Checks whether words connecting concepts are present."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:89
+#: comea_theme/templates/concept_map.html:142
+#: comea_theme/templates/evaluation_config.html:243
+#: comea_theme/templates/evaluation_rubric_config.html:288
+#: comea_theme/templates/print_rubric.html:368
+#: comea_theme/templates/print_rubric.html:417
+#: comea_theme/templates/print_rubric.html:754
+msgid "Branching"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:90
+#: comea_theme/templates/print_rubric.html:369
+msgid "Counts the number of nodes from which two or more connections emerge."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:101
+#: comea_theme/templates/evaluation_config.html:251
+#: comea_theme/templates/print_feedback.html:338
+#: comea_theme/templates/print_rubric.html:380
+msgid "Hierarchical Depth"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:102
+#: comea_theme/templates/evaluation_rubric_config.html:299
+#: comea_theme/templates/print_rubric.html:381
+msgid ""
+"Measures the number of levels between the root concept and the furthest "
+"concept."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:113
+#: comea_theme/templates/print_rubric.html:392
+#: comea_theme/templates/print_rubric.html:756
+msgid "Cross-links"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:114
+#: comea_theme/templates/evaluation_rubric_config.html:309
+#: comea_theme/templates/print_rubric.html:393
+msgid "Identifies connections between different branches of the map."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:122
+#: comea_theme/templates/print_rubric.html:400
+msgid "Classification rules:"
+msgstr "Classification rules:"
+
+#: comea_theme/templates/concept_map.html:126
+#: comea_theme/templates/print_rubric.html:404
+msgid ""
+"To be classified at a given level, the map must meet all the criteria for "
+"that level."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:129
+#: comea_theme/templates/print_rubric.html:407
+msgid "If a criterion is missing, the map is classified at the previous level."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:138
+#: comea_theme/templates/evaluation_config.html:269
+#: comea_theme/templates/evaluation_rubric_config.html:265
+#: comea_theme/templates/print_rubric.html:414
+#: comea_theme/templates/print_rubric.html:751
+#: comea_theme/templates/print_rubric.html:762
+msgid "Level"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:139
+msgid "Definition"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:140
+#: comea_theme/templates/print_rubric.html:415
+msgid "Concepts vs. Texts"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:141
+#: comea_theme/templates/print_rubric.html:416
+msgid "Linking Words"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:143
+#: comea_theme/templates/evaluation_rubric_config.html:298
+#: comea_theme/templates/print_rubric.html:418
+#: comea_theme/templates/print_rubric.html:755
+msgid "Hierarchy"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:144
+#: comea_theme/templates/print_rubric.html:419
+msgid "Cross-Links"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:151
+#: comea_theme/templates/evaluation_rubric_config.html:327
+#: comea_theme/templates/print_rubric.html:428
+#: comea_theme/templates/print_rubric.html:474
+#: comea_theme/templates/print_rubric.html:520
+#: comea_theme/templates/print_rubric.html:566
+#: comea_theme/templates/print_rubric.html:613
+#: comea_theme/templates/print_rubric.html:659
+#: comea_theme/templates/print_rubric.html:705
+msgid "Long texts predominate"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:152
+#: comea_theme/templates/evaluation_rubric_config.html:338
+msgid "Absent"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:153
+#: comea_theme/templates/concept_map.html:162
+#: comea_theme/templates/print_rubric.html:448
+#: comea_theme/templates/print_rubric.html:494
+#: comea_theme/templates/print_rubric.html:540
+#: comea_theme/templates/print_rubric.html:586
+#: comea_theme/templates/print_rubric.html:633
+#: comea_theme/templates/print_rubric.html:679
+#: comea_theme/templates/print_rubric.html:725
+msgid "0–1 point"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:160
+#: comea_theme/templates/concept_map.html:169
+#: comea_theme/templates/evaluation_rubric_config.html:328
+#: comea_theme/templates/print_rubric.html:430
+#: comea_theme/templates/print_rubric.html:476
+#: comea_theme/templates/print_rubric.html:522
+#: comea_theme/templates/print_rubric.html:568
+#: comea_theme/templates/print_rubric.html:615
+#: comea_theme/templates/print_rubric.html:661
+#: comea_theme/templates/print_rubric.html:707
+msgid "Concepts predominate"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:161
+#: comea_theme/templates/evaluation_rubric_config.html:339
+#: comea_theme/templates/print_rubric.html:439
+#: comea_theme/templates/print_rubric.html:485
+#: comea_theme/templates/print_rubric.html:531
+#: comea_theme/templates/print_rubric.html:577
+#: comea_theme/templates/print_rubric.html:624
+#: comea_theme/templates/print_rubric.html:670
+#: comea_theme/templates/print_rubric.html:716
+msgid "Half or more are missing"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:170
+#: comea_theme/templates/evaluation_rubric_config.html:340
+#: comea_theme/templates/print_rubric.html:441
+#: comea_theme/templates/print_rubric.html:487
+#: comea_theme/templates/print_rubric.html:533
+#: comea_theme/templates/print_rubric.html:579
+#: comea_theme/templates/print_rubric.html:626
+#: comea_theme/templates/print_rubric.html:672
+#: comea_theme/templates/print_rubric.html:718
+msgid "Less than half are missing"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:171
+msgid "2 points"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:178
+#: comea_theme/templates/concept_map.html:187
+#: comea_theme/templates/concept_map.html:196
+#: comea_theme/templates/concept_map.html:205
+#: comea_theme/templates/print_rubric.html:432
+#: comea_theme/templates/print_rubric.html:478
+#: comea_theme/templates/print_rubric.html:524
+#: comea_theme/templates/print_rubric.html:570
+#: comea_theme/templates/print_rubric.html:617
+#: comea_theme/templates/print_rubric.html:663
+#: comea_theme/templates/print_rubric.html:709
+msgid "No long texts"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:179
+#: comea_theme/templates/concept_map.html:188
+#: comea_theme/templates/concept_map.html:197
+#: comea_theme/templates/concept_map.html:206
+#: comea_theme/templates/evaluation_rubric_config.html:341
+#: comea_theme/templates/print_rubric.html:443
+#: comea_theme/templates/print_rubric.html:489
+#: comea_theme/templates/print_rubric.html:535
+#: comea_theme/templates/print_rubric.html:581
+#: comea_theme/templates/print_rubric.html:628
+#: comea_theme/templates/print_rubric.html:674
+#: comea_theme/templates/print_rubric.html:720
+msgid "All present"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:180
+msgid "3–4 points"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:181
+msgid "< 3 levels"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:189
+#: comea_theme/templates/concept_map.html:198
+msgid "5–6 points"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:190
+#: comea_theme/templates/concept_map.html:199
+#: comea_theme/templates/concept_map.html:208
+msgid "≥ 3 levels"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:200
+msgid "1–2 cross-links"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:207
+msgid "≥ 7 points"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:209
+msgid "> 2 cross-links"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:218
+#: comea_theme/templates/concept_map.html:286
+#: comea_theme/templates/concept_map.html:422
+msgid "References"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:226
+#: comea_theme/templates/concept_map.html:228
+msgid "Proposition Evaluation"
+msgstr "Proposition Evaluation"
+
+#: comea_theme/templates/concept_map.html:232
+msgid "What are propositions?"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:234
+msgid ""
+"Propositions are the fundamental units used to represent a concept map in a "
+"textual format that can be processed computationally. Each proposition is "
+"derived from a relationship in the concept map and is structured as a "
+"triplet:"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:237
+msgid "Proposition = (Head Concept, Relationship, Target Concept)"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:240
+msgid ""
+"For example, in a concept map about 'Molecules', a proposition might be: "
+"'molecules can be water' (Head Concept: molecules, Relationship: can be, "
+"Target Concept: water). Each proposition is then converted into a sentence "
+"and transformed into a numerical vector called an embedding using deep "
+"learning models. This allows the computer to understand and compare the "
+"meaning of propositions mathematically."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:246
+msgid "How are propositions evaluated?"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:248
+msgid "The evaluation of propositions occurs through the following steps:"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:254
+msgid "Extraction"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:255
+msgid ""
+"All propositions (triplets) are extracted from each student's concept map."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:262
+msgid "Comparison"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:263
+msgid ""
+"The system will compare each proposition extracted from the student's map "
+"with the essential concepts extracted from a reference document, looking for "
+"concepts present or absent in the concept map."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:270
+#: comea_theme/templates/evaluation_config.html:369
+msgid "Classification"
+msgstr "Classification"
+
+#: comea_theme/templates/concept_map.html:271
+msgid ""
+"Based on the reference document, each proposition extracted from the "
+"student's concept map will be classified as 'Correct,' 'Partially correct,' "
+"or 'Incorrect' by a Generative Artificial Intelligence model."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:280
+msgid ""
+"This approach allows for a semantic comparison of concept maps, going beyond "
+"simple word matching to understand the meaning and relationships expressed "
+"by the students."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:294
+#: comea_theme/templates/concept_map.html:296
+#: comea_theme/templates/evaluation_config.html:117
+#: comea_theme/templates/print_feedback.html:264
+msgid "Structure Classification"
+msgstr "Structure Classification"
+
+#: comea_theme/templates/concept_map.html:301
+msgid ""
+"Based on the research by Hay and Kinchin, concept maps can reveal three "
+"distinct types of cognitive structures, or 'typologies of thought.' These "
+"structures — Spoke, Chain, and Network — represent different ways knowledge "
+"is organized in a student's mind. Identifying them helps educators "
+"understand the depth and quality of a student's understanding."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:310
+#: comea_theme/templates/evaluation_rubric_config.html:125
+msgid "Spoke Structure"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:311
+#: comea_theme/templates/evaluation_rubric_config.html:126
+msgid "Chain Structure"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:312
+#: comea_theme/templates/evaluation_rubric_config.html:127
+msgid "Network Structure"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:328
+msgid "Example image of a chain structure inside a table cell."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:336
+msgid "Example image of a network structure inside a table cell."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:345
+msgid ""
+"This is the simplest structure. It resembles a wheel, where a single central "
+"concept is connected to several related ideas, but those peripheral ideas "
+"are not connected to each other."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:351
+msgid ""
+"This structure is a linear sequence of concepts linked in a single line. It "
+"represents a procedural or sequential understanding, often focused on cause "
+"and effect or chronological order (e.g., a step-by-step process)."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:356
+msgid ""
+"This is the most complex and sophisticated structure. It features multiple "
+"concepts connected by numerous, meaningful links in a web-like fashion, "
+"showing a rich hierarchy and many cross-connections."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:364
+#: comea_theme/templates/evaluation_rubric_config.html:125
+msgid ""
+"Indicates a naive or superficial understanding. The student knows that "
+"certain concepts are related to the main topic but cannot explain the "
+"relationships between the secondary concepts. It is often a sign of a "
+"beginner's knowledge."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:369
+#: comea_theme/templates/evaluation_rubric_config.html:126
+msgid ""
+"Indicates a goal-oriented, but rigid, understanding. This type of thinking "
+"is good for following procedures and achieving specific goals. However, it "
+"is fragile. It can reflect 'surface learning' where the sequence is "
+"memorized but the broader connections are not understood."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:374
+#: comea_theme/templates/evaluation_rubric_config.html:127
+msgid ""
+"Indicates expertise and deep, meaningful learning. They show that a student "
+"can integrate new knowledge with existing knowledge, see complex "
+"relationships, and understand a topic from multiple perspectives."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:383
+#: comea_theme/templates/concept_map.html:393
+msgid "Addition of new knowledge:"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:383
+msgid "Additions to central concept do not interfere with associated concepts."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:386
+#: comea_theme/templates/concept_map.html:396
+msgid "Deletions of concepts (corrections of misunderstanding):"
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:386
+msgid ""
+"Have no effect on overall structure, except if misunderstanding involves the "
+"central concept."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:393
+msgid ""
+"Cannot cope with additions near the beginning of the sequence, as they can "
+"disrupt the train of thought. If a new concept is introduced in the middle "
+"of the chain, the entire structure can collapse because the logic is linear "
+"and interdependent."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:396
+msgid "Disrupt the sequence below the deletion."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:402
+msgid ""
+"Additions/deletions may have varying influence as 'other routes' are often "
+"available through the map. This structure is robust and adaptable, allowing "
+"for the easy addition or deletions of  concepts without collapsing."
+msgstr ""
+
+#: comea_theme/templates/concept_map.html:416
+msgid ""
+"In summary, as a learner progresses, their cognitive structure ideally "
+"evolves from simple spokes (superficial knowledge) into linear chains "
+"(procedural knowledge), and finally into complex networks (integrated "
+"expertise), though learning can happen within each structure without "
+"changing its fundamental shape."
+msgstr ""
+
+#: comea_theme/templates/contact.html:17 comea_theme/templates/contact.html:74
+#: comea_theme/templates/contact.html:119
+msgid "Profile photo"
+msgstr ""
+
+#: comea_theme/templates/contact.html:26
+msgid "Creator and Developer of CoMEA"
+msgstr ""
+
+#: comea_theme/templates/contact.html:57
+msgid "Master's Student in"
+msgstr ""
+
+#: comea_theme/templates/contact.html:83
+msgid "Researcher Advisor"
+msgstr "Researcher Advisor"
+
+#: comea_theme/templates/contact.html:101
+#: comea_theme/templates/contact.html:145
+msgid "Professor at"
+msgstr "Professor at"
+
+#: comea_theme/templates/contact.html:127
+msgid "Researcher Co-Advisor"
+msgstr "Researcher Co-Advisor"
+
+#: comea_theme/templates/contact.html:156
+#: comea_theme/templates/evaluation_history.html:17
+#: comea_theme/templates/privacy.html:71
+msgid "Back to Dashboard"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:8
+msgid "Welcome to CoMEA"
+msgstr "Welcome to CoMEA"
+
+#: comea_theme/templates/dashboard.html:9
+msgid "Choose an option to get started"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:18
+#: comea_theme/templates/select_rubric.html:123
+msgid "Create New Rubric"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:19
+msgid ""
+"Configure evaluation criteria, topics, and propositions for concept map "
+"assessment"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:22
+msgid "Start Creating"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:37
+msgid "Evaluate Concept Map"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:38
+msgid ""
+"Upload a concept map and evaluate it using an existing rubric configuration"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:41
+msgid "Start Evaluation"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:56
+#: comea_theme/templates/evaluation_history.html:10
+msgid "Evaluation History"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:57
+msgid "View all your concept map evaluations and their current status"
+msgstr ""
+
+#: comea_theme/templates/dashboard.html:60
+msgid "View History"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:46
+msgid "Evaluation Results"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:47
+msgid "Concept Map Filename"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:53
+#: comea_theme/templates/evaluation_history.html:94
+msgid "Student Name"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:57
+msgid "Enter student name"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:62
+#: comea_theme/templates/evaluation_config.html:284
+#: comea_theme/templates/evaluation_config.html:351
+#: comea_theme/templates/evaluation_history.html:96
+#: comea_theme/templates/print_feedback.html:351
+msgid "Score"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:67
+msgid "Enter score"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:72
+msgid "Recalculate"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:82
+msgid "Additional Student Information"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:85
+msgid ""
+"This information will be collected and used solely for research purposes."
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:95
+msgid "Student has suspected dyslexia"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:100
+msgid "Other disabilities or special needs"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:106
+msgid "Describe any other disabilities or special educational needs"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:122
+#: comea_theme/templates/propositions_extraction_config.html:23
+msgid "Drag"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:122
+msgid "nodes to reposition"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:122
+#: comea_theme/templates/propositions_extraction_config.html:23
+msgid "Zoom"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:122
+msgid "with mouse wheel"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:123
+#: comea_theme/templates/evaluation_config.html:124
+#: comea_theme/templates/evaluation_config.html:125
+msgid "Right-click"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:123
+msgid "on a white/blue/orange node to change its structural classification"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:124
+msgid "on a green node to edit its label or delete it"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:125
+msgid "on a green dashed connection to edit its label or delete it"
+msgstr ""
+
+# Structural types
+#: comea_theme/templates/evaluation_config.html:127
+msgid "Chain"
+msgstr "Chain"
+
+#: comea_theme/templates/evaluation_config.html:128
+msgid "Spoke"
+msgstr "Spoke"
+
+#: comea_theme/templates/evaluation_config.html:129
+msgid "Network"
+msgstr "Network"
+
+#: comea_theme/templates/evaluation_config.html:130
+msgid "Added"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:133
+#: comea_theme/templates/print_feedback.html:291
+msgid "Existing connections"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:134
+#: comea_theme/templates/print_feedback.html:295
+msgid "Suggested connections"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:143
+#: comea_theme/templates/propositions_extraction_config.html:41
+msgid "Reset Layout"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:144
+#: comea_theme/templates/propositions_extraction_config.html:42
+msgid "Fit to View"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:145
+#: comea_theme/templates/propositions_extraction_config.html:44
+msgid "Export as PNG"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:151
+msgid "Regenerate Comments"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:158
+msgid "General Comments on Structure Classification"
+msgstr "General Comments on Structure Classification"
+
+#: comea_theme/templates/evaluation_config.html:162
+msgid ""
+"Add general observations, recommendations, or feedback about the structural "
+"classification"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:172
+#: comea_theme/templates/evaluation_rubric_config.html:181
+#: comea_theme/templates/print_feedback.html:438
+#: comea_theme/templates/select_rubric.html:56
+msgid "Visual Aspects"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:173
+#: comea_theme/templates/print_feedback.html:440
+msgid ""
+"Comments about layout, readability, visual organization, and presentation "
+"quality."
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:176
+msgid "Concept Map Preview"
+msgstr "Concept Map Preview"
+
+#: comea_theme/templates/evaluation_config.html:180
+#: comea_theme/templates/print_feedback.html:444
+msgid "Concept map preview image"
+msgstr "Concept map preview image"
+
+#: comea_theme/templates/evaluation_config.html:190
+msgid "Add feedback about visual aspects of the concept map"
+msgstr ""
+
+# Rubric names
+#: comea_theme/templates/evaluation_config.html:202
+#: comea_theme/templates/evaluation_rubric_config.html:215
+#: comea_theme/templates/evaluation_rubric_config.html:431
+#: comea_theme/templates/print_feedback.html:315
+#: comea_theme/templates/print_rubric.html:284
+msgid "Topological Scoring"
+msgstr "Topological Scoring"
+
+# Rubric descriptions
+#: comea_theme/templates/evaluation_config.html:203
+msgid "Structural properties and connectivity"
+msgstr "Structural properties and connectivity"
+
+#: comea_theme/templates/evaluation_config.html:209
+#: comea_theme/templates/evaluation_config.html:325
+msgid "Recalculate Score"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:215
+#: comea_theme/templates/evaluation_history.html:115
+msgid "Nodes"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:219
+msgid "Number of nodes with long texts"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:229
+#: comea_theme/templates/evaluation_history.html:116
+msgid "Edges"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:233
+msgid "Number of edges without linking-words"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:259
+#: comea_theme/templates/print_feedback.html:342
+msgid "Cross Links"
+msgstr ""
+
+# Rubric names
+#: comea_theme/templates/evaluation_config.html:302
+msgid "General Comments on Topological Scoring"
+msgstr "General Comments on Topological Scoring"
+
+#: comea_theme/templates/evaluation_config.html:306
+msgid ""
+"Add general observations, recommendations, or feedback about the topological "
+"structure"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:318
+#: comea_theme/templates/evaluation_rubric_config.html:228
+#: comea_theme/templates/evaluation_rubric_config.html:432
+#: comea_theme/templates/select_rubric.html:48
+msgid "Proposition Analysis"
+msgstr "Proposition Analysis"
+
+#: comea_theme/templates/evaluation_config.html:319
+msgid "Quality and correctness"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:331
+#: comea_theme/templates/print_feedback.html:374
+msgid "Completeness Score"
+msgstr ""
+
+# Classification types
+#: comea_theme/templates/evaluation_config.html:341
+#: comea_theme/templates/print_feedback.html:380
+msgid "Correctness Score"
+msgstr "Correctness Score"
+
+#: comea_theme/templates/evaluation_config.html:368
+#: comea_theme/templates/file_upload_with_rubric.html:23
+#: comea_theme/templates/print_feedback.html:397
+#: comea_theme/templates/print_rubric.html:278
+msgid "Proposition"
+msgstr "Proposition"
+
+#: comea_theme/templates/evaluation_config.html:370
+msgid "Related Topics"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:371
+#: comea_theme/templates/print_feedback.html:399
+msgid "Justification"
+msgstr ""
+
+# Classification types
+#: comea_theme/templates/evaluation_config.html:380
+#: comea_theme/templates/print_feedback.html:409
+msgid "Correct"
+msgstr "Correct"
+
+#: comea_theme/templates/evaluation_config.html:381
+#: comea_theme/templates/print_feedback.html:411
+msgid "Partially Correct"
+msgstr "Partially Correct"
+
+#: comea_theme/templates/evaluation_config.html:382
+#: comea_theme/templates/print_feedback.html:413
+msgid "Incorrect"
+msgstr "Incorrect"
+
+#: comea_theme/templates/evaluation_config.html:416
+msgid "Enter justification"
+msgstr "Enter justification"
+
+#: comea_theme/templates/evaluation_config.html:428
+msgid "General Comments on Propositions"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:432
+msgid ""
+"Add general observations, recommendations, or feedback about the propositions"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:441
+msgid "Return to Upload"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:446
+msgid "Save All Changes"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:678
+msgid "Changes saved successfully! \\n\\nRedirecting to evaluation history"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:810
+msgid "Change Node Color"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:812
+msgid "Node:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:813
+msgid "Current color:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:815
+msgid "White (Network)"
+msgstr "White (Network)"
+
+#: comea_theme/templates/evaluation_config.html:816
+msgid "Orange (Spoke)"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:817
+msgid "Blue (Chain)"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:821
+#: comea_theme/templates/evaluation_config.html:855
+#: comea_theme/templates/evaluation_config.html:878
+#: comea_theme/templates/evaluation_config.html:901
+#: comea_theme/templates/evaluation_config.html:926
+#: comea_theme/templates/evaluation_history.html:276
+#: comea_theme/templates/propositions_extraction_config.html:32
+#: comea_theme/templates/propositions_extraction_config.html:67
+#: comea_theme/templates/propositions_extraction_config.html:83
+#: comea_theme/templates/select_rubric.html:149
+#: comea_theme/templates/topics_extraction_config.html:114
+msgid "Cancel"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:833
+msgid "Add Suggested Connection"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:837
+msgid "Source Node:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:843
+msgid "Link Label (optional):"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:845
+msgid "e.g., relates to, causes, etc."
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:849
+msgid "Target Node:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:856
+#: comea_theme/templates/propositions_extraction_config.html:43
+msgid "Add Connection"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:868
+msgid "Add New Node"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:872
+#: comea_theme/templates/evaluation_config.html:895
+msgid "Node Label:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:874
+msgid "Enter concept name"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:879
+msgid "Add Node"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:891
+msgid "Edit Node Label"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:902
+#: comea_theme/templates/evaluation_config.html:927
+#: comea_theme/templates/propositions_extraction_config.html:68
+#: comea_theme/templates/topics_extraction_config.html:115
+msgid "Save"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:903
+#: comea_theme/templates/evaluation_config.html:928
+#: comea_theme/templates/evaluation_history.html:277
+#: comea_theme/templates/evaluation_history.html:535
+#: comea_theme/templates/evaluation_history.html:542
+#: comea_theme/templates/propositions_extraction_config.html:66
+#: comea_theme/templates/select_rubric.html:150
+#: comea_theme/templates/select_rubric.html:211
+#: comea_theme/templates/select_rubric.html:218
+#: comea_theme/templates/topics_extraction_config.html:47
+msgid "Delete"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:915
+msgid "Edit Connection Label"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:917
+msgid "Connection:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:920
+msgid "Link Label:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:962
+msgid "Select source node"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:963
+msgid "Select target node"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:1081
+msgid "Error saving changes:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:1123
+msgid "Please select both source and target nodes"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:1146
+#: comea_theme/templates/evaluation_config.html:1184
+msgid "Please enter a label for the node"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:1196
+msgid "Delete this node and all its connections?"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:1215
+msgid "Delete this connection?"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:1229
+msgid "+ Add Node"
+msgstr ""
+
+#: comea_theme/templates/evaluation_config.html:1237
+msgid "+ Add Connection"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:11
+msgid "View all your concept map evaluations"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:24
+msgid "Filters"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:29
+#: comea_theme/templates/evaluation_history.html:95
+#: comea_theme/templates/evaluation_rubric_config.html:202
+msgid "Status"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:32
+msgid "All Status"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:33
+#: comea_theme/templates/evaluation_history.html:177
+msgid "Feedback Ready"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:34
+#: comea_theme/templates/evaluation_history.html:75
+msgid "In Progress"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:41
+#: comea_theme/templates/evaluation_history.html:93
+#: comea_theme/templates/evaluation_rubric_config.html:203
+#: comea_theme/templates/select_rubric.html:22
+msgid "Rubric"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:44
+msgid "All Rubrics"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:54
+msgid "Search"
+msgstr "Search"
+
+#: comea_theme/templates/evaluation_history.html:56
+msgid "Search by filename"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:65
+msgid "Total Evaluations"
+msgstr "Total Evaluations"
+
+#: comea_theme/templates/evaluation_history.html:69
+msgid "Completed"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:81
+msgid "Average Score"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:97
+msgid "Date"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:98
+msgid "Actions"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:141
+msgid "No rubric"
+msgstr "No rubric"
+
+#: comea_theme/templates/evaluation_history.html:165
+msgid "Pending"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:170
+#: comea_theme/templates/evaluation_history.html:388
+msgid "Processing"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:184
+#: comea_theme/templates/evaluation_history.html:426
+msgid "Failed"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:188
+msgid "Unknown"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:216
+msgid "Continue Evaluation"
+msgstr "Continue Evaluation"
+
+#: comea_theme/templates/evaluation_history.html:225
+msgid "Please edit the rubric and add student name first"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:225
+msgid "Print Feedback"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:226
+msgid ""
+"Please edit the rubric and add the student name before printing the feedback."
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:238
+msgid "Delete Concept Map"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:258
+msgid "No evaluations found"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:259
+msgid "Start by creating a rubric and evaluating a concept map"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:270
+#: comea_theme/templates/select_rubric.html:143
+msgid "Confirm Deletion"
+msgstr "Confirm Deletion"
+
+#: comea_theme/templates/evaluation_history.html:272
+msgid "Are you sure you want to delete the concept map"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:274
+#: comea_theme/templates/select_rubric.html:147
+msgid ""
+"This action cannot be undone. All associated evaluations will also be "
+"deleted."
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:428
+msgid "Evaluation failed. Please try again."
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:516
+#: comea_theme/templates/select_rubric.html:191
+msgid "Deleting"
+msgstr ""
+
+#: comea_theme/templates/evaluation_history.html:540
+msgid "An error occurred while deleting the concept map"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:8
+msgid "Configure the Rubric for Concept Map Assessment"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:9
+msgid "Select one of the established concept map rubrics or create your own!"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:10
+msgid "For a full explanation of each rubric criterion, please refer to the "
+msgstr ""
+"Para a explicação completa sobre cada critério da rubrica, por favor acesse a"
+
+#: comea_theme/templates/evaluation_rubric_config.html:10
+msgid "rubric and concept map explanation"
+msgstr "explicação sobre mapas conceituais e rubricas de avaliação"
+
+#: comea_theme/templates/evaluation_rubric_config.html:17
+msgid "Please enter a name for the rubric"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:24
+msgid "✅ Select Rubrics and Configure Feedback Settings"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:27
+msgid "Give a name to identify your rubric"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:29
+msgid "e.g.: Solar System Concept Map Rubric"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:31
+msgid "Advanced Configuration"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:38
+msgid "Assessment Rubric Configuration Questionnaire"
+msgstr "Assessment Rubric Configuration Questionnaire"
+
+#: comea_theme/templates/evaluation_rubric_config.html:39
+msgid "Answer the questions to automatically configure a recommended rubric."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:42
+msgid "Do you want to assess the concept map structure quality?"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:44
+#: comea_theme/templates/evaluation_rubric_config.html:61
+#: comea_theme/templates/evaluation_rubric_config.html:82
+#: comea_theme/templates/evaluation_rubric_config.html:122
+#: comea_theme/templates/evaluation_rubric_config.html:142
+msgid "Get more Info"
+msgstr "Get more Info"
+
+#: comea_theme/templates/evaluation_rubric_config.html:46
+msgid ""
+"The structure quality is assessed based on atributes such as the number of "
+"concepts, the number of connections, if the concept map is well-connected, "
+"if it contains short-text concepts rather than long sentences, and others."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:51
+#: comea_theme/templates/evaluation_rubric_config.html:71
+#: comea_theme/templates/evaluation_rubric_config.html:132
+#: comea_theme/templates/evaluation_rubric_config.html:149
+msgid "Select an option"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:52
+#: comea_theme/templates/evaluation_rubric_config.html:72
+#: comea_theme/templates/evaluation_rubric_config.html:133
+#: comea_theme/templates/evaluation_rubric_config.html:150
+msgid "Yes"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:53
+#: comea_theme/templates/evaluation_rubric_config.html:73
+#: comea_theme/templates/evaluation_rubric_config.html:134
+#: comea_theme/templates/evaluation_rubric_config.html:151
+msgid "No"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:59
+msgid "Do you want to assess the content of the concept map?"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:63
+msgid ""
+"For assessing the content, you need to provide a reference document. This "
+"document will be used to validate the propositions in the concept map of the "
+"student for correctness and completeness of the content. The final score is "
+"the mean between the Correctness and Completeness scores."
+msgstr ""
+
+# Classification types
+#: comea_theme/templates/evaluation_rubric_config.html:64
+msgid "Correctness Score:"
+msgstr "Correctness Score:"
+
+#: comea_theme/templates/evaluation_rubric_config.html:64
+msgid ""
+"measures how correct are the propositions compared with the reference "
+"document. They receive 1 point if are correct, half-point if partially "
+"correct, and 0 points if incorrect."
+msgstr ""
+
+# Classification types
+#: comea_theme/templates/evaluation_rubric_config.html:65
+msgid "Completeness Score:"
+msgstr "Completeness Score:"
+
+#: comea_theme/templates/evaluation_rubric_config.html:65
+msgid ""
+"measures if all relevant topics are included. To check this, the system will "
+"extract essential topics from the reference document for you to validate."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:80
+msgid ""
+"Select a reference document for assessing the content of the concept map"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:84
+msgid ""
+"A reference document is a PDF file that the system will use to validate the "
+"information. It can be a book chapter, article, paper or any other scholarly "
+"source."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:92
+msgid "Balance the importance between the two evaluation types"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:95
+msgid "Structure quality"
+msgstr "Structure quality"
+
+#: comea_theme/templates/evaluation_rubric_config.html:105
+msgid "Content evaluation"
+msgstr "Content evaluation"
+
+#: comea_theme/templates/evaluation_rubric_config.html:108
+msgid "of the final score is based on Structure Quality"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:109
+msgid "of the final score is based on Content Evaluation"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:116
+msgid "Feedback Configuration Options"
+msgstr "Feedback Configuration Options"
+
+#: comea_theme/templates/evaluation_rubric_config.html:117
+msgid ""
+"The feedback options does not affect the final score calculation, but can "
+"provide valuable insights for student learning."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:120
+msgid ""
+"Do you want to classify the type of structure of the concept map and provide "
+"feedback on new conenctions and concepts that could be added?"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:124
+msgid ""
+"Classifying the structure helps in understanding the cognitive organization "
+"of the student. The structure can be classified in three types:"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:140
+msgid "Do you want to assess the visual aspects of the concept map?"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:144
+msgid ""
+"Visual aspects include layout, colors, and overall design. The system will "
+"not provide an automatic assessment for these elements, but you can provide "
+"your own feedback manually."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:163
+msgid "Structural Classification"
+msgstr "Structural Classification"
+
+#: comea_theme/templates/evaluation_rubric_config.html:164
+msgid ""
+"Concept maps structures can be classified as Spoke, Chain, or Network, based "
+"on the different ways knowledge is organized in a student's mind. "
+"Identifying them can help educators understand the depth and quality of a "
+"student's understanding."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:174
+msgid ""
+"Analyzes the structural organization patterns (Spoke, Chain, Network) of "
+"concept maps, and presents feedback on how to improve the structure."
+msgstr ""
+"Analyzes the structural organization patterns (Spoke, Chain, Network) of "
+"concept maps, and presents feedback on how to improve the structure."
+
+#: comea_theme/templates/evaluation_rubric_config.html:182
+msgid ""
+"Visual aspects include layout, colors, and overall design. The system does "
+"not automatically assess these elements, but this option enables manual "
+"feedback."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:192
+msgid ""
+"Enables feedback focused on visual organization, readability, and "
+"presentation quality of concept maps."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:205
+#: comea_theme/templates/print_rubric.html:272
+#: comea_theme/templates/topics_extraction_config.html:34
+#: comea_theme/templates/topics_extraction_config.html:107
+msgid "Weight"
+msgstr ""
+
+# Rubric descriptions
+#: comea_theme/templates/evaluation_rubric_config.html:216
+msgid ""
+"Focuses on structural properties and connectivity patterns of concept maps."
+msgstr ""
+"Focuses on structural properties and connectivity patterns of concept maps."
+
+#: comea_theme/templates/evaluation_rubric_config.html:229
+msgid ""
+"Focuses on the correctness and quality of propositions formed in the concept "
+"map."
+msgstr ""
+"Focuses on the correctness and quality of propositions formed in the concept "
+"map."
+
+#: comea_theme/templates/evaluation_rubric_config.html:248
+msgid "⚙️ Rubrics Configuration"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:251
+msgid "Select a reference document for proposition analysis"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:253
+msgid "Max size of 20MB and PDF format only."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:278
+msgid "Linking Phrase"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:279
+msgid " \tChecks whether words connecting concepts are present."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:289
+msgid ""
+" \tCounts the number of nodes from which two or more connections emerge."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:308
+msgid "Crosslinks"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:329
+msgid "No long texts present"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:355
+#: comea_theme/templates/evaluation_rubric_config.html:370
+#: comea_theme/templates/evaluation_rubric_config.html:385
+msgid "Must be a positive number"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:358
+msgid "Branching number must be positive."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:373
+msgid "Hierarchy level must be positive."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:388
+msgid "Cross-links number must be positive."
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:401
+msgid "Save Rubric"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:448
+#: comea_theme/templates/print_feedback.html:254
+msgid "Final Score"
+msgstr ""
+
+#: comea_theme/templates/evaluation_rubric_config.html:784
+msgid "Please upload a reference document for proposition analysis"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:9
+msgid "Upload Concept Map"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:10
+msgid "Upload your concept map file for evaluation"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:19
+msgid "Selected Rubric"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:21
+msgid "Semantic"
+msgstr ""
+
+# Rubric names
+#: comea_theme/templates/file_upload_with_rubric.html:22
+msgid "Topological"
+msgstr "Topological"
+
+#: comea_theme/templates/file_upload_with_rubric.html:39
+#, python-format
+msgid ""
+"\n"
+"                %(counter)s evaluation in progress\n"
+"              "
+msgid_plural ""
+"\n"
+"                %(counter)s evaluations in progress\n"
+"              "
+msgstr[0] ""
+msgstr[1] ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:47
+msgid ""
+"You have reached the maximum limit. Please wait for an evaluation to "
+"complete before uploading a new concept map."
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:49
+msgid "You can upload 1 more concept map for evaluation."
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:51
+msgid "You can upload 2 more concept maps for evaluation."
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:77
+msgid "Concept Map File"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:88
+msgid "Accepted formats: .excalidraw and .cxl"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:98
+msgid "Maximum Limit Reached"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:100
+msgid "Upload and Evaluate"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:114
+msgid "Back to Rubric Selection"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:120
+msgid "Instructions"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:122
+msgid "Select your concept map file in CXL or EXCALIDRAW format"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:123
+msgid "The map will be evaluated using the selected rubric configuration"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:124
+msgid "You will be redirected to the evaluation results page after processing"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:173
+msgid "Uploading"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:195
+msgid "An error occurred"
+msgstr ""
+
+#: comea_theme/templates/file_upload_with_rubric.html:221
+msgid "An error occurred while uploading the file. Please try again."
+msgstr ""
+
+#: comea_theme/templates/loading.html:8
+msgid "Extracting Topics from Reference Document"
+msgstr ""
+
+#: comea_theme/templates/loading.html:10
+msgid "Processing Evaluation"
+msgstr ""
+
+#: comea_theme/templates/loading.html:20
+msgid "Please wait while we extract topics from your reference document"
+msgstr ""
+
+#: comea_theme/templates/loading.html:22
+msgid "Please wait while we calculate the evaluation metrics"
+msgstr ""
+
+#: comea_theme/templates/loading.html:32 comea_theme/templates/loading.html:66
+msgid "Analyzing document content"
+msgstr ""
+
+#: comea_theme/templates/loading.html:34 comea_theme/templates/loading.html:124
+msgid "Analyzing concept map structure"
+msgstr ""
+
+#: comea_theme/templates/loading.html:67
+msgid "Extracting key concepts"
+msgstr ""
+
+#: comea_theme/templates/loading.html:68
+msgid "Identifying relationships"
+msgstr ""
+
+#: comea_theme/templates/loading.html:69
+msgid "Creating propositions"
+msgstr "Creating propositions"
+
+#: comea_theme/templates/loading.html:70
+msgid "Finalizing topics extraction"
+msgstr ""
+
+#: comea_theme/templates/loading.html:87
+msgid "Topics extracted successfully! Redirecting"
+msgstr ""
+
+#: comea_theme/templates/loading.html:94 comea_theme/templates/loading.html:100
+msgid "Error processing document. Please try again."
+msgstr ""
+
+#: comea_theme/templates/loading.html:125
+msgid "Calculating quantitative metrics"
+msgstr ""
+
+#: comea_theme/templates/loading.html:126
+msgid "Processing propositions"
+msgstr ""
+
+#: comea_theme/templates/loading.html:127
+msgid "Classifying topics"
+msgstr ""
+
+#: comea_theme/templates/loading.html:128
+msgid "Finalizing evaluation"
+msgstr ""
+
+#: comea_theme/templates/loading.html:146
+msgid "Evaluation complete! Redirecting"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:6
+msgid "Feedback Report"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:236
+#: comea_theme/templates/print_rubric.html:256
+msgid "Print"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:240
+msgid "Concept Map Evaluation Report"
+msgstr "Concept Map Evaluation Report"
+
+#: comea_theme/templates/print_feedback.html:241
+msgid "Automated Assessment Feedback"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:247
+msgid "Student"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:250
+msgid "Evaluation Date"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:266
+msgid ""
+"Visual representation of the concept map with node classifications and "
+"suggested connections (green dashed lines)."
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:275
+msgid "Legend"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:279
+msgid "White nodes"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:279
+msgid "Network structure"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:283
+msgid "Orange nodes"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:283
+msgid "Spoke structure"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:287
+msgid "Blue nodes"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:287
+msgid "Chain structure"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:291
+msgid "Solid lines"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:295
+msgid "Dashed green lines"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:301
+#: comea_theme/templates/print_feedback.html:358
+#: comea_theme/templates/print_feedback.html:426
+msgid "General Comments"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:318
+msgid "Total Nodes"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:322
+msgid "Long Text Nodes"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:326
+msgid "Total Edges"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:330
+msgid "Edges Without Link"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:334
+msgid "Branching Points"
+msgstr ""
+
+# Rubric names
+#: comea_theme/templates/print_feedback.html:347
+msgid "Topological Level"
+msgstr "Topological Level"
+
+#: comea_theme/templates/print_feedback.html:371
+msgid "Propositions Evaluation"
+msgstr "Propositions Evaluation"
+
+#: comea_theme/templates/print_feedback.html:376
+msgid "Coverage of essential topics"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:382
+msgid "Accuracy of propositions"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:386
+msgid "Overall Proposition Score"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:388
+msgid "Combined metric"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:398
+msgid "Evaluation"
+msgstr ""
+
+#: comea_theme/templates/print_feedback.html:457
+#: comea_theme/templates/print_rubric.html:795
+msgid "Generated on"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:6
+msgid "Rubric Configuration"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:252
+#: comea_theme/templates/print_rubric.html:807
+msgid "Hide Topics"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:260
+msgid "Assessment Rubric Configuration"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:266
+msgid "Active Evaluation Criteria"
+msgstr "Active Evaluation Criteria"
+
+#: comea_theme/templates/print_rubric.html:291
+msgid ""
+"The final score is calculated by multiplying the weights of the active "
+"criteria and dividing by the sum of the weights."
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:297
+msgid "Feedback"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:298
+msgid ""
+"The following criteria will also be evaluated in your map, to compose the "
+"feedback:"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:301
+msgid "Structure Classification Feedback"
+msgstr "Structure Classification Feedback"
+
+#: comea_theme/templates/print_rubric.html:302
+msgid ""
+"an assessment of the map's structure type, which evaluates the level of "
+"integration between knowledge areas."
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:307
+msgid "Visual Aspects Feedback"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:308
+msgid ""
+"Evaluation of visual aspects, such as the appropriate use of colors and "
+"shapes, and a clean organization, which facilitate reading and "
+"interpretation."
+msgstr ""
+
+# Rubric names
+#: comea_theme/templates/print_rubric.html:320
+msgid "Topological Scoring Parameters"
+msgstr "Topological Scoring Parameters"
+
+#: comea_theme/templates/print_rubric.html:437
+#: comea_theme/templates/print_rubric.html:483
+#: comea_theme/templates/print_rubric.html:529
+#: comea_theme/templates/print_rubric.html:575
+#: comea_theme/templates/print_rubric.html:622
+#: comea_theme/templates/print_rubric.html:668
+#: comea_theme/templates/print_rubric.html:714
+msgid "All Linking Phrases Absent"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:450
+#: comea_theme/templates/print_rubric.html:455
+#: comea_theme/templates/print_rubric.html:462
+#: comea_theme/templates/print_rubric.html:496
+#: comea_theme/templates/print_rubric.html:501
+#: comea_theme/templates/print_rubric.html:508
+#: comea_theme/templates/print_rubric.html:542
+#: comea_theme/templates/print_rubric.html:547
+#: comea_theme/templates/print_rubric.html:554
+#: comea_theme/templates/print_rubric.html:588
+#: comea_theme/templates/print_rubric.html:593
+#: comea_theme/templates/print_rubric.html:600
+#: comea_theme/templates/print_rubric.html:635
+#: comea_theme/templates/print_rubric.html:640
+#: comea_theme/templates/print_rubric.html:647
+#: comea_theme/templates/print_rubric.html:681
+#: comea_theme/templates/print_rubric.html:686
+#: comea_theme/templates/print_rubric.html:693
+#: comea_theme/templates/print_rubric.html:727
+#: comea_theme/templates/print_rubric.html:732
+#: comea_theme/templates/print_rubric.html:739
+msgid "At least "
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:450
+#: comea_theme/templates/print_rubric.html:496
+#: comea_theme/templates/print_rubric.html:542
+#: comea_theme/templates/print_rubric.html:588
+#: comea_theme/templates/print_rubric.html:635
+#: comea_theme/templates/print_rubric.html:681
+#: comea_theme/templates/print_rubric.html:727
+msgid " points"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:455
+#: comea_theme/templates/print_rubric.html:501
+#: comea_theme/templates/print_rubric.html:547
+#: comea_theme/templates/print_rubric.html:593
+#: comea_theme/templates/print_rubric.html:640
+#: comea_theme/templates/print_rubric.html:686
+#: comea_theme/templates/print_rubric.html:732
+msgid " levels deep"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:462
+#: comea_theme/templates/print_rubric.html:508
+#: comea_theme/templates/print_rubric.html:554
+#: comea_theme/templates/print_rubric.html:600
+#: comea_theme/templates/print_rubric.html:647
+#: comea_theme/templates/print_rubric.html:693
+#: comea_theme/templates/print_rubric.html:739
+msgid " cross-links"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:752
+msgid "Concept vs. Texts"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:753
+msgid "Linking Phrases"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:780
+#: comea_theme/templates/select_rubric.html:65
+msgid "Reference Document"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:781
+msgid ""
+"These are some of the expected topics/propositions extracted from the "
+"reference document that should be on the concept map."
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:783
+msgid "Extracted Topics/Propositions"
+msgstr ""
+
+#: comea_theme/templates/print_rubric.html:811
+msgid "Show Topics"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:11
+msgid ""
+"This Privacy Policy describes how the CoMEA platform handles information "
+"collected during the evaluation of concept maps. Our commitment is to ensure "
+"transparency and protection of user data."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:14
+msgid "1. Data Collection"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:15
+msgid "At CoMEA:"
+msgstr "At CoMEA:"
+
+#: comea_theme/templates/privacy.html:17
+msgid ""
+"We do not collect any data from the user's browser (such as cookies, "
+"history, IP address, location information, or browsing metadata)."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:18
+msgid ""
+"The only data collection occurs from information provided directly by the "
+"user during the use of the platform, specifically related to concept map "
+"evaluation."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:21
+msgid "2. Purpose of Data Use"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:23
+msgid ""
+"All data entered on the platform will be used exclusively for academic and "
+"scientific research purposes. Aggregated research results may be published "
+"in scientific papers, reports, or presentations, always maintaining "
+"anonymity and confidentiality."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:26
+msgid "3. Anonymization and Confidentiality"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:27
+msgid "We commit to:"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:29
+msgid ""
+"Not identifying any individual in the research conducted, whether the "
+"platform user or any student whose name may be entered by the user during "
+"use."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:32
+msgid "4. User's Right to Data Deletion"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:34
+msgid ""
+"The user has the right, at any time, to request the complete deletion of "
+"their data from the platform and the cessation of use of this data in "
+"research. To do so, simply send an email to:"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:40
+msgid ""
+"The request will be fulfilled within a maximum of 30 days, at no cost to the "
+"user."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:43
+msgid "5. Security and Storage"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:45
+msgid ""
+"We adopt technical and organizational measures to protect data against "
+"unauthorized access, alteration, or destruction. Data will be stored in a "
+"secure environment and accessible only by the research team."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:48
+msgid "6. Changes to This Policy"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:50
+msgid ""
+"This Privacy Policy may be updated periodically. Any modifications will be "
+"communicated through a visible notification on the website."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:53
+msgid "7. Contact"
+msgstr "7. Contact"
+
+#: comea_theme/templates/privacy.html:55
+msgid ""
+"For questions, clarifications, or requests related to this policy or data "
+"handling, please contact via email:"
+msgstr ""
+
+#: comea_theme/templates/privacy.html:63
+msgid "This policy applies exclusively to the use of the CoMEA platform."
+msgstr ""
+
+#: comea_theme/templates/privacy.html:66
+msgid "Last updated: February 2026"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:11
+msgid "Configure the Concept Map"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:13
+msgid ""
+"Edit the concept map by double-clicking on nodes or edges to modify their "
+"text."
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:21
+msgid "Interactive Concept Map"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:23
+msgid "nodes to reposition."
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:23
+msgid "with mouse wheel."
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:24
+msgid "Double-click"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:24
+msgid "on nodes or edges to edit their text or delete them."
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:25
+msgid "Add connection:"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:25
+msgid ""
+"Click the 'Add Connection' button, then click source node, then target node "
+"to add a new connection."
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:31
+#: comea_theme/templates/propositions_extraction_config.html:222
+msgid "Click on the source node"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:46
+msgid "Confirm and Continue"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:52
+msgid "No concept map found. Please upload a concept map first."
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:61
+msgid "Edit Text"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:63
+msgid "Enter new text"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:76
+msgid "New Connection Label"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:78
+msgid "From:"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:79
+msgid "To:"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:80
+msgid "Enter connection label"
+msgstr ""
+
+#: comea_theme/templates/propositions_extraction_config.html:84
+msgid "Create"
+msgstr ""
+
+#: comea_theme/templates/registration/login.html:8
+msgid "Sign in to your account"
+msgstr ""
+
+#: comea_theme/templates/registration/login.html:18
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+
+#: comea_theme/templates/registration/login.html:24
+msgid "Username"
+msgstr ""
+
+#: comea_theme/templates/registration/login.html:34
+msgid "Password"
+msgstr ""
+
+#: comea_theme/templates/registration/login.html:45
+msgid "Sign in"
+msgstr ""
+
+#: comea_theme/templates/registration/login.html:51
+msgid "New to CoMEA?"
+msgstr "New to CoMEA?"
+
+#: comea_theme/templates/registration/login.html:53
+msgid "Register here"
+msgstr ""
+
+#: comea_theme/templates/registration/register.html:8
+msgid "Create new account"
+msgstr ""
+
+#: comea_theme/templates/registration/register.html:16
+msgid "No momento, a opção de registro está desativada."
+msgstr ""
+
+#: comea_theme/templates/registration/register.html:19
+msgid ""
+"Para utilizar o sistema, é necessário que você seja convidado pelas "
+"pesquisadoras responsáveis. Caso queira se cadastrar, envie um email para "
+"lais.vosssen@edu.udesc.br para se informar sobre o processo."
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:9
+msgid "Select a Rubric"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:10
+msgid "Choose an existing rubric configuration to evaluate your concept map"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:32
+msgid "Structure Analysis"
+msgstr ""
+
+# Rubric names
+#: comea_theme/templates/select_rubric.html:40
+msgid "Topological Analysis"
+msgstr "Topological Analysis"
+
+#: comea_theme/templates/select_rubric.html:71
+msgid "Created"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:73
+msgid "Updated"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:80
+msgid "Select rubric"
+msgstr "Evaluate"
+
+#: comea_theme/templates/select_rubric.html:89
+msgid "Print rubric"
+msgstr "Specification"
+
+#: comea_theme/templates/select_rubric.html:98
+msgid "Delete rubric"
+msgstr "Delete"
+
+#: comea_theme/templates/select_rubric.html:115
+msgid "No rubrics found"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:116
+msgid ""
+"You need to create a rubric configuration first before evaluating concept "
+"maps."
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:134
+msgid "Back"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:145
+msgid "Are you sure you want to delete the rubric"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:209
+msgid "Error"
+msgstr ""
+
+#: comea_theme/templates/select_rubric.html:216
+msgid "An error occurred while deleting the rubric"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:12
+msgid "Configure the Key Topics Extracted"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:14
+msgid ""
+"Here are the key topics we extracted from your document. You can edit them "
+"or their weights, or delete any that you find irrelevant."
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:21
+msgid "Loading topics"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:33
+msgid "Topic"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:35
+#: comea_theme/templates/topics_extraction_config.html:46
+msgid "Edit"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:58
+msgid "+ Add Topic"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:61
+msgid "Confirm Topics"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:69
+#: comea_theme/templates/topics_extraction_config.html:262
+msgid "Add Proposition"
+msgstr "Add Proposition"
+
+#: comea_theme/templates/topics_extraction_config.html:74
+msgid "Origin concept (existing)"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:80
+msgid "Origin concept (new)"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:82
+#: comea_theme/templates/topics_extraction_config.html:102
+msgid "Write a new concept"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:87
+msgid "Linking phrase"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:89
+msgid "Example: leads to, creates, have, ..."
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:94
+msgid "Target concept (existing)"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:100
+msgid "Target concept (new)"
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:241
+msgid "Edit Proposition"
+msgstr "Edit Proposition"
+
+#: comea_theme/templates/topics_extraction_config.html:282
+msgid "Please fill origin concept, linking phrase, and target concept."
+msgstr ""
+
+#: comea_theme/templates/topics_extraction_config.html:375
+msgid "Add at least one valid relation before saving."
+msgstr ""
+
+#: comea_website/settings.py:121
+msgid "English"
+msgstr "English"
+
+#: comea_website/settings.py:122
+msgid "Português Brasileiro"
+msgstr "Brazilian Portuguese"
+
+#~ msgid "Concept Map Creation Tutorial"
+#~ msgstr "Concept Map Creation Tutorial"
+
+#~ msgid "Proposition Classification"
+#~ msgstr "Proposition Classification"
+
+#~ msgid ""
+#~ "A Concept Map Evaluation Assistant that leverages the power of semantic "
+#~ "evaluations provided by LLMs, combined with customizable assessment "
+#~ "metrics to create a map evaluation flow that makes the process "
+#~ "transparent and customizable to the user."
+#~ msgstr ""
+#~ "A Concept Map Evaluation Assistant that leverages the power of semantic "
+#~ "evaluations provided by LLMs, combined with customizable assessment "
+#~ "metrics to create a map evaluation flow that makes the process "
+#~ "transparent and customizable to the user."
+
+#~ msgid "Terms of Use"
+#~ msgstr "Terms of Use"

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n l10n %}
+
+{% block content %}
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9">
+            {% trans "Create new account" %}
+        </h2>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h3 class="card-title text-lg mb-2">{% trans "No momento, a opção de registro está desativada." %}</h3>
+                <div class="alert alert-info mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-sm">{% trans "Para utilizar o sistema, é necessário que você seja convidado pelas pesquisadoras responsáveis. Caso queira se cadastrar, envie um email para lais.vosssen@edu.udesc.br para se informar sobre o processo." %}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-error">
+                {{ form.errors }}
+            </div>
+            {% endif %}
+            
+            <div>
+                <label for="username" class="block text-sm font-medium leading-6">
+                    Username
+                </label>
+                <div class="mt-2">
+                    {{ form.username }}
+                </div>
+            </div>
+
+            <div>
+                <label for="password1" class="block text-sm font-medium leading-6">
+                    Password
+                </label>
+                <div class="mt-2">
+                    {{ form.password1 }}
+                </div>
+            </div>
+
+            <div>
+                <label for="password2" class="block text-sm font-medium leading-6">
+                    Confirm Password
+                </label>
+                <div class="mt-2">
+                    {{ form.password2 }}
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary w-full">
+                    Register
+                </button>
+            </div>
+        </form> -->
+    </div>
+</div>
+{% endblock %}

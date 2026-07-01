@@ -1,0 +1,930 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n %}
+
+{% block content %}
+<div class="rubric-typography max-w-6xl mx-auto mt-10 space-y-8">
+
+    <div class="w-full text-center">
+        <h2 class="text-3xl font-semibold">{% trans "Configure the Rubric for Concept Map Assessment" %}</h2>
+        <p class="text-gray-600 mt-2">{% trans "Select one of the established concept map rubrics or create your own!" %}</p>
+        <p class="text-gray-600">{% trans "For a full explanation of each rubric criterion, please refer to the " %}<a href="{% url 'concept_map' %}" target="_blank" class="link link-info">{% trans "rubric and concept map explanation" %}</a></p>
+    </div>
+
+    <div role="alert" class="alert alert-error" hidden id="alert-error-submiting-rubric">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>{% trans "Please enter a name for the rubric" %}</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-8">
+    {% csrf_token %}
+        <div id="custom-fields" class="flex flex-col p-6 rounded-lg shadow">
+            <div class="flex flex-col items-left p-1 rounded-lg ">
+                <h2 class="font-semibold text-center text-lg font-medium">{% trans "✅ Select Rubrics and Configure Feedback Settings" %}</h2>
+                
+                <fieldset class="fieldset p-4">
+                    <legend class="fieldset-legend text-lg font-medium">{% trans "Give a name to identify your rubric" %}</legend>
+                    <div class="flex flex-col md:flex-row md:items-center gap-3">
+                        <input type="text" class="input flex-1" id="rubric-name-input" name="rubric_name" placeholder="{% trans "e.g.: Solar System Concept Map Rubric" %}" />
+                        <label class="label cursor-pointer gap-2 justify-start md:justify-end whitespace-nowrap">
+                            <span class="label-text text-gray-600 font-medium">{% trans "Advanced Configuration" %}</span>
+                            <input type="checkbox" id="expert-mode-toggle" class="toggle toggle-success" />
+                        </label>
+                    </div>
+                </fieldset>
+
+                <div id="guided-questionnaire-section" class="w-full flex flex-col gap-4 p-4 border border-base-300 rounded-lg mt-4">
+                    <h3 class="font-semibold text-center text-lg font-medium">{% trans "Assessment Rubric Configuration Questionnaire" %}</h3>
+                    <p class="text-sm text-gray-600 text-center ">{% trans "Answer the questions to automatically configure a recommended rubric." %}</p>
+
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend text-lg font-medium">{% trans "Do you want to assess the concept map structure quality?" %}</legend>
+                        <details>
+                            <summary class="cursor-pointer text-sm text-gray-600 font-medium">{% trans "Get more Info" %}</summary>
+                            <div class="space-y-1">
+                                <p class="text-sm text-gray-600">{% trans "The structure quality is assessed based on atributes such as the number of concepts, the number of connections, if the concept map is well-connected, if it contains short-text concepts rather than long sentences, and others." %}</p>
+                            </div>
+                        </details>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3">
+                            <select class="select" name="topologycal_scoring_qr">
+                                <option value="" selected disabled hidden>{% trans "Select an option" %}</option>
+                                <option value="1">{% trans "Yes" %}</option>
+                                <option value="0">{% trans "No" %}</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend text-lg font-medium">{% trans "Do you want to assess the content of the concept map?" %}</legend>
+                        <details class="">
+                            <summary class="cursor-pointer text-sm text-gray-600 font-medium">{% trans "Get more Info" %}</summary>
+                            <div class=" space-y-1">
+                                <p class="text-sm text-gray-600">{% trans "For assessing the content, you need to provide a reference document. This document will be used to validate the propositions in the concept map of the student for correctness and completeness of the content. The final score is the mean between the Correctness and Completeness scores." %}</p>
+                                <p class="text-sm text-gray-600"><strong>{% trans "Correctness Score:" %}</strong> {% trans "measures how correct are the propositions compared with the reference document. They receive 1 point if are correct, half-point if partially correct, and 0 points if incorrect." %}</p>
+                                <p class="text-sm text-gray-600"><strong>{% trans "Completeness Score:" %}</strong> {% trans "measures if all relevant topics are included. To check this, the system will extract essential topics from the reference document for you to validate." %}</p>
+                            </div>
+                        </details>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center gap-3">
+                            <select class="select" name="proposition_analysis_qr">
+                                <option value="" selected disabled hidden>{% trans "Select an option" %}</option>
+                                <option value="1">{% trans "Yes" %}</option>
+                                <option value="0">{% trans "No" %}</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <div id="guided-reference-document-section" class="w-full flex justify-left p-3 border border-base-300 rounded-lg mt-2" style="display:none;">
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend">{% trans "Select a reference document for assessing the content of the concept map" %}</legend>
+                            <details class="">
+                                <summary class="cursor-pointer text-sm text-gray-600 font-medium">{% trans "Get more Info" %}</summary>
+                                <div class=" space-y-1">
+                                    <p class="text-sm text-gray-600">{% trans "A reference document is a PDF file that the system will use to validate the information. It can be a book chapter, article, paper or any other scholarly source." %}</p>
+                                </div>
+                            </details>
+                            <input type="file" id="guided-reference-document-input" name="reference_qr" class="file-input" accept=".pdf,application/pdf"/>
+                        </fieldset>
+                    </div>
+
+                    <div id="guided-importance-slider-section" class="w-full p-4 border border-base-300 rounded-lg" style="display:none;">
+                        <p class="font-medium">{% trans "Balance the importance between the two evaluation types" %}</p>
+                        <div class="mt-3 flex flex-col gap-2">
+                            <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 text-sm text-gray-600">
+                                <span class="md:w-44 text-left">{% trans "Structure quality" %}</span>
+                                <input
+                                    id="guided-importance-slider"
+                                    type="range"
+                                    min="1"
+                                    max="9"
+                                    value="5"
+                                    step="1"
+                                    class="flex-1"
+                                />
+                                <span class="md:w-44 text-left md:text-right">{% trans "Content evaluation" %}</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <p><span id="guided-importance-structure-percentage">50</span>% {% trans "of the final score is based on Structure Quality" %}</p>
+                                <p><span id="guided-importance-content-percentage">50</span>% {% trans "of the final score is based on Content Evaluation" %}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr/>
+
+                    <h3 class="font-semibold text-center text-lg font-medium">{% trans "Feedback Configuration Options" %}</h3>
+                    <p class="text-sm text-gray-600 text-center ">{% trans "The feedback options does not affect the final score calculation, but can provide valuable insights for student learning." %}</p>
+
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend text-lg font-medium">{% trans "Do you want to classify the type of structure of the concept map and provide feedback on new conenctions and concepts that could be added?" %}</legend>
+                        <details>
+                            <summary class="cursor-pointer text-sm text-gray-600 font-medium">{% trans "Get more Info" %}</summary>
+                            <div class="space-y-1">
+                                <p class="text-sm text-gray-600">{% trans "Classifying the structure helps in understanding the cognitive organization of the student. The structure can be classified in three types:" %}</p>
+                                <p class="text-sm text-gray-600"><strong>{% trans "Spoke Structure" %}:</strong> {% trans "Indicates a naive or superficial understanding. The student knows that certain concepts are related to the main topic but cannot explain the relationships between the secondary concepts. It is often a sign of a beginner's knowledge." %}</p>
+                                <p class="text-sm text-gray-600"><strong>{% trans "Chain Structure" %}:</strong> {% trans "Indicates a goal-oriented, but rigid, understanding. This type of thinking is good for following procedures and achieving specific goals. However, it is fragile. It can reflect 'surface learning' where the sequence is memorized but the broader connections are not understood." %}</p>
+                                <p class="text-sm text-gray-600"><strong>{% trans "Network Structure" %}:</strong> {% trans "Indicates expertise and deep, meaningful learning. They show that a student can integrate new knowledge with existing knowledge, see complex relationships, and understand a topic from multiple perspectives." %}</p>
+                            </div>
+                        </details>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3">
+                            <select class="select" name="structure_classification_qr">
+                                <option value="" selected disabled hidden>{% trans "Select an option" %}</option>
+                                <option value="1">{% trans "Yes" %}</option>
+                                <option value="0">{% trans "No" %}</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend text-lg font-medium">{% trans "Do you want to assess the visual aspects of the concept map?" %}</legend>
+                        <details>
+                            <summary class="cursor-pointer text-sm text-gray-600 font-medium">{% trans "Get more Info" %}</summary>
+                            <div class="space-y-1">
+                                <p class="text-sm text-gray-600">{% trans "Visual aspects include layout, colors, and overall design. The system will not provide an automatic assessment for these elements, but you can provide your own feedback manually." %}</p>
+                            </div>
+                        </details>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3">
+                            <select class="select" name="visual_aspects_qr">
+                                <option value="" selected disabled hidden>{% trans "Select an option" %}</option>
+                                <option value="1">{% trans "Yes" %}</option>
+                                <option value="0">{% trans "No" %}</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                </div>
+
+                <div id="expert-mode-fields" class="w-full flex-col gap-4" style="display:none;">
+
+                    <fieldset class="fieldset p-4 items-left">
+                        <legend class="fieldset-legend">
+                            <div class="flex items-center gap-2">
+                                <span>{% trans "Structural Classification" %}</span>
+                                <div class="tooltip tooltip-right" data-tip="{% trans "Concept maps structures can be classified as Spoke, Chain, or Network, based on the different ways knowledge is organized in a student's mind. Identifying them can help educators understand the depth and quality of a student's understanding." %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-info cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </legend>
+                        <label class="label">
+                            <input type="checkbox" checked="checked" class="toggle toggle-success"
+                                id="structural-classification-checkbox" name="structure_classification_checkbox"/>
+                            {% trans "Analyzes the structural organization patterns (Spoke, Chain, Network) of concept maps, and presents feedback on how to improve the structure." %}
+                        </label>
+                    </fieldset>
+
+                    <fieldset class="fieldset p-4 items-left">
+                        <legend class="fieldset-legend">
+                            <div class="flex items-center gap-2">
+                                <span>{% trans "Visual Aspects" %}</span>
+                                <div class="tooltip tooltip-right" data-tip="{% trans "Visual aspects include layout, colors, and overall design. The system does not automatically assess these elements, but this option enables manual feedback." %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-info cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </legend>
+                        <label class="label">
+                            <input type="checkbox" class="toggle toggle-success"
+                                id="visual-aspects-checkbox" name="visual_aspects_checkbox"/>
+                            {% trans "Enables feedback focused on visual organization, readability, and presentation quality of concept maps." %}
+                        </label>
+                    </fieldset>
+
+                    
+
+                    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+                        <table class="table">
+                            <thead>
+                                <tr class="bg-base-200">
+                                    <th class="px-4 py-2 text-left">{% trans "Status" %}</th>
+                                    <th class="px-4 py-2 text-left">{% trans "Rubric" %}</th>
+                                    <th class="px-4 py-2 text-left">{% trans "Description" %}</th>
+                                    <th class="px-4 py-2 text-left">{% trans "Weight" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td class="px-4 py-2">
+                                        <input type="checkbox"  checked="checked"  class="toggle toggle-success" 
+                                        id="topological-scoring-checkbox" name="topological_scoring_checkbox">
+                                    </td>
+                                    <td class="px-4 py-2">{% trans "Topological Scoring" %}</td>
+                                    <td class="px-4 py-2">{% trans "Focuses on structural properties and connectivity patterns of concept maps." %}</td>
+                                    <td class="px-4 py-2">
+                                        <input type="number" id="topological-scoring-weight" name="topological_scoring_weight"
+                                        class="input input-bordered w-20" value="1">
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="px-4 py-2">
+                                        <input type="checkbox" checked="checked"  class="toggle toggle-success" id="proposition-analysis-checkbox"
+                                            name="proposition_analysis_checkbox">
+                                    </td>
+                                    <td class="px-4 py-2">{% trans "Proposition Analysis" %}</td>
+                                    <td class="px-4 py-2">{% trans "Focuses on the correctness and quality of propositions formed in the concept map." %}</td>
+                                    <td class="px-4 py-2">
+                                        <input type="number" id="proposition-analysis-weight" name="proposition_analysis_weight"
+                                        class="input input-bordered w-20" value="1">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="score-formula-field" class="w-full flex justify-left p-3 text-lg font-mono text-grey-500 border border-base-300 rounded-lg mt-4" style="display:none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div id="rubric-config-section" class="flex flex-col p-6 rounded-lg shadow" style="display:none;">
+        <div class="flex flex-col items-left p-1 rounded-lg ">
+            <h2 class="font-semibold text-center">{% trans "⚙️ Rubrics Configuration" %}</h2>
+            <div id="reference-document-section", class="w-full flex justify-left p-3 border border-base-300 rounded-lg mt-4">
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">{% trans "Select a reference document for proposition analysis" %}</legend>
+                    <input type="file" id="advanced-reference-document-input" name="reference_adv" class="file-input" accept=".pdf,application/pdf"/>
+                    <label class="label">{% trans "Max size of 20MB and PDF format only." %}</label>
+                </fieldset>
+            </div>
+
+            <div class=" justify-left p-3 border border-base-300 rounded-lg mt-4" id="topological-score-config">
+                <div>
+                    <h2 class="font-semibold text-center p-4">{% trans "Topological Taxonomy" %}</h2>
+                </div>
+                <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+                    <table class="table">
+                        <thead>
+                            <tr class="bg-base-200">
+                                <th>{% trans "Level" %}</th>
+                                <th>
+                                    <div class="flex items-center gap-2">
+                                        <span>{% trans "Concept vs. Long Texts" %}</span>
+                                        <div class="tooltip tooltip-bottom" data-tip="{% trans 'Checks whether nodes contain short concepts or long explanations.' %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-info cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="flex items-center gap-2">
+                                        <span>{% trans "Linking Phrase" %}</span>
+                                        <div class="tooltip tooltip-bottom" data-tip="{% trans ' 	Checks whether words connecting concepts are present.' %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-info cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="flex items-center gap-2">
+                                        <span>{% trans "Branching" %}</span>
+                                        <div class="tooltip tooltip-bottom" data-tip="{% trans ' 	Counts the number of nodes from which two or more connections emerge.' %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-info cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="flex items-center gap-2">
+                                        <span>{% trans "Hierarchy" %}</span>
+                                        <div class="tooltip tooltip-left" data-tip="{% trans 'Measures the number of levels between the root concept and the furthest concept.' %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-info cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="flex items-center gap-2">
+                                        <span>{% trans "Crosslinks" %}</span>
+                                        <div class="tooltip tooltip-left" data-tip="{% trans 'Identifies connections between different branches of the map.' %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-info cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="md:items-baseline">
+                            {% for level, description in level_description.items %}
+                                <tr>
+                                    <th>{{ level }}: {{ description }}</th>
+                                    
+                                    <!-- Concept vs. Long Texts -->
+                                    <td>
+                                        <fieldset class="fieldset">
+                                            <select class="select" name="level{{ level }}_clt">
+                                                <option value="0.5" {% if level == "0" %}selected{% endif %}>{% trans "Long texts predominate" %}</option>
+                                                <option value="0.4" {% if level == "1" or level == "2" %}selected{% endif %}>{% trans "Concepts predominate" %}</option>
+                                                <option value="0.0" {% if level >= "3" %}selected{% endif %}>{% trans "No long texts present" %}</option>
+                                            </select>
+                                        </fieldset>
+                                    </td>
+                                    
+                                    <!-- Linking Phrase -->
+                                    <td>
+                                        <fieldset class="fieldset">
+                                            <select class="select" name="level{{ level }}_lp">
+                                                <option value="1.0" {% if level == "0" %}selected{% endif %}>{% trans "Absent" %}</option>
+                                                <option value="0.5" {% if level == "1" %}selected{% endif %}>{% trans "Half or more are missing" %}</option>
+                                                <option value="0.4" {% if level == "2" %}selected{% endif %}>{% trans "Less than half are missing" %}</option>
+                                                <option value="0.0" {% if level >= "3" %}selected{% endif %}>{% trans "All present" %}</option>
+                                            </select>
+                                        </fieldset>
+                                    </td>
+                                    
+                                    <!-- Branching -->
+                                    <td>
+                                        <input
+                                            type="number"
+                                            class="input validator"
+                                            name="level{{ level }}_branching"
+                                            required
+                                            min="0"
+                                            max="1000"
+                                            title="{% trans "Must be a positive number" %}"
+                                            value="{% if level == "0" or level == "1" %}0{% elif level == "2" %}2{% elif level == "3" %}3{% elif level == "4" or level == "5" %}5{% else %}7{% endif %}"
+                                            />
+                                        <p class="validator-hint">{% trans "Branching number must be positive." %}</p>
+                                    </td>
+                                    
+                                    <!-- Hierarchy -->
+                                    <td>
+                                        <input
+                                            type="number"
+                                            class="input validator"
+                                            name="level{{ level }}_hierarchy"
+                                            required
+                                            min="0"
+                                            max="1000"
+                                            title="{% trans "Must be a positive number" %}"
+                                            value="{% if level <= "3" %}0{% else %}3{% endif %}"
+                                            />
+                                        <p class="validator-hint">{% trans "Hierarchy level must be positive." %}</p>
+                                    </td>
+                                    
+                                    <!-- Crosslinks -->
+                                    <td>
+                                        <input
+                                            type="number"
+                                            class="input validator"
+                                            name="level{{ level }}_crosslinks"
+                                            required
+                                            min="0"
+                                            max="1000"
+                                            title="{% trans "Must be a positive number" %}"
+                                            value="{% if level <= "4" %}0{% elif level == "5" %}1{% else %}3{% endif %}"
+                                            />
+                                        <p class="validator-hint">{% trans "Cross-links number must be positive." %}</p>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div id="rubric-hidden-fields"></div>
+        <div class="w-full flex justify-center p-3">
+            <button id="save-rubric-submit-btn" type="submit" class="btn btn-primary bg-blue-500">{% trans "Save Rubric" %}</button>
+        </div>
+        
+    </form>
+
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+function syncCheckboxWeight(params = [
+        'topological-scoring', 'proposition-analysis'
+    ]) {
+    params.forEach(function(param) {
+        const checkbox = document.getElementById(param + '-checkbox');
+        const weight = document.getElementById(param + '-weight');
+        updateScoreFormula();
+        if (checkbox && weight) {
+            weight.disabled = !checkbox.checked;
+            checkbox.addEventListener('change', function() {
+                weight.disabled = !checkbox.checked;
+            });
+        }
+    });
+}
+
+function updateScoreFormula() {
+    const params = [
+        {id: 'topological-scoring-checkbox', label: "{% trans 'Topological Scoring' %}", weight: 'topological-scoring-weight'},
+        {id: 'proposition-analysis-checkbox', label: "{% trans 'Proposition Analysis' %}", weight: 'proposition-analysis-weight'}
+    ];
+    const formulaField = document.getElementById('score-formula-field');
+
+    let activeParams = [];
+    let totalWeight = 0;
+    params.forEach(p => {
+        const cb = document.getElementById(p.id);
+        const wt = document.getElementById(p.weight);
+        if (cb && cb.checked && wt) {
+            activeParams.push(`${p.label} × ${wt.value}`);
+            totalWeight += Number(wt.value) || 0;
+        }
+    });
+    if (activeParams.length > 0 && totalWeight > 0) {
+        formulaField.style.display = 'flex';
+        formulaField.textContent = `{% trans 'Final Score' %} = (${activeParams.join(' + ')}) / ${totalWeight}`;
+    } else {
+        formulaField.style.display = 'none';
+    }
+}
+
+function toggleReferenceDocumentSection() {
+    const propositionCheckbox = document.getElementById('proposition-analysis-checkbox');
+    const referenceSection = document.getElementById('reference-document-section');
+    
+    if (propositionCheckbox && referenceSection) {
+        referenceSection.style.display = propositionCheckbox.checked ? 'flex' : 'none';
+    }
+}
+
+function toggleTopologicalScoreConfig() {
+    const topoCheckbox = document.getElementById('topological-scoring-checkbox');
+    const topoConfig = document.getElementById('topological-score-config');
+    
+    if (topoCheckbox && topoConfig) {
+        topoConfig.style.display = topoCheckbox.checked ? 'block' : 'none';
+    }
+}
+
+function toggleGuidedReferenceDocumentSection() {
+    const propositionAnalysisQr = document.querySelector('select[name="proposition_analysis_qr"]');
+    const guidedReferenceSection = document.getElementById('guided-reference-document-section');
+
+    if (propositionAnalysisQr && guidedReferenceSection) {
+        guidedReferenceSection.style.display = propositionAnalysisQr.value === '1' ? 'flex' : 'none';
+    }
+}
+
+function updateReferenceRequirement() {
+    const expertModeToggle = document.getElementById('expert-mode-toggle');
+    const propositionSelect = document.querySelector('select[name="proposition_analysis_qr"]');
+    const propositionCheckbox = document.getElementById('proposition-analysis-checkbox');
+    const guidedReferenceInput = document.getElementById('guided-reference-document-input');
+    const advancedReferenceInput = document.getElementById('advanced-reference-document-input');
+
+    const isExpertMode = expertModeToggle ? expertModeToggle.checked : false;
+    const isGuidedPropositionEnabled = propositionSelect ? propositionSelect.value === '1' : false;
+    const isAdvancedPropositionEnabled = propositionCheckbox ? propositionCheckbox.checked : false;
+
+    if (guidedReferenceInput) {
+        guidedReferenceInput.required = !isExpertMode && isGuidedPropositionEnabled;
+    }
+
+    if (advancedReferenceInput) {
+        advancedReferenceInput.required = isExpertMode && isAdvancedPropositionEnabled;
+    }
+}
+
+function toggleGuidedImportanceSlider() {
+    const topologySelect = document.querySelector('select[name="topologycal_scoring_qr"]');
+    const propositionSelect = document.querySelector('select[name="proposition_analysis_qr"]');
+    const sliderSection = document.getElementById('guided-importance-slider-section');
+
+    if (!topologySelect || !propositionSelect || !sliderSection) {
+        return;
+    }
+
+    const shouldShowSlider = topologySelect.value === '1' && propositionSelect.value === '1';
+    sliderSection.style.display = shouldShowSlider ? 'block' : 'none';
+}
+
+function applyGuidedImportanceWeights() {
+    const slider = document.getElementById('guided-importance-slider');
+    const structurePercentageLabel = document.getElementById('guided-importance-structure-percentage');
+    const contentPercentageLabel = document.getElementById('guided-importance-content-percentage');
+    const topologicalWeight = document.getElementById('topological-scoring-weight');
+    const propositionWeight = document.getElementById('proposition-analysis-weight');
+    const topologicalCheckbox = document.getElementById('topological-scoring-checkbox');
+    const propositionCheckbox = document.getElementById('proposition-analysis-checkbox');
+
+    if (!slider) {
+        return;
+    }
+
+    const sliderValue = Number(slider.value) || 5;
+    const minValue = Number(slider.min) || 1;
+    const maxValue = Number(slider.max) || 9;
+    const range = maxValue - minValue;
+    const contentPercentage = range > 0 ? sliderValue * 10 : 50;
+    const structurePercentage = 100 - contentPercentage;
+
+    if (structurePercentageLabel) {
+        structurePercentageLabel.textContent = String(structurePercentage);
+    }
+
+    if (contentPercentageLabel) {
+        contentPercentageLabel.textContent = String(contentPercentage);
+    }
+
+    if (topologicalWeight && topologicalCheckbox && topologicalCheckbox.checked) {
+        topologicalWeight.value = structurePercentage;
+    }
+
+    if (propositionWeight && propositionCheckbox && propositionCheckbox.checked) {
+        propositionWeight.value = contentPercentage;
+    }
+
+    updateScoreFormula();
+}
+
+function syncGuidedQuestionnaireWithAdvancedConfig() {
+    const topologySelect = document.querySelector('select[name="topologycal_scoring_qr"]');
+    const propositionSelect = document.querySelector('select[name="proposition_analysis_qr"]');
+    const structureSelect = document.querySelector('select[name="structure_classification_qr"]');
+    const visualAspectsSelect = document.querySelector('select[name="visual_aspects_qr"]');
+
+    const topologicalCheckbox = document.getElementById('topological-scoring-checkbox');
+    const propositionCheckbox = document.getElementById('proposition-analysis-checkbox');
+    const structureCheckbox = document.getElementById('structural-classification-checkbox');
+    const visualAspectsCheckbox = document.getElementById('visual-aspects-checkbox');
+    const topologicalWeight = document.getElementById('topological-scoring-weight');
+    const propositionWeight = document.getElementById('proposition-analysis-weight');
+
+    if (topologySelect && topologicalCheckbox) {
+        topologicalCheckbox.checked = topologySelect.value === '1';
+    }
+
+    if (propositionSelect && propositionCheckbox) {
+        propositionCheckbox.checked = propositionSelect.value === '1';
+    }
+
+    if (structureSelect && structureCheckbox) {
+        structureCheckbox.checked = structureSelect.value === '1';
+    }
+
+    if (visualAspectsSelect && visualAspectsCheckbox) {
+        visualAspectsCheckbox.checked = visualAspectsSelect.value === '1';
+    }
+
+    if (topologicalWeight && topologicalCheckbox && topologicalCheckbox.checked) {
+        topologicalWeight.value = '1';
+    }
+
+    if (propositionWeight && propositionCheckbox && propositionCheckbox.checked) {
+        propositionWeight.value = '1';
+    }
+
+    toggleGuidedImportanceSlider();
+
+    const bothGuidedEvaluationsEnabled = topologySelect && propositionSelect && topologySelect.value === '1' && propositionSelect.value === '1';
+    if (bothGuidedEvaluationsEnabled) {
+        applyGuidedImportanceWeights();
+    }
+
+    updateScoreFormula();
+    toggleReferenceDocumentSection();
+    toggleTopologicalScoreConfig();
+    updateReferenceRequirement();
+}
+
+function toggleExpertModeSections() {
+    const expertModeToggle = document.getElementById('expert-mode-toggle');
+    const guidedQuestionnaireSection = document.getElementById('guided-questionnaire-section');
+    const expertModeFields = document.getElementById('expert-mode-fields');
+    const rubricConfigSection = document.getElementById('rubric-config-section');
+
+    if (!expertModeToggle || !guidedQuestionnaireSection || !expertModeFields || !rubricConfigSection) {
+        return;
+    }
+
+    const isExpertMode = expertModeToggle.checked;
+    guidedQuestionnaireSection.style.display = isExpertMode ? 'none' : 'flex';
+    expertModeFields.style.display = isExpertMode ? 'block' : 'none';
+    rubricConfigSection.style.display = isExpertMode ? 'flex' : 'none';
+    updateReferenceRequirement();
+}
+
+function toggleSubmitButton() {
+    const submitButton = document.getElementById('save-rubric-submit-btn');
+    const expertModeToggle = document.getElementById('expert-mode-toggle');
+
+    if (!submitButton) {
+        return;
+    }
+
+    const isExpertMode = expertModeToggle ? expertModeToggle.checked : false;
+    let hasActiveRubric = false;
+
+    if (isExpertMode) {
+        const expertRubricCheckboxes = [
+            'topological-scoring-checkbox',
+            'proposition-analysis-checkbox',
+            'structural-classification-checkbox',
+            'visual-aspects-checkbox'
+        ];
+        hasActiveRubric = expertRubricCheckboxes.some(function(id) {
+            const checkbox = document.getElementById(id);
+            return checkbox && checkbox.checked;
+        });
+    } else {
+        const guidedRubricSelectors = [
+            'select[name="topologycal_scoring_qr"]',
+            'select[name="proposition_analysis_qr"]',
+            'select[name="structure_classification_qr"]',
+            'select[name="visual_aspects_qr"]'
+        ];
+        hasActiveRubric = guidedRubricSelectors.some(function(selector) {
+            const select = document.querySelector(selector);
+            return select && select.value === '1';
+        });
+    }
+
+    submitButton.disabled = !hasActiveRubric;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    syncCheckboxWeight();
+    syncGuidedQuestionnaireWithAdvancedConfig();
+    updateScoreFormula();
+    toggleReferenceDocumentSection();
+    toggleTopologicalScoreConfig();
+    toggleGuidedReferenceDocumentSection();
+    toggleGuidedImportanceSlider();
+    toggleExpertModeSections();
+    updateReferenceRequirement();
+    toggleSubmitButton();
+
+    const expertModeToggle = document.getElementById('expert-mode-toggle');
+    if (expertModeToggle) {
+        expertModeToggle.checked = false;
+        expertModeToggle.addEventListener('change', function() {
+            toggleExpertModeSections();
+            toggleSubmitButton();
+        });
+    }
+
+    ['topological-scoring-checkbox', 'proposition-analysis-checkbox'
+    ].forEach(function(id) {
+        const cb = document.getElementById(id);
+        if (cb) {
+            cb.addEventListener('change', updateScoreFormula);
+            cb.addEventListener('change', toggleSubmitButton);
+        }
+        const wt = document.getElementById(id.replace('-checkbox', '-weight'));
+        if (wt) wt.addEventListener('input', updateScoreFormula);
+    });
+
+    ['structural-classification-checkbox', 'visual-aspects-checkbox'].forEach(function(id) {
+        const cb = document.getElementById(id);
+        if (cb) {
+            cb.addEventListener('change', toggleSubmitButton);
+        }
+    });
+    
+    // Add listener to proposition checkbox to toggle reference document section
+    const propositionCheckbox = document.getElementById('proposition-analysis-checkbox');
+    if (propositionCheckbox) {
+        propositionCheckbox.addEventListener('change', toggleReferenceDocumentSection);
+        propositionCheckbox.addEventListener('change', updateReferenceRequirement);
+    }
+
+    const propositionAnalysisQr = document.querySelector('select[name="proposition_analysis_qr"]');
+    if (propositionAnalysisQr) {
+        propositionAnalysisQr.addEventListener('change', toggleGuidedReferenceDocumentSection);
+        propositionAnalysisQr.addEventListener('change', updateReferenceRequirement);
+    }
+
+    [
+        'select[name="topologycal_scoring_qr"]',
+        'select[name="proposition_analysis_qr"]',
+        'select[name="structure_classification_qr"]',
+        'select[name="visual_aspects_qr"]'
+    ].forEach(function(selector) {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.addEventListener('change', syncGuidedQuestionnaireWithAdvancedConfig);
+            element.addEventListener('change', toggleSubmitButton);
+        }
+    });
+
+    const guidedImportanceSlider = document.getElementById('guided-importance-slider');
+    if (guidedImportanceSlider) {
+        guidedImportanceSlider.addEventListener('input', applyGuidedImportanceWeights);
+        guidedImportanceSlider.addEventListener('change', applyGuidedImportanceWeights);
+    }
+    
+    // Add listener to topological scoring checkbox to toggle topological score config
+    const topologicalCheckbox = document.getElementById('topological-scoring-checkbox');
+    if (topologicalCheckbox) {
+        topologicalCheckbox.addEventListener('change', toggleTopologicalScoreConfig);
+    }
+
+    const formulaField = document.getElementById('score-formula-field');
+    
+    // Validação do formulário ao submeter
+    const form = document.querySelector('form');
+    const rubricNameInput = document.getElementById('rubric-name-input');
+    const errorAlert = document.getElementById('alert-error-submiting-rubric');
+    const structureCheckbox = document.getElementById('structural-classification-checkbox');
+    const guidedReferenceInput = document.getElementById('guided-reference-document-input');
+    const advancedReferenceInput = document.getElementById('advanced-reference-document-input');
+    const propositionSelect = document.querySelector('select[name="proposition_analysis_qr"]');
+    const propositionCheckboxForValidation = document.getElementById('proposition-analysis-checkbox');
+    const expertModeToggleForValidation = document.getElementById('expert-mode-toggle');
+    
+    if (form && rubricNameInput && errorAlert) {
+        form.addEventListener('submit', function(event) {
+            // Esconder o alerta inicialmente
+            errorAlert.hidden = true;
+            rubricNameInput.classList.remove('input-error');
+            
+            // Verificar se o nome da rubrica está vazio
+            if (!rubricNameInput.value.trim()) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Mostrar o alerta
+                errorAlert.hidden = false;
+                rubricNameInput.classList.add('input-error');
+                
+                // Scroll até o alerta
+                errorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                return false;
+            }
+
+            const isExpertMode = expertModeToggleForValidation ? expertModeToggleForValidation.checked : false;
+            const propositionEnabledInGuided = propositionSelect ? propositionSelect.value === '1' : false;
+            const propositionEnabledInAdvanced = propositionCheckboxForValidation ? propositionCheckboxForValidation.checked : false;
+            const shouldRequireReference = propositionEnabledInGuided || propositionEnabledInAdvanced;
+
+            if (shouldRequireReference) {
+                const guidedFileSelected = guidedReferenceInput && guidedReferenceInput.files && guidedReferenceInput.files.length > 0;
+                const advancedFileSelected = advancedReferenceInput && advancedReferenceInput.files && advancedReferenceInput.files.length > 0;
+                const hasReferenceFile = isExpertMode ? advancedFileSelected : guidedFileSelected;
+
+                if (!hasReferenceFile) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    errorAlert.hidden = false;
+                    errorAlert.querySelector('span').textContent = "{% trans 'Please upload a reference document for proposition analysis' %}";
+
+                    if (isExpertMode && advancedReferenceInput) {
+                        advancedReferenceInput.focus();
+                    } else if (!isExpertMode && guidedReferenceInput) {
+                        guidedReferenceInput.focus();
+                    }
+
+                    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    return false;
+                }
+            }
+        });
+        
+        // Esconder alerta quando usuário começar a digitar
+        rubricNameInput.addEventListener('input', function() {
+            if (rubricNameInput.value.trim()) {
+                errorAlert.hidden = true;
+                rubricNameInput.classList.remove('input-error');
+            }
+        });
+    }
+});
+
+</script>
+
+<style>
+.rubric-typography {
+    --rubric-font-body: "Nunito Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    --rubric-font-heading: "Merriweather", Georgia, "Times New Roman", serif;
+    font-family: var(--rubric-font-body);
+}
+
+.rubric-typography p,
+.rubric-typography label,
+.rubric-typography span,
+.rubric-typography td,
+.rubric-typography th,
+.rubric-typography input,
+.rubric-typography select,
+.rubric-typography button {
+    font-family: var(--rubric-font-body);
+    line-height: 1.55;
+}
+
+.rubric-typography h2,
+.rubric-typography h3 {
+    font-family: var(--rubric-font-heading);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.rubric-typography .fieldset-legend {
+    font-family: var(--rubric-font-heading);
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+}
+
+.rubric-typography .label-text,
+.rubric-typography .validator-hint {
+    font-size: 0.92rem;
+}
+
+#guided-importance-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: #d1d5db;
+    outline: none;
+}
+
+#guided-importance-slider::-webkit-slider-runnable-track {
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: #d1d5db;
+}
+
+#guided-importance-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -0.375rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: #2563eb;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+#guided-importance-slider::-moz-range-track {
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: #d1d5db;
+}
+
+#guided-importance-slider::-moz-range-progress {
+    background: #d1d5db;
+    height: 0.5rem;
+}
+
+#guided-importance-slider::-moz-range-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: #2563eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+.rubric-card {
+    transition: all 0.3s ease;
+}
+
+.rubric-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.rubric-card input[type="radio"] {
+    cursor: pointer;
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+    border-width: 2px;
+}
+
+/* Permitir que tooltips sejam exibidos corretamente */
+.table thead th {
+    position: relative;
+    overflow: visible !important;
+}
+
+.tooltip {
+    z-index: 9999 !important;
+}
+
+/* Permitir overflow vertical mantendo scroll horizontal */
+.overflow-x-auto {
+    overflow-y: visible !important;
+}
+</style>
+{% endblock %}

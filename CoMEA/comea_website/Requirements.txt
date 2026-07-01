@@ -1,0 +1,14 @@
+gunicorn
+django-tailwind
+django-simple-history
+whitenoise
+Django
+networkx
+matplotlib
+openai
+pdfplumber
+pdf2image
+pytesseract
+celery
+marker
+honcho

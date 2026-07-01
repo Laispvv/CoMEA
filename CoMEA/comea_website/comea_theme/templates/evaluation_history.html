@@ -1,0 +1,549 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 flex justify-between items-center">
+      <div>
+        <h1 class="text-4xl font-bold mb-2">{% trans "Evaluation History" %}</h1>
+        <p class="text-lg text-gray-600">{% trans "View all your concept map evaluations" %}</p>
+      </div>
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        {% trans "Back to Dashboard" %}
+      </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card bg-base-200 shadow-xl mb-6">
+      <div class="card-body">
+        <h2 class="card-title mb-4">{% trans "Filters" %}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Status Filter -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{% trans "Status" %}</span>
+            </label>
+            <select id="status-filter" class="select select-bordered w-full">
+              <option value="all">{% trans "All Status" %}</option>
+              <option value="completed">{% trans "Feedback Ready" %}</option>
+              <option value="in_progress">{% trans "In Progress" %}</option>
+            </select>
+          </div>
+
+          <!-- Rubric Filter -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{% trans "Rubric" %}</span>
+            </label>
+            <select id="rubric-filter" class="select select-bordered w-full">
+              <option value="all">{% trans "All Rubrics" %}</option>
+              {% for rubric in unique_rubrics %}
+                <option value="{{ rubric.id }}">{{ rubric.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Search -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{% trans "Search" %}</span>
+            </label>
+            <input type="text" id="search-input" placeholder="{% trans "Search by filename" %}..." class="input input-bordered w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="stat bg-base-200 rounded-lg shadow">
+        <div class="stat-title">{% trans "Total Evaluations" %}</div>
+        <div class="stat-value text-primary">{{ evaluations_data|length }}</div>
+      </div>
+      <div class="stat bg-base-200 rounded-lg shadow">
+        <div class="stat-title">{% trans "Completed" %}</div>
+        <div class="stat-value text-success" id="completed-count">
+          {% for eval_data in evaluations_data %}{% if eval_data.status == 'completed' %}1{% endif %}{% endfor %}
+        </div>
+      </div>
+      <div class="stat bg-base-200 rounded-lg shadow">
+        <div class="stat-title">{% trans "In Progress" %}</div>
+        <div class="stat-value text-warning" id="in-progress-count">
+          {% for eval_data in evaluations_data %}{% if eval_data.status == 'in_progress' %}1{% endif %}{% endfor %}
+        </div>
+      </div>
+      <div class="stat bg-base-200 rounded-lg shadow">
+        <div class="stat-title">{% trans "Average Score" %}</div>
+        <div class="stat-value text-info" id="avg-score"></div>
+      </div>
+    </div>
+
+    <!-- Evaluations Table -->
+    {% if evaluations_data %}
+      <div class="card bg-base-100 shadow-xl overflow-x-auto">
+        <table class="table table-zebra w-full">
+          <thead>
+            <tr>
+              <th>{% trans "Concept Map" %}</th>
+              <th>{% trans "Rubric" %}</th>
+              <th>{% trans "Student Name" %}</th>
+              <th>{% trans "Status" %}</th>
+              <th>{% trans "Score" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody id="evaluations-table-body">
+            {% for eval_data in evaluations_data %}
+              <tr class="evaluation-row" 
+                  data-status="{{ eval_data.status }}"
+                  data-rubric-id="{{ eval_data.rubric.id|default:'' }}"
+                  data-filename="{{ eval_data.concept_map.filename|lower }}"
+                  data-evaluation-id="{{ eval_data.evaluation.id }}"
+                  data-student-name="{% if eval_data.evaluation.student_name %}{{ eval_data.evaluation.student_name }}{% else %}-{% endif %}">
+                <!-- Concept Map Name -->
+                <td>
+                  <div class="flex items-center gap-3">
+                    <div>
+                      <div class="font-bold">{{ eval_data.concept_map.filename }}</div>
+                      <div class="text-sm opacity-50">
+                        {% trans "Nodes" %}: {{ eval_data.concept_map.total_nodes }} | 
+                        {% trans "Edges" %}: {{ eval_data.concept_map.total_edges }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Rubric -->
+                <td>
+                  {% if eval_data.rubric %}
+                    <div class="font-semibold">{{ eval_data.rubric.name }}</div>
+                    <div class="flex gap-1 mt-1">
+                      {% if eval_data.rubric.topological_scoring_rubric_checkbox %}
+                        <span class="badge badge-xs badge-primary">T</span>
+                      {% endif %}
+                      {% if eval_data.rubric.structure_classification %}
+                        <span class="badge badge-xs badge-secondary">S</span>
+                      {% endif %}
+                      {% if eval_data.rubric.proposition_rubric_checkbox %}
+                        <span class="badge badge-xs badge-accent">P</span>
+                      {% endif %}
+                      {% if eval_data.rubric.visual_aspects %}
+                        <span class="badge badge-xs badge-warning">V</span>
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    <span class="text-gray-500 italic">{% trans "No rubric" %}</span>
+                  {% endif %}
+                </td>
+
+                <!-- Reference Document -->
+                <td>
+                  {% if eval_data.evaluation %}
+                    <span class="truncate max-w-xs block">
+                      {% if eval_data.evaluation.student_name %}
+                        {{ eval_data.evaluation.student_name }}
+                      {% else %}
+                        
+                      {% endif %}
+                    </span>
+                  {% else %}
+                    <span class="text-gray-500">--</span>
+                  {% endif %}
+                </td>
+
+                <!-- Status -->
+                <td>
+                  {% if eval_data.status == 'pending' %}
+                    <div class="badge badge-info gap-2 status-badge">
+                      <span class="loading loading-spinner loading-xs"></span>
+                      {% trans "Pending" %}...
+                    </div>
+                  {% elif eval_data.status == 'processing' %}
+                    <div class="badge badge-warning gap-2 status-badge">
+                      <span class="loading loading-spinner loading-xs"></span>
+                      {% trans "Processing" %}...
+                    </div>
+                  {% elif eval_data.status == 'completed' %}
+                    <div class="badge badge-success gap-2 status-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {% trans "Feedback Ready" %}
+                    </div>
+                  {% elif eval_data.status == 'failed' %}
+                    <div class="badge badge-error gap-2 status-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      {% trans "Failed" %}
+                    </div>
+                  {% else %}
+                    <div class="badge badge-ghost gap-2">
+                      {% trans "Unknown" %}
+                    </div>
+                  {% endif %}
+                </td>
+
+                <!-- Score -->
+                <td>
+                  {% if eval_data.final_score is not None %}
+                    <div class="font-bold text-lg score-concept-map">{{ eval_data.final_score|floatformat:2 }}</div>
+                  {% else %}
+                    <span class="text-gray-500">--</span>
+                  {% endif %}
+                </td>
+
+                <!-- Date -->
+                <td>
+                  <div class="text-sm">
+                    {{ eval_data.concept_map.created_at|date:"SHORT_DATE_FORMAT" }}
+                  </div>
+                  <div class="text-xs opacity-50">
+                    {{ eval_data.concept_map.created_at|time:"H:i" }}
+                  </div>
+                </td>
+
+                <!-- Actions -->
+                <td>
+                  <div class="flex gap-2">
+                    {% if eval_data.status == 'completed' %}
+                       <a href="{% url 'evaluation_config' eval_data.rubric.id eval_data.concept_map.id %}" class="btn btn-sm btn-primary" title="{% trans 'Continue Evaluation' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </a>
+                    
+                      <a href="{% url 'print_feedback' eval_data.concept_map.id %}" 
+                         target="_blank" 
+                         class="btn btn-sm btn-accent print-feedback-btn {% if not eval_data.evaluation.student_name or eval_data.evaluation.student_name == '-' %}btn-disabled{% endif %}" 
+                         title="{% if not eval_data.evaluation.student_name or eval_data.evaluation.student_name == '-' %}{% trans 'Please edit the rubric and add student name first' %}{% else %}{% trans 'Print Feedback' %}{% endif %}"
+                         {% if not eval_data.evaluation.student_name or eval_data.evaluation.student_name == '-' %}onclick="event.preventDefault(); alert('{% trans "Please edit the rubric and add the student name before printing the feedback." %}'); return false;"{% endif %}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                      </a>
+                    {% else %}
+                     
+                    {% endif %}
+                    <button 
+                      class="btn btn-sm btn-error btn-outline delete-conceptmap-btn"
+                      data-concept-map-id="{{ eval_data.concept_map.id }}"
+                      data-filename="{{ eval_data.concept_map.filename }}"
+                      title="{% trans 'Delete Concept Map' %}">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <!-- No Evaluations -->
+      <div class="alert alert-info shadow-lg">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div>
+            <h3 class="font-bold">{% trans "No evaluations found" %}</h3>
+            <div class="text-sm">{% trans "Start by creating a rubric and evaluating a concept map" %}</div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Modal de Confirmação de Deleção -->
+<div id="delete-conceptmap-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">{% trans "Confirm Deletion" %}</h3>
+    <p class="py-4">
+      {% trans "Are you sure you want to delete the concept map" %} "<span id="conceptmap-filename-display"></span>"?
+    </p>
+    <p class="text-sm text-error">{% trans "This action cannot be undone. All associated evaluations will also be deleted." %}</p>
+    <div class="modal-action">
+      <button id="cancel-delete-conceptmap-btn" class="btn">{% trans "Cancel" %}</button>
+      <button id="confirm-delete-conceptmap-btn" class="btn btn-error">{% trans "Delete" %}</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  'use strict';
+
+  // Get filter elements
+  const statusFilter = document.getElementById('status-filter');
+  const rubricFilter = document.getElementById('rubric-filter');
+  const searchInput = document.getElementById('search-input');
+  const tableRows = document.querySelectorAll('.evaluation-row');
+
+  // Filter function
+  function applyFilters() {
+    const statusValue = statusFilter.value;
+    const rubricValue = rubricFilter.value;
+    const searchValue = searchInput.value.toLowerCase();
+
+    let visibleCount = 0;
+    let completedCount = 0;
+    let inProgressCount = 0;
+    let scoreSum = 0;
+    let scoreCount = 0;
+
+    tableRows.forEach(row => {
+      const rowStatus = row.dataset.status;
+      const rowRubricId = row.dataset.rubricId;
+      const rowFilename = row.dataset.filename;
+
+      // Check all filters
+      const statusMatch = statusValue === 'all' || statusValue === rowStatus;
+      const rubricMatch = rubricValue === 'all' || rubricValue === rowRubricId;
+      const searchMatch = searchValue === '' || rowFilename.includes(searchValue);
+
+      if (statusMatch && rubricMatch && searchMatch) {
+        row.style.display = '';
+        visibleCount++;
+        if (rowStatus === 'completed') {
+          completedCount++;
+          // Calcular média das notas visíveis
+          const scoreCell = row.querySelector('.score-concept-map');
+          if (scoreCell) {
+            const score = parseFloat(scoreCell.textContent.replace(',', '.'));
+            if (!isNaN(score)) {
+              scoreSum += score;
+              scoreCount++;
+            }
+          } else {
+          }
+        }
+        if (rowStatus === 'in_progress') inProgressCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    // Update counters
+    document.getElementById('completed-count').textContent = completedCount;
+    document.getElementById('in-progress-count').textContent = inProgressCount;
+    
+    // Update average score based on visible rows
+    const avgScoreElement = document.getElementById('avg-score');
+    if (scoreCount > 0) {
+      const avgScore = scoreSum / scoreCount;
+      avgScoreElement.textContent = avgScore.toFixed(2);
+    } else {
+      avgScoreElement.textContent = '--';
+    }
+  }
+
+  // ===== PROCESSAMENTO DE AVALIAÇÕES PENDENTES =====
+  // Verificar se há avaliações com status 'pending' ou 'processing' e iniciar/monitorar
+  const pendingRows = document.querySelectorAll('.evaluation-row[data-status="pending"], .evaluation-row[data-status="processing"]');
+  
+  pendingRows.forEach(row => {
+    const evaluationId = row.dataset.evaluationId;
+    const currentStatus = row.dataset.status;
+    
+    // Se está pending, iniciar processamento
+    if (currentStatus === 'pending') {
+      startEvaluationProcessing(evaluationId, row);
+    } else if (currentStatus === 'processing') {
+      // Se já está processing, apenas monitorar
+      pollEvaluationStatus(evaluationId, row);
+    }
+  });
+  
+  function startEvaluationProcessing(evaluationId, row) {
+    const formData = new FormData();
+    formData.append('evaluation_id', evaluationId);
+    
+    fetch('{% url "process_evaluation_background" %}', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Atualizar status para 'processing' na UI
+        row.dataset.status = 'processing';
+        const statusBadge = row.querySelector('.status-badge');
+        if (statusBadge) {
+          statusBadge.className = 'badge badge-warning status-badge';
+          statusBadge.innerHTML = '<span class="loading loading-spinner loading-xs mr-1"></span>{% trans "Processing" %}...';
+        }
+        // Iniciar polling
+        pollEvaluationStatus(evaluationId, row);
+      } else {
+        console.error(`❌ Erro ao iniciar processamento: ${data.message}`);
+        alert('Erro ao iniciar avaliação: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('❌ Erro na requisição:', error);
+      alert('Erro ao iniciar avaliação');
+    });
+  }
+  
+  function pollEvaluationStatus(evaluationId, row) {
+    const pollInterval = setInterval(() => {
+      fetch(`{% url "check_evaluation_status" %}?evaluation_id=${evaluationId}`, {
+        method: 'GET',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          const evalStatus = data.evaluation_status;
+          
+          if (evalStatus === 'completed') {
+            clearInterval(pollInterval);
+            // Recarregar página para mostrar resultado
+            window.location.reload();
+          } else if (evalStatus === 'failed') {
+            console.error(`❌ Avaliação ${evaluationId} falhou`);
+            clearInterval(pollInterval);
+            const statusBadge = row.querySelector('.status-badge');
+            if (statusBadge) {
+              statusBadge.className = 'badge badge-error status-badge';
+              statusBadge.textContent = '{% trans "Failed" %}';
+            }
+            alert('{% trans "Evaluation failed. Please try again." %}');
+          }
+          // Se ainda está 'processing', continuar polling
+        } else {
+          console.error(`❌ Erro ao verificar status: ${data.message}`);
+        }
+      })
+      .catch(error => {
+        console.error('❌ Erro no polling:', error);
+        clearInterval(pollInterval);
+      });
+    }, 3000); // Poll a cada 3 segundos
+  }
+
+  // Add event listeners
+  if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+  if (rubricFilter) rubricFilter.addEventListener('change', applyFilters);
+  if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+  // Calculate actual statistics on page load
+  let completedTotal = 0;
+  let inProgressTotal = 0;
+  let scoreSum = 0;
+  let scoreCount = 0;
+
+  tableRows.forEach(row => {
+    const status = row.dataset.status;
+    if (status === 'completed') {
+      completedTotal++;
+      const scoreCell = row.querySelector('td:nth-child(5) .font-bold');
+      if (scoreCell) {
+        const score = parseFloat(scoreCell.textContent.replace(',', '.'));
+        if (!isNaN(score)) {
+          scoreSum += score;
+          scoreCount++;
+        }
+      }
+    } else if (status === 'in_progress') {
+      inProgressTotal++;
+    }
+  });
+
+  // Update stats
+  document.getElementById('completed-count').textContent = completedTotal;
+  document.getElementById('in-progress-count').textContent = inProgressTotal;
+  
+  const avgScoreElement = document.getElementById('avg-score');
+  if (scoreCount > 0) {
+    const avgScore = scoreSum / scoreCount;
+    avgScoreElement.textContent = avgScore.toFixed(2);
+  } else {
+    avgScoreElement.textContent = '--';
+  }
+
+  // ===== DELEÇÃO DE MAPA CONCEITUAL =====
+  let conceptMapIdToDelete = null;
+  let conceptMapFilenameToDelete = null;
+  const deleteConceptMapModal = document.getElementById('delete-conceptmap-modal');
+  const conceptMapFilenameDisplay = document.getElementById('conceptmap-filename-display');
+  const cancelDeleteConceptMapBtn = document.getElementById('cancel-delete-conceptmap-btn');
+  const confirmDeleteConceptMapBtn = document.getElementById('confirm-delete-conceptmap-btn');
+
+  // Event listeners para botões de deletar
+  document.querySelectorAll('.delete-conceptmap-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      conceptMapIdToDelete = this.dataset.conceptMapId;
+      conceptMapFilenameToDelete = this.dataset.filename;
+      conceptMapFilenameDisplay.textContent = conceptMapFilenameToDelete;
+      deleteConceptMapModal.classList.add('modal-open');
+    });
+  });
+
+  function closeConceptMapModal() {
+    deleteConceptMapModal.classList.remove('modal-open');
+    conceptMapIdToDelete = null;
+    conceptMapFilenameToDelete = null;
+  }
+
+  if (cancelDeleteConceptMapBtn) {
+    cancelDeleteConceptMapBtn.addEventListener('click', closeConceptMapModal);
+  }
+
+  if (confirmDeleteConceptMapBtn) {
+    confirmDeleteConceptMapBtn.addEventListener('click', function() {
+      if (!conceptMapIdToDelete) return;
+
+      // Disable button durante a requisição
+      confirmDeleteConceptMapBtn.disabled = true;
+      confirmDeleteConceptMapBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> {% trans "Deleting" %}...';
+
+      const formData = new FormData();
+      formData.append('concept_map_id', conceptMapIdToDelete);
+
+      fetch('{% url "delete_concept_map" %}', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          window.location.reload();
+        } else {
+          alert('Erro: ' + data.message);
+          confirmDeleteConceptMapBtn.disabled = false;
+          confirmDeleteConceptMapBtn.innerHTML = '{% trans "Delete" %}';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('{% trans "An error occurred while deleting the concept map" %}');
+        confirmDeleteConceptMapBtn.disabled = false;
+        confirmDeleteConceptMapBtn.innerHTML = '{% trans "Delete" %}';
+      });
+    });
+  }
+
+})();
+</script>
+{% endblock %}

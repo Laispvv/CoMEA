@@ -1,0 +1,435 @@
+{% extends 'base.html' %}
+{% load static tailwind_tags i18n %}
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+{% block content %}
+
+{% if CURRENT_LANGUAGE == 'pt-br' %}
+<div class="py-6 prose-neutral text-justify">
+    <h2 class="text-2xl font-semibold mb-4 text-center">Conheça mais sobre Mapas Conceituais no Mapear</h2>
+    <p class="text-base leading-relaxed mb-4">
+        A proposta desse site é reunir materiais, conceitos e ferramentas que auxiliem professores no uso de mapas conceituais em diferentes contextos educacionais.
+        O projeto foi pensado especialmente para apoiar práticas pedagógicas inclusivas, considerando salas de aula
+        compostas por estudantes neurotípicos e neurodivergentes, incluindo alunos com dislexia, público central da
+        pesquisa. O site e os materiais disponibilizados buscaram seguir recomendações de acessibilidade voltadas a
+        pessoas com dislexia, inspiradas em orientações da British Dyslexia Association. 
+    </p>
+    <p class="text-base leading-relaxed mb-4">
+        Acesse o site e conheça mais: <a href="https://mapear.online/" class="text-blue-500 hover:underline">Mapear</a>
+    </p>
+</div>
+{% endif %}
+
+<div class="py-6 prose-neutral text-justify">
+    <h2 class="text-2xl font-semibold mb-4 text-center">{% trans "Concept Map Evaluation Methods Available" %}</h2>
+    <div role="tablist" class="tabs tabs-lift tabs-lg tabs-boxed bg-base-200/60 rounded-xl p-2">
+    <input type="radio" name="evaluation_tabs" role="tab" class="tab" aria-label="{% trans "Topological Taxonomy" %}" checked="checked" />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h3 class="text-xl font-semibold mb-4">{% trans "Topological Taxonomy" %}</h3>
+        
+        <!-- What is it? -->
+        <div class="mb-6">
+        <h4 class="text-lg font-semibold mb-2 text-blue-700">{% trans "What is it?" %}</h4>
+        <p class="text-base leading-relaxed">
+            {% trans "The Topological Taxonomy is a classification tool developed by the Conéctate al Conocimiento Project in Panama to assess the structural complexity of concept maps. It consists of 7 levels (0 to 6) that analyze the external structure of the map, not its semantic content. It is inspired by Bloom's Taxonomy and aims to provide a 'common language' to describe the evolution of students' concept maps." %}
+        </p>
+        </div>
+
+
+        <!-- How is it measured? -->
+        <div class="mb-6">
+        <h4 class="text-lg font-semibold mb-3 text-blue-700">{% trans "How is it measured?" %}</h4>
+        <p class="text-base leading-relaxed mb-3">
+            {% trans "The taxonomy evaluates 5 structural criteria:" %}
+        </p>
+        <div class="overflow-x-auto mb-4">
+            <table class="table table-sm table-zebra w-full text-sm">
+            <thead>
+                <tr class="bg-blue-100 text-blue-900">
+                <th class="text-center">{% trans "Example" %}</th>
+                <th class="text-center">{% trans "Criterion" %}</th>
+                <th class="text-center">{% trans "Description" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td class="text-center flex items-center justify-center">
+                    <img
+                    src="{% static 'images/concept_text.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="w-70 h-30 rounded-md object-contain"
+                    loading="lazy"
+                    />
+                </td>
+                <td class="text-center font-semibold">{% trans "Concept vs. Long Texts" %}</td>
+                <td class="text-justify">{% trans "Checks whether nodes contain short concepts or long explanations." %}</td>
+                </tr>
+                <tr>
+                <td class="text-center flex items-center justify-center">
+                    <img
+                    src="{% static 'images/linking_words.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="w-50 h-30 rounded-md object-contain"
+                    loading="lazy"
+                    />
+                </td>
+                <td class="text-center font-semibold">{% trans "Linking words" %}</td>
+                <td class="text-justify">{% trans "Checks whether words connecting concepts are present." %}</td>
+                </tr>
+                <tr>
+                <td class="text-center flex items-center justify-center">
+                    <img
+                    src="{% static 'images/branching.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="w-70 h-30 rounded-md object-contain"
+                    loading="lazy"
+                    />
+                </td>
+                <td class="text-center font-semibold">{% trans "Branching" %}</td>
+                <td class="text-justify">{% trans "Counts the number of nodes from which two or more connections emerge." %}</td>
+                </tr>
+                <tr>
+                <td class="text-center flex items-center justify-center">
+                    <img
+                    src="{% static 'images/depth_hierarchy.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="w-50 h-40 rounded-md object-contain"
+                    loading="lazy"
+                    />
+                </td>
+                <td class="text-center font-semibold">{% trans "Hierarchical Depth" %}</td>
+                <td class="text-justify">{% trans "Measures the number of levels between the root concept and the furthest concept." %}</td>
+                </tr>
+                <tr>
+                <td class="text-center flex items-center justify-center">
+                    <img
+                    src="{% static 'images/connections.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="w-40 h-30 rounded-md object-contain"
+                    loading="lazy"
+                    />
+                </td>
+                <td class="text-center font-semibold">{% trans "Cross-links" %}</td>
+                <td class="text-justify">{% trans "Identifies connections between different branches of the map." %}</td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+
+        <!-- Classification rules -->
+        <p class="text-base leading-relaxed font-semibold mb-2">
+            {% trans "Classification rules:" %}
+        </p>
+        <ul class="list-disc list-inside space-y-2 text-base leading-relaxed ml-2 mb-4">
+            <li>
+            {% trans "To be classified at a given level, the map must meet all the criteria for that level." %}
+            </li>
+            <li>
+            {% trans "If a criterion is missing, the map is classified at the previous level." %}
+            </li>
+        </ul>
+
+        <!-- Level summary table -->
+        <div class="overflow-x-auto">
+            <table class="table table-sm table-zebra w-full text-sm">
+            <thead>
+                <tr class="bg-blue-100 text-blue-900">
+                <th class="text-center">{% trans "Level" %}</th>
+                <th class="text-center">{% trans "Definition" %}</th>
+                <th>{% trans "Concepts vs. Texts" %}</th>
+                <th>{% trans "Linking Words" %}</th>
+                <th>{% trans "Branching" %}</th>
+                <th>{% trans "Hierarchy" %}</th>
+                <th>{% trans "Cross-Links" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td class="text-center font-bold">0: {% trans "Structure Absent" %}</td>
+                <td>{% trans "The map is not yet a concept map; it is a block of text with scattered lines. There are no linking words, and the nodes contain long explanations. The concept map is abscent of the desired attribute (conceptual structure)." %}</td>
+                <td>{% trans "Long texts predominate" %}</td>
+                <td>{% trans "Absent" %}</td>
+                <td>{% trans "0–1 point" %}</td>
+                <td class="text-center text-base-content/40">–</td>
+                <td class="text-center text-base-content/40">–</td>
+                </tr>
+                <tr>
+                <td class="text-center font-bold">1: {% trans "Initial Structure" %}</td>
+                <td>{% trans "The student begins to use short concepts, but most connections still lack linking words. The structure is still linear. The concept map is an initial approach, but far from ideal." %}</td>
+                <td>{% trans "Concepts predominate" %}</td>
+                <td>{% trans "Half or more are missing" %}</td>
+                <td>{% trans "0–1 point" %}</td>
+                <td class="text-center text-base-content/40">–</td>
+                <td class="text-center text-base-content/40">–</td>
+                </tr>
+                <tr>
+                <td class="text-center font-bold">2: {% trans "Basic Structure" %}</td>
+                <td>{% trans "Concepts now predominate over long texts. Linking words are present, with less than half missing. There is little branching. The concept map meets the minimum, but is inconsistent." %}</td>
+                <td>{% trans "Concepts predominate" %}</td>
+                <td>{% trans "Less than half are missing" %}</td>
+                <td>{% trans "2 points" %}</td>
+                <td class="text-center text-base-content/40">–</td>
+                <td class="text-center text-base-content/40">–</td>
+                </tr>
+                <tr>
+                <td class="text-center font-bold">3: {% trans "Emerging Structure" %}</td>
+                <td>{% trans "The map is free of long texts. All linking words are present. Branching is noticeable (3–4 points), but hierarchical depth is still limited (< 3 levels). The concept map presents a functional structure, although not very deep." %}</td>
+                <td>{% trans "No long texts" %}</td>
+                <td>{% trans "All present" %}</td>
+                <td>{% trans "3–4 points" %}</td>
+                <td>{% trans "< 3 levels" %}</td>
+                <td class="text-center text-base-content/40">–</td>
+                </tr>
+                <tr>
+                <td class="text-center font-bold">4: {% trans "Consolidated Structure" %}</td>
+                <td>{% trans "The map meets the criteria of level 3, but now with high branching (5–6 points) and developed hierarchy (≥ 3 levels). Still no cross-links. The concept map presents a solid structure, but without integration between branches." %}</td>
+                <td>{% trans "No long texts" %}</td>
+                <td>{% trans "All present" %}</td>
+                <td>{% trans "5–6 points" %}</td>
+                <td>{% trans "≥ 3 levels" %}</td>
+                <td class="text-center text-base-content/40">–</td>
+                </tr>
+                <tr>
+                <td class="text-center font-bold">5: {% trans "Integrated Structure" %}</td>
+                <td>{% trans "Everything level 4 offers, plus 1 to 2 cross-links. The student can now establish relationships between different parts of the map. The concept map presents a robust structure with evidence of relational thinking." %}</td>
+                <td>{% trans "No long texts" %}</td>
+                <td>{% trans "All present" %}</td>
+                <td>{% trans "5–6 points" %}</td>
+                <td>{% trans "≥ 3 levels" %}</td>
+                <td>{% trans "1–2 cross-links" %}</td>
+                </tr>
+                <tr>
+                <td class="text-center font-bold">6: {% trans "Advanced Structure" %}</td>
+                <td>{% trans "Maximum level. It presents very high branching (≥ 7 points), developed hierarchy, and multiple cross-links (> 2). Indicates high capacity for conceptual integration and differentiation. The concept map presents a full mastery of the tool and knowledge structuring." %}</td>
+                <td>{% trans "No long texts" %}</td>
+                <td>{% trans "All present" %}</td>
+                <td>{% trans "≥ 7 points" %}</td>
+                <td>{% trans "≥ 3 levels" %}</td>
+                <td>{% trans "> 2 cross-links" %}</td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        </div>
+
+        <!-- References -->
+        <div class="mt-6 pt-4 border-t border-base-300">
+        <h4 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">{% trans "References" %}</h4>
+        <ul class="space-y-1 text-sm text-base-content/70">
+            <li>Deshpande, P., Ahmed, I.: Topological Scoring of Concept Maps for Cybersecurity Education. In: Proceedings of the 50th ACM Technical Symposium on Computer Science Education. pp. 731–737. ACM, Minneapolis MN USA (2019). https://doi.org/10.1145/3287324.3287495.</li>
+            <li>Cañas, A., Novak, J., Miller, N., Collado, C., Rodríguez, M., Concepción, M., Santana, C., Peña, L.: Confiabilidad de una Taxonomía Topológica para Mapas Conceptuales. Presented at the September 1 (2006).</li>
+        </ul>
+        </div>
+    </div>
+
+    <input type="radio" name="evaluation_tabs" role="tab" class="tab" aria-label="{% trans "Proposition Evaluation" %}" />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h3 class="text-xl font-semibold mb-4">{% trans "Proposition Evaluation" %}</h3>
+
+        <!-- What are propositions? -->
+        <div class="mb-6">
+        <h4 class="text-lg font-semibold mb-2 text-blue-700">{% trans "What are propositions?" %}</h4>
+        <p class="text-base leading-relaxed mb-3">
+            {% trans "Propositions are the fundamental units used to represent a concept map in a textual format that can be processed computationally. Each proposition is derived from a relationship in the concept map and is structured as a triplet:" %}
+        </p>
+        <div class="bg-base-200 rounded-lg p-3 mb-3 text-center font-mono text-sm">
+            {% trans "Proposition = (Head Concept, Relationship, Target Concept)" %}
+        </div>
+        <p class="text-base leading-relaxed">
+            {% trans "For example, in a concept map about 'Molecules', a proposition might be: 'molecules can be water' (Head Concept: molecules, Relationship: can be, Target Concept: water). Each proposition is then converted into a sentence and transformed into a numerical vector called an embedding using deep learning models. This allows the computer to understand and compare the meaning of propositions mathematically." %}
+        </p>
+        </div>
+
+        <!-- How are propositions evaluated? -->
+        <div class="mb-6">
+        <h4 class="text-lg font-semibold mb-3 text-blue-700">{% trans "How are propositions evaluated?" %}</h4>
+        <p class="text-base leading-relaxed mb-3">
+            {% trans "The evaluation of propositions occurs through the following steps:" %}
+        </p>
+        <div class="space-y-3">
+            <div class="flex gap-3 items-start">
+            <span class="flex-shrink-0 bg-blue-600 text-white text-sm font-bold rounded-full w-7 h-7 flex items-center justify-center">1</span>
+            <div>
+                <p class="font-semibold text-sm">{% trans "Extraction" %}</p>
+                <p class="text-base leading-relaxed">{% trans "All propositions (triplets) are extracted from each student's concept map." %}</p>
+            </div>
+            </div>
+            
+            <div class="flex gap-3 items-start">
+            <span class="flex-shrink-0 bg-blue-600 text-white text-sm font-bold rounded-full w-7 h-7 flex items-center justify-center">2</span>
+            <div>
+                <p class="font-semibold text-sm">{% trans "Comparison" %}</p>
+                <p class="text-base leading-relaxed">{% trans "The system will compare each proposition extracted from the student's map with the essential concepts extracted from a reference document, looking for concepts present or absent in the concept map." %}</p>
+            </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+            <span class="flex-shrink-0 bg-blue-600 text-white text-sm font-bold rounded-full w-7 h-7 flex items-center justify-center">3</span>
+            <div>
+                <p class="font-semibold text-sm">{% trans "Classification" %}</p>
+                <p class="text-base leading-relaxed">{% trans "Based on the reference document, each proposition extracted from the student's concept map will be classified as 'Correct,' 'Partially correct,' or 'Incorrect' by a Generative Artificial Intelligence model." %}</p>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <p class="text-base leading-relaxed">
+            {% trans "This approach allows for a semantic comparison of concept maps, going beyond simple word matching to understand the meaning and relationships expressed by the students." %}
+        </p>
+        </div>
+
+        <!-- References -->
+        <div class="mt-6 pt-4 border-t border-base-300">
+        <h4 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">{% trans "References" %}</h4>
+        <ul class="space-y-1 text-sm text-base-content/70">
+            <li>Montanaro, A.G., Sciarrone, F., Temperini, M.: A Deep Learning Approach to Concept Maps Similarity. Presented at the Proceedings of the International Conference on Information Visualisation (2022). https://doi.org/10.1109/IV56949.2022.00048.</li>
+            <li>Sciarrone, F., Temperini, M.: A Sentence-Embedding-Based Dashboard to Support Teacher Analysis of Learner Concept Maps. Electronics (Switzerland). 13, (2024). https://doi.org/10.3390/electronics13091756.</li>
+        </ul>
+        </div>
+    </div>
+
+    <input type="radio" name="evaluation_tabs" role="tab" class="tab" aria-label="{% trans "Structure Classification" %}" />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+        <h3 class="text-xl font-semibold mb-4">{% trans "Structure Classification" %}</h3>
+
+        <!-- Introduction -->
+        <div class="mb-4">
+        <p class="text-base leading-relaxed">
+            {% trans "Based on the research by Hay and Kinchin, concept maps can reveal three distinct types of cognitive structures, or 'typologies of thought.' These structures — Spoke, Chain, and Network — represent different ways knowledge is organized in a student's mind. Identifying them helps educators understand the depth and quality of a student's understanding." %}
+        </p>
+        </div>
+
+        <div class="mb-6">
+        <div class="overflow-x-auto">
+            <table class="table table-zebra w-full text-sm">
+            <thead>
+                <tr class="bg-blue-100 text-blue-900">
+                <th class="text-center">{% trans "Spoke Structure" %}</th>
+                <th class="text-center">{% trans "Chain Structure" %}</th>
+                <th class="text-center">{% trans "Network Structure" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td class="min-w-[220px]">
+                    <img
+                    src="{% static 'images/spoke_structure.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="w-full max-w-[280px] rounded-md "
+                    loading="lazy"
+                    />
+                </td>
+                    <td class="min-w-[220px]">
+                    <img
+                    src="{% static 'images/chain_structure.png' %}"
+                    alt="{% trans 'Example image of a chain structure inside a table cell.' %}"
+                    class="w-full max-w-[280px] rounded-md"
+                    loading="lazy"
+                    />
+                </td>
+                <td class="min-w-[220px]">
+                    <img
+                    src="{% static 'images/network_structure.png' %}"
+                    alt="{% trans 'Example image of a network structure inside a table cell.' %}"
+                    class="w-full max-w-[280px] rounded-md"
+                    loading="lazy"
+                    />
+                </td>
+                </tr>
+                <tr>
+                <td >
+                    <p>
+                    {% trans "This is the simplest structure. It resembles a wheel, where a single central concept is connected to several related ideas, but those peripheral ideas are not connected to each other." %}
+                    </p>
+                    
+                </td>
+                <td >
+                    <p>
+                    {% trans "This structure is a linear sequence of concepts linked in a single line. It represents a procedural or sequential understanding, often focused on cause and effect or chronological order (e.g., a step-by-step process)." %}
+                    </p>
+                </td>
+                <td >
+                    <p>
+                    {% trans "This is the most complex and sophisticated structure. It features multiple concepts connected by numerous, meaningful links in a web-like fashion, showing a rich hierarchy and many cross-connections." %}
+                    </p>
+                </td>
+                </tr>
+
+                <tr>
+                <td >
+                    <p>
+                    {% trans "Indicates a naive or superficial understanding. The student knows that certain concepts are related to the main topic but cannot explain the relationships between the secondary concepts. It is often a sign of a beginner's knowledge." %}
+                    </p>
+                </td>
+                <td >
+                    <p>
+                    {% trans "Indicates a goal-oriented, but rigid, understanding. This type of thinking is good for following procedures and achieving specific goals. However, it is fragile. It can reflect 'surface learning' where the sequence is memorized but the broader connections are not understood." %}
+                    </p>
+                </td>
+                <td >
+                    <p>
+                    {% trans "Indicates expertise and deep, meaningful learning. They show that a student can integrate new knowledge with existing knowledge, see complex relationships, and understand a topic from multiple perspectives." %}
+                    </p>
+                </td>
+                </tr>
+
+                <tr>
+                <td >
+                    <ul >
+                    <li>
+                        <strong>{% trans "Addition of new knowledge:" %}</strong> {% trans "Additions to central concept do not interfere with associated concepts." %}
+                    </li>
+                    <li>
+                        <strong>{% trans "Deletions of concepts (corrections of misunderstanding):" %}</strong> {% trans "Have no effect on overall structure, except if misunderstanding involves the central concept." %}
+                    </li>
+                    </ul>
+                </td>
+                <td >
+                    <ul >
+                    <li>
+                        <strong>{% trans "Addition of new knowledge:" %}</strong> {% trans "Cannot cope with additions near the beginning of the sequence, as they can disrupt the train of thought. If a new concept is introduced in the middle of the chain, the entire structure can collapse because the logic is linear and interdependent." %}
+                    </li>
+                    <li>
+                        <strong>{% trans "Deletions of concepts (corrections of misunderstanding):" %}</strong> {% trans "Disrupt the sequence below the deletion." %}
+                    </li>
+                    </ul>
+                </td>
+                <td >
+                    <p>
+                    {% trans "Additions/deletions may have varying influence as 'other routes' are often available through the map. This structure is robust and adaptable, allowing for the easy addition or deletions of  concepts without collapsing." %}
+                    </p>
+                </td>
+                </tr>
+
+            </tbody>
+            </table>
+
+        </div>
+        </div>
+        
+        <!-- Summary -->
+        <div class="mt-8 bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <p class="text-base leading-relaxed">
+            {% trans "In summary, as a learner progresses, their cognitive structure ideally evolves from simple spokes (superficial knowledge) into linear chains (procedural knowledge), and finally into complex networks (integrated expertise), though learning can happen within each structure without changing its fundamental shape." %}
+        </p>
+        </div>
+
+        <!-- References -->
+        <div class="mt-6 pt-4 border-t border-base-300">
+        <h4 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">{% trans "References" %}</h4>
+        <ul class="space-y-1 text-sm text-base-content/70">
+            <li>Kinchin, I., Michelson, A., Reiska, P.: Uncovering Types of Knowledge in Concept Maps. Education Sciences. 9, 131 (2019). https://doi.org/10.3390/educsci9020131.</li>
+            <li>Kinchin, I., Hay, D.: Using concept maps to optimize the composition of collaborative student groups: a pilot study. Journal of Advanced Nursing. 51, 182–187 (2005). https://doi.org/10.1111/j.1365-2648.2005.03478.x.</li>
+            <li>Hay, D.B., Kinchin, I.M.: Using concept maps to reveal conceptual typologies. Education + Training. 48, 127–142 (2006). https://doi.org/10.1108/00400910610651764.</li>
+            <li>Vossen, L.P.V., Gasparini, I., Oliveira, E.H.T., Czinczel, B., Harms, U., Menzel, L., Gombert, S., Neumann, K., Drachsler, H.: Concept Map Assessment Through Structure Classification, http://arxiv.org/abs/2503.22741, (2025). https://doi.org/10.48550/arXiv.2503.22741.</li>
+        </ul>
+        </div>
+    </div>
+    </div>
+    
+</div>
+
+{% endblock %}

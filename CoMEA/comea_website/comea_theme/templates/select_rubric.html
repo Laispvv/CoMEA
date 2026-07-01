@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold mb-4">{% trans "Select a Rubric" %}</h1>
+      <p class="text-lg">{% trans "Choose an existing rubric configuration to evaluate your concept map" %}</p>
+    </div>
+
+    <!-- Rubrics List -->
+    {% if rubrics %}
+      <div class="grid gap-6">
+        {% for rubric in rubrics %}
+          <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+            <div class="card-body">
+              <div class="flex justify-between items-start">
+                <div class="flex-1">
+                  <h2 class="card-title text-2xl mb-2">
+                    {{ rubric.name|default:_("Rubric") }} #{{ rubric.id }}
+                  </h2>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <!-- Structure Analysis -->
+                    <div class="flex items
+                    <div class="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {% if rubric.structure_classification %}text-success{% else %}text-base-content opacity-50{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="{% if not rubric.structure_classification %}opacity-50{% endif %}">{% trans "Structure Analysis" %}</span>
+                    </div>
+
+                    <!-- Topological Analysis -->
+                    <div class="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {% if rubric.topological_scoring_rubric_checkbox %}text-success{% else %}text-base-content opacity-50{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="{% if not rubric.topological_scoring_rubric_checkbox %}opacity-50{% endif %}">{% trans "Topological Analysis" %}</span>
+                    </div>
+
+                    <!-- Proposition Analysis -->
+                    <div class="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {% if rubric.proposition_rubric_checkbox %}text-success{% else %}text-base-content opacity-50{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="{% if not rubric.proposition_rubric_checkbox %}opacity-50{% endif %}">{% trans "Proposition Analysis" %}</span>
+                    </div>
+
+                    <!-- Visual Aspects -->
+                    <div class="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {% if rubric.visual_aspects %}text-success{% else %}text-base-content opacity-50{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="{% if not rubric.visual_aspects %}opacity-50{% endif %}">{% trans "Visual Aspects" %}</span>
+                    </div>
+
+                    <!-- Reference Document -->
+                    <!-- {% if rubric.reference_document %}
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>{% trans "Reference Document" %}</span>
+                      </div>
+                    {% endif %} -->
+                  </div>
+
+                  <div class="mt-4 text-sm opacity-70">
+                    {% trans "Created" %}: {{ rubric.created_at|date:"SHORT_DATETIME_FORMAT" }}
+                    {% if rubric.updated_at %}
+                      | {% trans "Updated" %}: {{ rubric.updated_at|date:"SHORT_DATETIME_FORMAT" }}
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="card-actions flex-col gap-2 items-start">
+                  <a href="{% url 'file_upload_with_rubric' rubric.id %}" class="btn btn-primary w-34 justify-start">
+                    {% trans "Select rubric" %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </a>
+                  <a href="{% url 'print_rubric' rubric.id %}" target="_blank" class="btn btn-outline btn-sm justify-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    {% trans "Print rubric" %}
+                  </a>
+                  <button 
+                    class="btn btn-error btn-outline btn-sm delete-rubric-btn w-34 justify-start"
+                    data-rubric-id="{{ rubric.id }}"
+                    data-rubric-name="{{ rubric.name }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    {% trans "Delete rubric" %}
+                  </button>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <!-- No Rubrics Found -->
+      <div class="alert alert-info shadow-lg">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div>
+            <h3 class="font-bold">{% trans "No rubrics found" %}</h3>
+            <div class="text-xs">{% trans "You need to create a rubric configuration first before evaluating concept maps." %}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <a href="{% url 'evaluation_rubric_config' %}" class="btn btn-primary">
+          {% trans "Create New Rubric" %}
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div class="mt-8">
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        {% trans "Back" %}
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div id="delete-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">{% trans "Confirm Deletion" %}</h3>
+    <p class="py-4">
+      {% trans "Are you sure you want to delete the rubric" %} "<span id="rubric-name-display"></span>"?
+    </p>
+    <p class="text-sm text-error">{% trans "This action cannot be undone. All associated evaluations will also be deleted." %}</p>
+    <div class="modal-action">
+      <button id="cancel-delete-btn" class="btn">{% trans "Cancel" %}</button>
+      <button id="confirm-delete-btn" class="btn btn-error">{% trans "Delete" %}</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  'use strict';
+
+  let rubricIdToDelete = null;
+  let rubricNameToDelete = null;
+  const deleteModal = document.getElementById('delete-modal');
+  const rubricNameDisplay = document.getElementById('rubric-name-display');
+  const cancelBtn = document.getElementById('cancel-delete-btn');
+  const confirmBtn = document.getElementById('confirm-delete-btn');
+
+  // Adicionar event listeners aos botões de deletar
+  document.querySelectorAll('.delete-rubric-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      rubricIdToDelete = this.dataset.rubricId;
+      rubricNameToDelete = this.dataset.rubricName;
+      rubricNameDisplay.textContent = rubricNameToDelete;
+      deleteModal.classList.add('modal-open');
+    });
+  });
+
+  function closeModal() {
+    deleteModal.classList.remove('modal-open');
+    rubricIdToDelete = null;
+    rubricNameToDelete = null;
+  }
+
+  cancelBtn.addEventListener('click', closeModal);
+
+  confirmBtn.addEventListener('click', function() {
+    if (!rubricIdToDelete) return;
+
+    // Disable button durante a requisição
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> {% trans "Deleting" %}...';
+
+    const formData = new FormData();
+    formData.append('rubric_id', rubricIdToDelete);
+
+    fetch('{% url "delete_rubric" %}', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Recarregar a página para atualizar a lista
+        window.location.reload();
+      } else {
+        alert('{% trans "Error" %}: ' + data.message);
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '{% trans "Delete" %}';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('{% trans "An error occurred while deleting the rubric" %}');
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = '{% trans "Delete" %}';
+    });
+  });
+
+})();
+</script>
+{% endblock %}

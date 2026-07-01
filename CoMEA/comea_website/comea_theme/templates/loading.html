@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-20 text-center space-y-6">
+    <h2 class="text-3xl font-bold mb-4 text-primary">
+        {% if processing_topics %}
+            {% trans "Extracting Topics from Reference Document" %}
+        {% else %}
+            {% trans "Processing Evaluation" %}
+        {% endif %}
+    </h2>
+    
+    <div class="flex justify-center mb-6">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+    
+    <p class="text-lg text-gray-600" id="main-message">
+        {% if processing_topics %}
+            {% trans "Please wait while we extract topics from your reference document" %}...
+        {% else %}
+            {% trans "Please wait while we calculate the evaluation metrics" %}...
+        {% endif %}
+    </p>
+    
+    <div class="w-full max-w-md mx-auto">
+        <progress class="progress progress-primary w-full" id="progress-bar"></progress>
+    </div>
+    
+    <p class="text-sm text-gray-500 italic" id="status-message">
+        {% if processing_topics %}
+            {% trans "Analyzing document content" %}...
+        {% else %}
+            {% trans "Analyzing concept map structure" %}...
+        {% endif %}
+    </p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const processingTopics = {{ processing_topics|yesno:"true,false" }};
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const progressBar = document.getElementById('progress-bar');
+    const statusMessage = document.getElementById('status-message');
+    
+    if (processingTopics) {
+        // Processar extração de tópicos
+        const topicsMessages = [
+            '{% trans "Analyzing document content" %}...',
+            '{% trans "Extracting key concepts" %}...',
+            '{% trans "Identifying relationships" %}...',
+            '{% trans "Creating propositions" %}...',
+            '{% trans "Finalizing topics extraction" %}...'
+        ];
+        
+        let progress = 0;
+        let messageIndex = 0;
+        
+        // Iniciar processamento via AJAX
+        fetch('{% url "process_topics_extraction" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                progressBar.value = 100;
+                statusMessage.textContent = '{% trans "Topics extracted successfully! Redirecting" %}...';
+                
+                setTimeout(() => {
+                    window.location.href = '{% url "topics_extraction_config" %}';
+                }, 1000);
+            } else {
+                console.error('❌ Erro:', data.message);
+                statusMessage.textContent = '{% trans "Error processing document. Please try again." %}';
+                statusMessage.classList.add('text-error');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Erro na requisição:', error);
+            statusMessage.textContent = '{% trans "Error processing document. Please try again." %}';
+            statusMessage.classList.add('text-error');
+        });
+        
+        // Atualizar progresso visualmente
+        const interval = setInterval(() => {
+            progress += 1;
+            progressBar.value = Math.min(progress, 95); // Não passa de 95% até completar
+            
+            // Atualizar mensagem a cada 20%
+            const newIndex = Math.floor(progress / 20);
+            if (newIndex !== messageIndex && newIndex < topicsMessages.length) {
+                messageIndex = newIndex;
+                statusMessage.textContent = topicsMessages[messageIndex];
+            }
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+            }
+        }, 150); // Progresso mais lento para dar tempo da API processar
+        
+    } else {
+        // Fluxo original de avaliação
+        const messages = [
+            '{% trans "Analyzing concept map structure" %}...',
+            '{% trans "Calculating quantitative metrics" %}...',
+            '{% trans "Processing propositions" %}...',
+            '{% trans "Classifying topics" %}...',
+            '{% trans "Finalizing evaluation" %}...'
+        ];
+        
+        let progress = 0;
+        let messageIndex = 0;
+        
+        const interval = setInterval(() => {
+            progress += 2;
+            progressBar.value = progress;
+            
+            const newIndex = Math.floor(progress / 20);
+            if (newIndex !== messageIndex && newIndex < messages.length) {
+                messageIndex = newIndex;
+                statusMessage.textContent = messages[messageIndex];
+            }
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+                statusMessage.textContent = '{% trans "Evaluation complete! Redirecting" %}...';
+                
+                setTimeout(() => {
+                    window.location.href = '/evaluation_config/';
+                }, 500);
+            }
+        }, 100);
+    }
+});
+</script>
+{% endblock %}

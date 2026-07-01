@@ -1,0 +1,771 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n %}
+
+{% block content %}
+{{ graph_data|json_script:"graph-data-json" }}
+{{ visual_aspects_enabled|json_script:"visual-aspects-enabled-json" }}
+
+<div class="max-w-7xl mx-auto mt-10 space-y-8">
+
+  <div class="text-center">
+    <h2 class="text-3xl font-semibold">{% trans "Configure the Concept Map" %}</h2>
+    <p class="text-gray-600 mt-2">
+      {% trans "Edit the concept map by double-clicking on nodes or edges to modify their text." %}
+    </p>
+  </div>
+
+  <!-- Concept Map Visualization (usando Cytoscape.js) -->
+  {% if has_concept_map %}
+  <div class="card bg-base-200 shadow-xl">
+    <div class="card-body">
+      <h3 class="card-title">{% trans "Interactive Concept Map" %}</h3>
+      <div class="text-sm text-gray-500 mb-2 space-y-1">
+        <p><strong>{% trans "Drag" %}</strong> {% trans "nodes to reposition." %} <strong>{% trans "Zoom" %}</strong> {% trans "with mouse wheel." %}</p>
+        <p><strong>{% trans "Double-click" %}</strong> {% trans "on nodes or edges to edit their text or delete them." %}</p>
+        <p><strong>{% trans "Add connection:" %}</strong> {% trans "Click the 'Add Connection' button, then click source node, then target node to add a new connection." %}</p>
+      </div>
+      
+      <!-- Indicador de modo de conexão -->
+      <div id="connection-mode-indicator" class="hidden alert alert-info mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="connection-mode-text">{% trans "Click on the source node" %}...</span>
+        <button id="cancel-connection-btn" class="btn btn-sm btn-ghost">{% trans "Cancel" %}</button>
+      </div>
+      
+      <!-- Container para o grafo -->
+      <div id="cy" style="width: 100%; height: 600px; border: 1px solid #ccc; border-radius: 8px; background: white;"></div>
+      
+      <!-- Mantém tudo igual até os botões -->
+      <div class="flex gap-2 mt-4 justify-between">
+        <div class="flex gap-2">
+          <button type="button" id="reset-layout-btn" class="btn btn-sm btn-outline">{% trans "Reset Layout" %}</button>
+          <button type="button" id="fit-graph-btn" class="btn btn-sm btn-outline">{% trans "Fit to View" %}</button>
+          <button type="button" id="add-connection-btn" class="btn btn-sm btn-outline btn-success">{% trans "Add Connection" %}</button>
+          <button type="button" id="export-png-btn" class="btn btn-sm btn-outline btn-primary">{% trans "Export as PNG" %}</button>
+        </div>
+        <button type="button" id="confirm-btn" class="btn btn-primary">{% trans "Confirm and Continue" %}</button>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-warning">
+    <span>{% trans "No concept map found. Please upload a concept map first." %}</span>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Modal para edição de texto -->
+<div id="edit-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg" id="edit-modal-title">{% trans "Edit Text" %}</h3>
+    <div class="py-4">
+      <input type="text" id="edit-input" class="input input-bordered w-full" placeholder="{% trans "Enter new text" %}...">
+    </div>
+    <div class="modal-action">
+      <button id="edit-delete-item-btn" class="btn btn-error mr-auto hidden">{% trans "Delete" %}</button>
+      <button id="edit-cancel-btn" class="btn">{% trans "Cancel" %}</button>
+      <button id="edit-save-btn" class="btn btn-primary">{% trans "Save" %}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para label da nova conexão -->
+<div id="new-edge-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">{% trans "New Connection Label" %}</h3>
+    <div class="py-4">
+      <p class="text-sm mb-2">{% trans "From:" %} <strong id="edge-from-label"></strong></p>
+      <p class="text-sm mb-4">{% trans "To:" %} <strong id="edge-to-label"></strong></p>
+      <input type="text" id="new-edge-input" class="input input-bordered w-full" placeholder="{% trans "Enter connection label" %}...">
+    </div>
+    <div class="modal-action">
+      <button id="new-edge-cancel-btn" class="btn">{% trans "Cancel" %}</button>
+      <button id="new-edge-save-btn" class="btn btn-primary">{% trans "Create" %}</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- Incluir Cytoscape.js via CDN -->
+<script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // 🔹 Variáveis para o modal de edição
+  const editModal = document.getElementById('edit-modal');
+  const editModalTitle = document.getElementById('edit-modal-title');
+  const editInput = document.getElementById('edit-input');
+  const editSaveBtn = document.getElementById('edit-save-btn');
+  const editCancelBtn = document.getElementById('edit-cancel-btn');
+  const editDeleteItemBtn = document.getElementById('edit-delete-item-btn');
+  let currentEditCallback = null;
+  let currentDeleteItemCallback = null;
+
+  // 🔹 Variáveis para o modal de nova edge
+  const newEdgeModal = document.getElementById('new-edge-modal');
+  const edgeFromLabel = document.getElementById('edge-from-label');
+  const edgeToLabel = document.getElementById('edge-to-label');
+  const newEdgeInput = document.getElementById('new-edge-input');
+  const newEdgeSaveBtn = document.getElementById('new-edge-save-btn');
+  const newEdgeCancelBtn = document.getElementById('new-edge-cancel-btn');
+  let currentNewEdgeCallback = null;
+
+  // 🔹 Variáveis para modo de conexão
+  const connectionModeIndicator = document.getElementById('connection-mode-indicator');
+  const connectionModeText = document.getElementById('connection-mode-text');
+  const cancelConnectionBtn = document.getElementById('cancel-connection-btn');
+  let isConnectionMode = false;
+  let sourceNode = null;
+  let edgeCounter = 0;
+
+  // 🔹 Funções do modal de edição
+  function openEditModal(title, currentValue, onSave, onDeleteItem = null, deleteLabel = 'Delete') {
+    editModalTitle.textContent = title;
+    editInput.value = currentValue;
+    editModal.classList.add('modal-open');
+    editInput.focus();
+    editInput.select();
+    
+    currentEditCallback = onSave;
+    currentDeleteItemCallback = onDeleteItem;
+
+    if (currentDeleteItemCallback) {
+      editDeleteItemBtn.textContent = deleteLabel;
+      editDeleteItemBtn.classList.remove('hidden');
+    } else {
+      editDeleteItemBtn.classList.add('hidden');
+    }
+  }
+
+  function closeEditModal() {
+    editModal.classList.remove('modal-open');
+    currentEditCallback = null;
+    currentDeleteItemCallback = null;
+    editDeleteItemBtn.classList.add('hidden');
+  }
+
+  editSaveBtn.addEventListener('click', () => {
+    const newValue = editInput.value.trim();
+    if (newValue && currentEditCallback) {
+      currentEditCallback(newValue);
+    }
+    closeEditModal();
+  });
+
+  editCancelBtn.addEventListener('click', closeEditModal);
+
+  editDeleteItemBtn.addEventListener('click', () => {
+    if (currentDeleteItemCallback) {
+      currentDeleteItemCallback();
+    }
+    closeEditModal();
+  });
+
+  editInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const newValue = editInput.value.trim();
+      if (newValue && currentEditCallback) {
+        currentEditCallback(newValue);
+      }
+      closeEditModal();
+    } else if (e.key === 'Escape') {
+      closeEditModal();
+    }
+  });
+
+  // 🔹 Funções do modal de nova edge
+  function openNewEdgeModal(fromLabel, toLabel, onSave) {
+    edgeFromLabel.textContent = fromLabel;
+    edgeToLabel.textContent = toLabel;
+    newEdgeInput.value = '';
+    newEdgeModal.classList.add('modal-open');
+    newEdgeInput.focus();
+    
+    currentNewEdgeCallback = onSave;
+  }
+
+  function closeNewEdgeModal() {
+    newEdgeModal.classList.remove('modal-open');
+    currentNewEdgeCallback = null;
+  }
+
+  newEdgeSaveBtn.addEventListener('click', () => {
+    const label = newEdgeInput.value.trim();
+    if (label && currentNewEdgeCallback) {
+      currentNewEdgeCallback(label);
+    }
+    closeNewEdgeModal();
+  });
+
+  newEdgeCancelBtn.addEventListener('click', closeNewEdgeModal);
+
+  newEdgeInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const label = newEdgeInput.value.trim();
+      if (label && currentNewEdgeCallback) {
+        currentNewEdgeCallback(label);
+      }
+      closeNewEdgeModal();
+    } else if (e.key === 'Escape') {
+      closeNewEdgeModal();
+    }
+  });
+
+  // 🔹 Funções do modo de conexão
+  function startConnectionMode() {
+    isConnectionMode = true;
+    sourceNode = null;
+    connectionModeIndicator.classList.remove('hidden');
+    connectionModeText.textContent = "{% trans 'Click on the source node' %}...";
+    document.getElementById('add-connection-btn').classList.add('btn-active');
+  }
+
+  function cancelConnectionMode() {
+    isConnectionMode = false;
+    sourceNode = null;
+    connectionModeIndicator.classList.add('hidden');
+    document.getElementById('add-connection-btn').classList.remove('btn-active');
+    
+    // Remover highlight do source node se existir
+    if (cy) {
+      cy.nodes().style({
+        'border-color': '#1e40af',
+        'border-width': 2
+      });
+    }
+  }
+
+  cancelConnectionBtn.addEventListener('click', cancelConnectionMode);
+
+  // 🔹 Inicializar Cytoscape.js
+  let cy = null;
+  const graphDataJson = document.getElementById('graph-data-json');
+  
+  if (graphDataJson) {
+    const graphData = JSON.parse(graphDataJson.textContent);
+    const visualAspectsEnabledJson = document.getElementById('visual-aspects-enabled-json');
+    const visualAspectsEnabled = visualAspectsEnabledJson ? JSON.parse(visualAspectsEnabledJson.textContent) : false;
+
+    function mapNodeShape(shape) {
+      const shapeMap = {
+        rectangle: 'roundrectangle',
+        ellipse: 'ellipse',
+        diamond: 'diamond'
+      };
+      return shapeMap[shape] || 'roundrectangle';
+    }
+
+    function mapStrokeStyle(strokeStyle) {
+      if (strokeStyle === 'dashed') return [10, 6];
+      if (strokeStyle === 'dotted') return [2, 6];
+      return null;
+    }
+
+    function normalizeBackgroundColor(color) {
+      if (!color || String(color).toLowerCase() === 'transparent') {
+        return '#ffffff';
+      }
+      return color;
+    }
+
+    function resolveStrokeStyle(styleObj) {
+      if (!styleObj) return 'solid';
+      return styleObj.container_stroke_style || styleObj.stroke_style || 'solid';
+    }
+
+    function mapArrowHead(arrowHead) {
+      const arrowMap = {
+        arrow: 'triangle',
+        triangle: 'triangle',
+        dot: 'circle',
+        circle: 'circle',
+        diamond: 'diamond',
+        bar: 'tee',
+        none: 'none'
+      };
+      return arrowMap[arrowHead] || 'triangle';
+    }
+    
+    // Converter dados para formato Cytoscape
+    const elements = [];
+    let nodesWithPosition = 0;
+    
+    // Adicionar nodes
+    graphData.nodes.forEach(node => {
+      const nodeStyle = node.style || {};
+      const nodeX = Number(nodeStyle.x) / 2;
+      const nodeY = Number(nodeStyle.y) / 2;
+      const hasValidPosition = Number.isFinite(nodeX) && Number.isFinite(nodeY);
+      const resolvedNodeBackgroundColor = visualAspectsEnabled
+        ? normalizeBackgroundColor(nodeStyle.background_color)
+        : '#ffffff';
+      const resolvedNodeStrokeStyle = visualAspectsEnabled
+        ? resolveStrokeStyle(nodeStyle)
+        : 'solid';
+      const resolvedNodeShape = visualAspectsEnabled
+        ? mapNodeShape(nodeStyle.shape)
+        : 'roundrectangle';
+      const resolvedNodeBorderColor = visualAspectsEnabled
+        ? (nodeStyle.stroke_color || '#1e40af')
+        : '#1e40af';
+      const cytoscapeNodeStyle = {
+        'background-color': resolvedNodeBackgroundColor,
+        'border-color': resolvedNodeBorderColor,
+        'shape': resolvedNodeShape,
+        'border-style': resolvedNodeStrokeStyle
+      };
+
+      if (visualAspectsEnabled && typeof nodeStyle.opacity === 'number') {
+        cytoscapeNodeStyle.opacity = Math.max(0, Math.min(1, nodeStyle.opacity / 100));
+      }
+
+      elements.push({
+        data: {
+          id: node.id,
+          label: node.label,
+          originalId: node.id,
+          backgroundColor: resolvedNodeBackgroundColor
+        },
+        position: hasValidPosition
+          ? { x: nodeX, y: nodeY }
+          : undefined,
+        style: cytoscapeNodeStyle
+      });
+
+      if (hasValidPosition) {
+        nodesWithPosition += 1;
+      }
+    });
+
+    const hasPresetPositions = graphData.nodes.length > 0 && nodesWithPosition === graphData.nodes.length;
+    
+    // Adicionar edges e contar para IDs únicos
+    graphData.edges.forEach((edge, idx) => {
+      const edgeStyle = edge.style || {};
+      const resolvedEdgeStrokeStyle = visualAspectsEnabled
+        ? resolveStrokeStyle(edgeStyle)
+        : 'solid';
+      const resolvedEdgeColor = visualAspectsEnabled
+        ? (edgeStyle.stroke_color || '#6b7280')
+        : '#6b7280';
+      const cytoscapeEdgeStyle = {
+        'line-color': resolvedEdgeColor,
+        'target-arrow-color': resolvedEdgeColor,
+        'line-style': resolvedEdgeStrokeStyle,
+        'target-arrow-shape': mapArrowHead(edgeStyle.end_arrowhead),
+        'source-arrow-shape': 'none',
+        'source-arrow-color': resolvedEdgeColor
+      };
+
+      const dashPattern = mapStrokeStyle(resolvedEdgeStrokeStyle);
+      if (dashPattern) {
+        cytoscapeEdgeStyle['line-dash-pattern'] = dashPattern;
+      }
+
+      if (visualAspectsEnabled && typeof edgeStyle.opacity === 'number') {
+        cytoscapeEdgeStyle.opacity = Math.max(0, Math.min(1, edgeStyle.opacity / 100));
+      }
+
+      elements.push({
+        data: {
+          id: `edge-${idx}`,
+          source: edge.source,
+          target: edge.target,
+          label: edge.label,
+          strokeColor: resolvedEdgeColor
+        },
+        style: cytoscapeEdgeStyle
+      });
+      edgeCounter = idx + 1;
+    });
+    
+    // Inicializar Cytoscape
+    const initialLayout = hasPresetPositions
+      ? {
+          name: 'preset',
+          fit: true,
+          padding: 50,
+          animate: false
+        }
+      : {
+          name: 'cose',
+          animate: true,
+          animationDuration: 500,
+          nodeDimensionsIncludeLabels: true,
+          padding: 50,
+          nodeOverlap: 20,
+          idealEdgeLength: 100
+        };
+
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      
+      elements: elements,
+      
+      style: [
+        // Estilo dos nodes
+        {
+          selector: 'node',
+          style: {
+            'background-color': '#ffffff',
+            'label': 'data(label)',
+            'color': '#000000',
+            'text-valign': 'center',
+            'text-halign': 'center',
+            'font-size': '14px',
+            'font-weight': 'bold',
+            'width': 'label',
+            'height': 'label',
+            'padding': '12px',
+            'shape': 'roundrectangle',
+            'border-width': 2,
+            'border-color': '#1e40af',
+            'text-wrap': 'wrap',
+            'text-max-width': '120px'
+          }
+        },
+        // Estilo das edges (setas)
+        {
+          selector: 'edge',
+          style: {
+            'width': 3,
+            'line-color': '#6b7280',
+            'target-arrow-color': '#6b7280',
+            'target-arrow-shape': 'triangle',
+            'curve-style': 'bezier',
+            'label': 'data(label)',
+            'font-size': '12px',
+            'text-rotation': 'autorotate',
+            'text-margin-y': -10,
+            'color': '#000000',
+            'text-background-opacity': 1,
+            'text-background-color': '#ffffff',
+            'text-background-padding': '4px',
+            'text-border-opacity': 1,
+            'text-border-width': 1,
+            'text-border-color': '#d1d5db'
+          }
+        },
+        // Estilo para elementos selecionados
+        {
+          selector: ':selected',
+          style: {
+            'border-width': 4,
+            'border-color': '#ef4444'
+          }
+        }
+      ],
+      
+      layout: initialLayout
+    });
+    
+    // 🔹 Click em node - pode ser para edição ou para criar conexão
+    cy.on('tap', 'node', function(evt) {
+      if (isConnectionMode) {
+        const node = evt.target;
+        
+        if (!sourceNode) {
+          // Primeiro clique - selecionar source
+          sourceNode = node;
+          node.style({
+            'border-color': '#10b981',
+            'border-width': 4
+          });
+          connectionModeText.textContent = `Source: "${node.data('label')}" - Now click on target node...`;
+        } else {
+          // Segundo clique - criar edge
+          const targetNode = node;
+          
+          if (sourceNode.id() === targetNode.id()) {
+            alert('Cannot create a connection to the same node!');
+            return;
+          }
+          
+          // Abrir modal para label da edge
+          openNewEdgeModal(sourceNode.data('label'), targetNode.data('label'), (label) => {
+            // Criar nova edge
+            cy.add({
+              group: 'edges',
+              data: {
+                id: `edge-${edgeCounter++}`,
+                source: sourceNode.id(),
+                target: targetNode.id(),
+                label: label
+              }
+            });
+            
+            cancelConnectionMode();
+          });
+        }
+      }
+    });
+    
+    // 🔹 Edição de nodes com duplo clique
+    cy.on('dblclick', 'node', function(evt) {
+      if (isConnectionMode) return; // Ignorar duplo clique no modo conexão
+      
+      const node = evt.target;
+      const currentLabel = node.data('label');
+      
+      openEditModal(
+        'Edit Node Text',
+        currentLabel,
+        (newValue) => {
+          node.data('label', newValue);
+          node.style({
+            'width': 'label',
+            'height': 'label'
+          });
+          cy.layout({
+            name: 'preset',
+            animate: false
+          }).run();
+        },
+        () => {
+          node.remove();
+        },
+        'Delete Node'
+      );
+    });
+    
+    // 🔹 Edição de edges com duplo clique
+    cy.on('dblclick', 'edge', function(evt) {
+      const edge = evt.target;
+      const currentLabel = edge.data('label');
+      
+      openEditModal(
+        'Edit Edge Text',
+        currentLabel,
+        (newValue) => {
+          edge.data('label', newValue);
+        },
+        () => {
+          edge.remove();
+        },
+        'Delete Edge'
+      );
+    });
+    
+    // 🔹 Deletar edge com tecla Delete
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const selectedEdges = cy.$(':selected').filter('edge');
+        if (selectedEdges.length > 0) {
+          if (confirm(`Delete ${selectedEdges.length} edge(s)?`)) {
+            selectedEdges.remove();
+          }
+        }
+      }
+      
+      // ESC cancela modo de conexão
+      if (e.key === 'Escape' && isConnectionMode) {
+        cancelConnectionMode();
+      }
+    });
+    
+    // 🔹 Highlight ao passar o mouse
+    cy.on('mouseover', 'node', function(evt) {
+      const node = evt.target;
+      if (!isConnectionMode || sourceNode !== node) {
+        node.style({
+          'background-color': '#2563eb',
+          'border-width': 3
+        });
+      }
+    });
+    
+    cy.on('mouseout', 'node', function(evt) {
+      const node = evt.target;
+      if (!node.selected() && (!isConnectionMode || sourceNode !== node)) {
+        const currentBackground = node.data('backgroundColor') || '#3b82f6';
+        node.style({
+          'background-color': currentBackground,
+          'border-width': 2
+        });
+      }
+    });
+    
+    cy.on('mouseover', 'edge', function(evt) {
+      const edge = evt.target;
+      edge.style({
+        'width': 4,
+        'line-color': '#374151',
+        'target-arrow-color': '#374151',
+        'source-arrow-color': '#374151'
+      });
+    });
+    
+    cy.on('mouseout', 'edge', function(evt) {
+      const edge = evt.target;
+      const baseColor = edge.data('strokeColor') || '#6b7280';
+      edge.style({
+        'width': 3,
+        'line-color': baseColor,
+        'target-arrow-color': baseColor,
+        'source-arrow-color': baseColor
+      });
+    });
+    
+    // 🔹 Botões de controle do grafo
+    const resetLayoutBtn = document.getElementById('reset-layout-btn');
+    const fitGraphBtn = document.getElementById('fit-graph-btn');
+    const exportPngBtn = document.getElementById('export-png-btn');
+    const addConnectionBtn = document.getElementById('add-connection-btn');
+    const confirmBtn = document.getElementById('confirm-btn');
+    let isSubmitting = false;
+    
+    if (resetLayoutBtn) {
+      resetLayoutBtn.addEventListener('click', () => {
+        if (hasPresetPositions) {
+          cy.layout({
+            name: 'preset',
+            animate: false,
+            fit: true,
+            padding: 50
+          }).run();
+          return;
+        }
+
+        cy.layout({
+          name: 'cose',
+          animate: true,
+          animationDuration: 500,
+          nodeDimensionsIncludeLabels: true,
+          padding: 50
+        }).run();
+      });
+    }
+    
+    if (fitGraphBtn) {
+      fitGraphBtn.addEventListener('click', () => {
+        cy.fit(null, 50);
+      });
+    }
+    
+    if (exportPngBtn) {
+      exportPngBtn.addEventListener('click', () => {
+        const png = cy.png({
+          output: 'blob',
+          bg: 'white',
+          full: true,
+          scale: 2
+        });
+        
+        const url = URL.createObjectURL(png);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'concept-map.png';
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+    
+    // 🔹 NOVO: Botão Add Connection
+    if (addConnectionBtn) {
+      addConnectionBtn.addEventListener('click', () => {
+        if (isConnectionMode) {
+          cancelConnectionMode();
+        } else {
+          startConnectionMode();
+        }
+      });
+    }
+    
+    if (confirmBtn) {
+  confirmBtn.addEventListener('click', () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    isSubmitting = true;
+    confirmBtn.disabled = true;
+    confirmBtn.classList.add('btn-disabled');
+
+    // Coletar dados atualizados do grafo
+    const updatedNodes = {};
+    const updatedEdges = [];
+    
+    // Formato do banco: nodes = {node_id: "text"}
+    cy.nodes().forEach(node => {
+      updatedNodes[node.data('originalId')] = node.data('label');
+    });
+    
+    cy.edges().forEach(edge => {
+      updatedEdges.push([
+        edge.data('source'),
+        edge.data('target'),
+        edge.data('label')
+      ]);
+    });
+    
+    
+    // Exportar imagem do mapa conceitual como PNG em base64
+    const pngBase64 = cy.png({
+      output: 'base64',
+      bg: 'white',
+      full: true,
+      scale: 2
+    });
+    
+    
+    // Preparar dados para envio
+    const formData = new FormData();
+    formData.append('nodes_data', JSON.stringify(updatedNodes));
+    formData.append('edges_data', JSON.stringify(updatedEdges));
+    formData.append('concept_map_image', pngBase64);
+    
+    // Enviar para o servidor
+    fetch(window.location.pathname, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || getCookie('csrftoken')
+      },
+      body: formData
+    })
+    .then(response => {
+      if (response.redirected) {
+        // Se o servidor redirecionou, seguir o redirect
+        window.location.href = response.url;
+      } else if (response.ok) {
+        // Sucesso sem redirect explícito
+        window.location.href = '/evaluation_config/';
+      } else {
+        return response.json().then(data => {
+          throw new Error(data.message || 'Error saving changes');
+        });
+      }
+    })
+    .catch(error => {
+      console.error('❌ Error:', error);
+      alert('Error saving changes: ' + error.message);
+      isSubmitting = false;
+      confirmBtn.disabled = false;
+      confirmBtn.classList.remove('btn-disabled');
+    });
+  });
+  }
+  }
+  
+  // Helper para obter CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+});
+</script>
+
+{% csrf_token %}
+{% endblock %}

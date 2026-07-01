@@ -1,0 +1,170 @@
+{% load static tailwind_tags i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" data-theme="light">
+<head>
+    <title>CoMEA - {% trans "Concept Map Evaluation Assistant" %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="color-scheme" content="light">
+    {% tailwind_css %}
+</head>
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div class="navbar bg-blue-200">
+    <div class="flex items-center gap-3">
+      <avatar class="w-40">
+          <a href="{% url 'index' %}">
+              <picture>
+            <source srcset="{% static 'images/comea_logo.png' %}" media="(prefers-color-scheme: light)"
+              alt="CoMEA logo with interconnected nodes forming a concept map, set against a white background. The design conveys collaboration and knowledge mapping. Text below reads CoMEA Concept Map Evaluation Assistant."/>
+
+            <!-- Default logo (light mode only) -->
+            <img src="{% static 'images/comea_logo.png' %}" alt="CoMEA logo with interconnected nodes forming a concept map, set against a white background. The design conveys collaboration and knowledge mapping. Text below reads CoMEA Concept Map Evaluation Assistant."/>
+              </picture>
+          </a>
+      </avatar>
+      <a href="{% url 'index' %}" class="btn btn-ghost hover:bg-blue-300 hover:border-blue-300">{% trans "CoMEA" %}</a>
+      <a href="{% url 'concept_map' %}" class="btn btn-ghost hover:bg-blue-300 hover:border-blue-300">{% trans "Concept Map" %}</a>
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost hover:bg-blue-300 hover:border-blue-300">{% trans "Dashboard" %}</a>
+    </div>
+    <div class="flex-none ml-auto">
+      <ul class="menu menu-horizontal px-1">
+        <!-- Language Switcher -->
+        <li class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-ghost btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-5 h-5 stroke-current">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+            </svg>
+            {% if CURRENT_LANGUAGE|lower == 'pt-br' or CURRENT_LANGUAGE|lower == 'pt_br' %}PT{% else %}EN{% endif %}
+          </label>
+          <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40 mt-4">
+            <li>
+              <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                <button type="submit" name="language" value="en" class="w-full text-left">
+                  🇺🇸 English
+                </button>
+              </form>
+            </li>
+            <li>
+              <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                <button type="submit" name="language" value="pt-br" class="w-full text-left">
+                  🇧🇷 Português
+                </button>
+              </form>
+            </li>
+          </ul>
+        </li>
+        {% if user.is_authenticated %}
+          <li class="flex items-center space-x-2">
+            <span>{% trans "Welcome" %}, {{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}" class="inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm">{% trans "Logout" %}</button>
+            </form>
+          </li>
+        {% else %}
+          <li><a href="{% url 'login' %}" class="btn btn-primary">{% trans "Login" %}</a></li>
+        {% endif %}
+      </ul>
+    </div>
+</div>
+
+<body class="bg-base-100 text-black font-serif leading-normal tracking-normal min-h-screen flex flex-col">
+    <div class="flex-1 container mx-auto flex items-center justify-center p-3">
+        <section class="w-full">
+
+            <!-- here is where the content specific from each view is put -->
+            {% block content %}
+            
+            <div class="hero bg-base-100 min-h-screen">
+                <div class="hero-content text-center">
+                  <div class="prose-lg">
+                    <h1 class="text-5xl font-bold">{% trans "What is CoMEA?" %}</h1>
+                    <p class="py-6 prose-neutral text-justify">
+                      {% trans "CoMEA (Concept Map Evaluation Assistant) uses LLMs for the qualitative assessment of concept maps, and combines this type of evaluation with other techniques found in the literature for the quantitative evaluation, allowing the educator to combine the methods to <strong>assess Concept Maps automatically.</strong>" %}
+                    </p>
+                    <p class="prose-neutral text-justify">
+                      {% trans " Acknowledging the critical ethical and educational dimensions of automated assessment, CoMEA is designed with a <strong>human-in-the-loop approach</strong>, ensuring that <strong>educators retain ultimate control over every stage of the evaluation process.</strong>" %}
+                    </p>
+                    
+                    <div class="py-6 prose-neutral text-justify">
+                        <h2 class="text-2xl font-semibold mb-4 text-center">{% trans "CoMEA Tutorial" %}</h2>
+                        <video class="w-full max-w-3xl rounded-lg shadow-lg mx-auto" controls preload="metadata" poster="{% static 'images/comea_logo.png' %}">
+                        {% if CURRENT_LANGUAGE|lower == 'pt-br' or CURRENT_LANGUAGE|lower == 'pt_br' %}
+                            <source src="{% static 'videos/video_funcionamento_comea.mp4' %}" type="video/mp4">
+                        {% else %}
+                            <source src="{% static 'videos/video_funcionamento_comea.mp4' %}" type="video/mp4">
+                        {% endif %}
+                        {% trans "Your browser does not support HTML5 video." %}
+                        </video>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                      <a href="{% url 'dashboard' %}" class="btn btn-primary">{% trans "Go to Dashboard" %}</a>
+                    {% else %}
+                      <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Login to Get Started" %}</a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+            {% endblock %}
+        </section>
+    </div>
+</body>
+
+<footer class="footer sm:footer-horizontal bg-blue-200 text-base-content p-10">
+    <aside>
+        <Avatar class="w-50">
+          <picture>
+            <!-- User prefers light mode: -->
+            <source srcset="{% static 'images/comea_logo.png' %}" media="(prefers-color-scheme: light)"
+                    alt="CoMEA logo with interconnected nodes forming a concept map, set against a white background. The design conveys collaboration and knowledge mapping. Text below reads CoMEA Concept Map Evaluation Assistant."/>
+
+                <!-- Default logo (light mode only) -->
+            <img src="{% static 'images/comea_logo.png' %}" alt="CoMEA logo with interconnected nodes forming a concept map, set against a white background. The design conveys collaboration and knowledge mapping. Text below reads CoMEA Concept Map Evaluation Assistant."/>
+          </picture>
+        </Avatar>
+    </aside>
+    <nav>
+      <h6 class="footer-title">{% trans "Research" %}</h6>
+      <a class="link link-hover" href="{% url 'index' %}">{% trans "About us" %}</a>
+      <a class="link link-hover" href="{% url 'contact' %}">{% trans "Contact" %}</a>
+    </nav>
+    <nav>
+      <h6 class="footer-title">{% trans "Legal" %}</h6>
+      <a class="link link-hover" href="{% url 'privacy' %}">{% trans "Privacy Policy" %}</a>
+    </nav>
+    <p class="w-full text-center text-xs mt-4">CoMEA © 2026 by Laís Pisetta Van Vossen is licensed under <a class="link link-hover" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0.</a></p>
+
+</footer>
+
+</html>
+
+<script>
+  function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Procura o cookie com nome 'csrftoken'
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;  // Retorna o valor do token
+}
+</script>
+
+{% block scripts %}
+
+{% endblock %}

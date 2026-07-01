@@ -1,0 +1,550 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n %}
+
+{% block content %}
+{{ topics|json_script:"topics-json" }}
+{{ concepts|json_script:"concepts-json" }}
+{{ edges|json_script:"edges-json" }}
+{{ proposition_weights|json_script:"weights-json" }}
+
+<div class="max-w-6xl mx-auto mt-10 space-y-8 text-center">
+
+  <h2 class="text-3xl font-semibold">{% trans "Configure the Key Topics Extracted" %}</h2>
+  <p class="text-gray-600 mt-2">
+    {% trans "Here are the key topics we extracted from your document. You can edit them or their weights, or delete any that you find irrelevant." %}
+  </p>
+
+  <!-- LOADING -->
+  <div id="loading-section"
+       class="{% if topics %}hidden{% endif %} flex flex-col items-center justify-center py-16">
+    <span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+    <p class="text-lg text-gray-500">{% trans "Loading topics" %}...</p>
+  </div>
+
+  <!-- TABLE -->
+  <div id="table-section"
+       class="{% if not topics %}hidden{% endif %}">
+    <form id="topics-form" method="post" enctype="multipart/form-data" class="space-y-8">
+      {% csrf_token %}
+      <div class="overflow-x-auto">
+        <table id="topics-table" class="table table-zebra w-full border border-gray-300 rounded-lg">
+          <thead>
+            <tr>
+              <th class="px-4 py-2">{% trans "Topic" %}</th>
+              <th class="px-4 py-2">{% trans "Weight" %}</th>
+              <th class="px-4 py-2">{% trans "Edit" %}</th>
+            </tr>
+          </thead>
+          <tbody id="topics-body">
+            {% for topic in topics %}
+            <tr>
+              <td class="px-4 py-2 topic-cell">{{ topic }}</td>
+              <td class="px-4 py-2">
+                <input type="number" class="input input-bordered w-20" value="1">
+              </td>
+              <td class="px-4 py-2 flex gap-2 justify-center">
+                <button type="button" class="btn btn-sm btn-outline btn-primary edit-btn">{% trans "Edit" %}</button>
+                <button type="button" class="btn btn-sm btn-outline btn-error delete-btn">{% trans "Delete" %}</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 🔹 Botões -->
+      <div class="w-full flex justify-center gap-4 p-3">
+        <button type="button" id="add-topic-btn" class="btn btn-outline btn-accent">
+          {% trans "+ Add Topic" %}
+        </button>
+        <button type="submit" class="btn btn-primary bg-blue-500">
+          {% trans "Confirm Topics" %}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <dialog id="topic-modal" class="modal">
+    <div class="modal-box max-w-2xl">
+      <h3 id="topic-modal-title" class="font-bold text-xl mb-4">{% trans "Add Proposition" %}</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+        <div>
+          <label class="label" for="source-existing">
+            <span class="label-text">{% trans "Origin concept (existing)" %}</span>
+          </label>
+          <select id="source-existing" class="select select-bordered w-full"></select>
+        </div>
+        <div>
+          <label class="label" for="source-new">
+            <span class="label-text">{% trans "Origin concept (new)" %}</span>
+          </label>
+          <input id="source-new" type="text" class="input input-bordered w-full" placeholder="{% trans 'Write a new concept' %}">
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="label" for="relation-input">
+            <span class="label-text">{% trans "Linking phrase" %}</span>
+          </label>
+          <input id="relation-input" type="text" class="input input-bordered w-full" placeholder="{% trans 'Example: leads to, creates, have, ...' %}">
+        </div>
+
+        <div>
+          <label class="label" for="target-existing">
+            <span class="label-text">{% trans "Target concept (existing)" %}</span>
+          </label>
+          <select id="target-existing" class="select select-bordered w-full"></select>
+        </div>
+        <div>
+          <label class="label" for="target-new">
+            <span class="label-text">{% trans "Target concept (new)" %}</span>
+          </label>
+          <input id="target-new" type="text" class="input input-bordered w-full" placeholder="{% trans 'Write a new concept' %}">
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="label" for="modal-weight">
+            <span class="label-text">{% trans "Weight" %}</span>
+          </label>
+          <input id="modal-weight" type="number" min="1" value="1" class="input input-bordered w-32">
+        </div>
+      </div>
+
+      <div class="modal-action">
+        <button type="button" id="topic-modal-cancel" class="btn">{% trans "Cancel" %}</button>
+        <button type="button" id="topic-modal-save" class="btn btn-primary">{% trans "Save" %}</button>
+      </div>
+    </div>
+  </dialog>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const topicsJson = document.getElementById('topics-json');
+  const conceptsJson = document.getElementById('concepts-json');
+  const edgesJson = document.getElementById('edges-json');
+  const weightsJson = document.getElementById('weights-json');
+  const topics = topicsJson ? JSON.parse(topicsJson.textContent) : [];
+  const existingConcepts = conceptsJson ? JSON.parse(conceptsJson.textContent) : [];
+  const existingEdges = edgesJson ? JSON.parse(edgesJson.textContent) : [];
+  const existingWeights = weightsJson ? JSON.parse(weightsJson.textContent) : {};
+  const topicsBody = document.getElementById('topics-body');
+  const addTopicBtn = document.getElementById('add-topic-btn');
+  const loadingSection = document.getElementById('loading-section');
+  const tableSection = document.getElementById('table-section');
+  const topicModal = document.getElementById('topic-modal');
+  const topicModalTitle = document.getElementById('topic-modal-title');
+  const sourceExisting = document.getElementById('source-existing');
+  const sourceNew = document.getElementById('source-new');
+  const relationInput = document.getElementById('relation-input');
+  const targetExisting = document.getElementById('target-existing');
+  const targetNew = document.getElementById('target-new');
+  const modalWeight = document.getElementById('modal-weight');
+  const topicModalSave = document.getElementById('topic-modal-save');
+  const topicModalCancel = document.getElementById('topic-modal-cancel');
+
+  let editingRow = null;
+
+  function parseProposition(topicText) {
+    const text = (topicText || '').trim();
+    if (!text) {
+      return null;
+    }
+
+    const angleMatch = text.match(/^(.+?)\s*<\s*(.+?)\s*>\s*(.+)$/);
+    if (angleMatch) {
+      return {
+        source: angleMatch[1].trim(),
+        relation: angleMatch[2].trim(),
+        target: angleMatch[3].trim(),
+      };
+    }
+
+    const plainMatch = text.match(/^(.+?)\s+-\s+(.+?)\s+-\s+(.+)$/);
+    if (plainMatch) {
+      return {
+        source: plainMatch[1].trim(),
+        relation: plainMatch[2].trim(),
+        target: plainMatch[3].trim(),
+      };
+    }
+
+    return null;
+  }
+
+  function buildTopicText(source, relation, target) {
+    return `${source} <${relation}> ${target}`;
+  }
+
+  function collectCurrentConcepts() {
+    const conceptSet = new Set(existingConcepts || []);
+    const rows = topicsBody.querySelectorAll('tr');
+
+    rows.forEach((row) => {
+      const source = (row.dataset.source || '').trim();
+      const target = (row.dataset.target || '').trim();
+
+      if (source) {
+        conceptSet.add(source);
+      }
+      if (target) {
+        conceptSet.add(target);
+      }
+    });
+
+    return Array.from(conceptSet).sort((a, b) => a.localeCompare(b));
+  }
+
+  function refreshConceptSelects() {
+    const concepts = collectCurrentConcepts();
+
+    [sourceExisting, targetExisting].forEach((select) => {
+      if (!select) {
+        return;
+      }
+
+      const previousValue = select.value;
+      select.innerHTML = '';
+
+      const emptyOption = document.createElement('option');
+      emptyOption.value = '';
+      emptyOption.textContent = '---';
+      select.appendChild(emptyOption);
+
+      concepts.forEach((concept) => {
+        const option = document.createElement('option');
+        option.value = concept;
+        option.textContent = concept;
+        select.appendChild(option);
+      });
+
+      if (previousValue && concepts.includes(previousValue)) {
+        select.value = previousValue;
+      }
+    });
+  }
+
+  function openTopicModal(row = null) {
+    editingRow = row;
+    refreshConceptSelects();
+
+    sourceExisting.value = '';
+    sourceNew.value = '';
+    relationInput.value = '';
+    targetExisting.value = '';
+    targetNew.value = '';
+    modalWeight.value = '1';
+
+    if (editingRow) {
+      topicModalTitle.textContent = '{% trans "Edit Proposition" %}';
+      const source = (editingRow.dataset.source || '').trim();
+      const relation = (editingRow.dataset.relation || '').trim();
+      const target = (editingRow.dataset.target || '').trim();
+      const weightInput = editingRow.querySelector('input[type="number"]');
+
+      if (collectCurrentConcepts().includes(source)) {
+        sourceExisting.value = source;
+      } else {
+        sourceNew.value = source;
+      }
+
+      if (collectCurrentConcepts().includes(target)) {
+        targetExisting.value = target;
+      } else {
+        targetNew.value = target;
+      }
+
+      relationInput.value = relation;
+      modalWeight.value = weightInput ? (parseInt(weightInput.value, 10) || 1) : 1;
+    } else {
+      topicModalTitle.textContent = '{% trans "Add Proposition" %}';
+    }
+
+    topicModal.showModal();
+  }
+
+  function closeTopicModal() {
+    if (topicModal.open) {
+      topicModal.close();
+    }
+    editingRow = null;
+  }
+
+  function applyModalToRow(row) {
+    const chosenSource = sourceNew.value.trim() || sourceExisting.value.trim();
+    const chosenRelation = relationInput.value.trim();
+    const chosenTarget = targetNew.value.trim() || targetExisting.value.trim();
+    const chosenWeight = Math.max(1, parseInt(modalWeight.value, 10) || 1);
+
+    if (!chosenSource || !chosenRelation || !chosenTarget) {
+      alert('{% trans "Please fill origin concept, linking phrase, and target concept." %}');
+      return false;
+    }
+
+    row.dataset.source = chosenSource;
+    row.dataset.relation = chosenRelation;
+    row.dataset.target = chosenTarget;
+
+    const topicCell = row.querySelector('.topic-cell');
+    const weightInput = row.querySelector('input[type="number"]');
+    topicCell.textContent = buildTopicText(chosenSource, chosenRelation, chosenTarget);
+    weightInput.value = String(chosenWeight);
+
+    return true;
+  }
+
+  // Se há tópicos, mostra a tabela
+  if (topics.length > 0) {
+    loadingSection.classList.add('hidden');
+    tableSection.classList.remove('hidden');
+  } else {
+    // Verificar periodicamente se os tópicos foram extraídos
+    const checkInterval = setInterval(async function() {
+      try {
+        const response = await fetch(window.location.pathname);
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newTopicsJson = doc.getElementById('topics-json');
+        
+        if (newTopicsJson) {
+          const newTopics = JSON.parse(newTopicsJson.textContent);
+          if (newTopics.length > 0) {
+            clearInterval(checkInterval);
+            location.reload();
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao verificar tópicos:', error);
+      }
+    }, 3000);
+  }
+
+  // Impede que pressionar Enter em inputs envie o formulário
+  const form = document.getElementById('topics-form');
+  if (form) {
+    form.addEventListener('keydown', function (e) {
+      const target = e.target;
+      if ((target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') && e.key === 'Enter') {
+        e.preventDefault();
+      }
+    });
+
+    // 🔹 Submit do formulário - enviar como JSON
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Coletar tópicos estruturados como edges
+      const topicRows = topicsBody.querySelectorAll('tr');
+      const updatedTopics = [];
+      const updatedWeights = {};
+      const updatedEdges = [];
+      const nodeSet = new Set();
+      
+      topicRows.forEach((row) => {
+        const topicCell = row.querySelector('.topic-cell');
+        let source = (row.dataset.source || '').trim();
+        let relation = (row.dataset.relation || '').trim();
+        let target = (row.dataset.target || '').trim();
+        const topicText = topicCell.textContent.trim();
+        const topicWeightInput = row.querySelector('input[type="number"]');
+
+        if (!source || !relation || !target) {
+          const parsed = parseProposition(topicText);
+          if (parsed) {
+            source = parsed.source;
+            relation = parsed.relation;
+            target = parsed.target;
+          }
+        }
+        
+        if (source && relation && target) {
+          const proposition = buildTopicText(source, relation, target);
+          const weightValue = Math.max(1, parseInt(topicWeightInput.value, 10) || 1);
+          updatedEdges.push([source, target, relation]);
+          updatedTopics.push(proposition);
+          updatedWeights[proposition] = weightValue;
+          nodeSet.add(source);
+          nodeSet.add(target);
+        }
+      });
+
+      if (!updatedEdges.length) {
+        alert('{% trans "Add at least one valid relation before saving." %}');
+        return;
+      }
+      
+      // Preparar dados para envio
+      const formData = new FormData();
+      formData.append('topics_data', JSON.stringify(updatedTopics));
+      formData.append('propositions_weight', JSON.stringify(updatedWeights));
+      formData.append('edges_data', JSON.stringify(updatedEdges));
+      formData.append('nodes_data', JSON.stringify(Array.from(nodeSet)));
+
+      // Enviar dados para o servidor
+      fetch(window.location.pathname, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: formData
+      })
+      .then(response => {
+        if (response.redirected) {
+          window.location.href = response.url;
+        } else if (response.ok) {
+          window.location.href = '/dashboard/';
+        } else {
+          return response.json().then(data => {
+            throw new Error(data.message || 'Error saving topics');
+          });
+        }
+      })
+      .catch(error => {
+        console.error('❌ Error:', error);
+        alert('Error saving topics: ' + error.message);
+      });
+    });
+  }
+
+  // Função para criar nova linha
+  function criarNovaLinha(topic = '', weight = 1, source = '', relation = '', target = '') {
+    const novaLinha = document.createElement('tr');
+    const parsed = parseProposition(topic);
+
+    const finalSource = source || (parsed ? parsed.source : '');
+    const finalRelation = relation || (parsed ? parsed.relation : '');
+    const finalTarget = target || (parsed ? parsed.target : '');
+    const finalTopic = (finalSource && finalRelation && finalTarget)
+      ? buildTopicText(finalSource, finalRelation, finalTarget)
+      : topic;
+
+    novaLinha.dataset.source = finalSource;
+    novaLinha.dataset.relation = finalRelation;
+    novaLinha.dataset.target = finalTarget;
+
+    novaLinha.innerHTML = `
+      <td class="px-4 py-2 topic-cell">
+        ${finalTopic}
+      </td>
+      <td class="px-4 py-2">
+        <input type="number" class="input input-bordered w-20" value="${weight}">
+      </td>
+      <td class="px-4 py-2 flex gap-2 justify-center">
+        <button type="button" class="btn btn-sm btn-outline btn-primary edit-btn">Edit</button>
+        <button type="button" class="btn btn-sm btn-outline btn-error delete-btn">Delete</button>
+      </td>
+    `;
+    topicsBody.appendChild(novaLinha);
+    adicionarEventosLinha(novaLinha);
+    refreshConceptSelects();
+    return novaLinha;
+  }
+
+  if (addTopicBtn) {
+    addTopicBtn.addEventListener('click', () => openTopicModal());
+  }
+
+  // Adiciona eventos (editar / deletar) a cada linha
+  function adicionarEventosLinha(linha) {
+    const editBtn = linha.querySelector('.edit-btn');
+    const deleteBtn = linha.querySelector('.delete-btn');
+
+    if (editBtn) {
+      editBtn.addEventListener('click', function () {
+        openTopicModal(linha);
+      });
+    }
+
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', () => {
+        linha.remove();
+        refreshConceptSelects();
+      });
+    }
+  }
+
+  if (topicModalSave) {
+    topicModalSave.addEventListener('click', () => {
+      if (editingRow) {
+        if (!applyModalToRow(editingRow)) {
+          return;
+        }
+      } else {
+        const newRow = criarNovaLinha('', 1);
+        if (!applyModalToRow(newRow)) {
+          newRow.remove();
+          return;
+        }
+      }
+
+      refreshConceptSelects();
+      closeTopicModal();
+    });
+  }
+
+  if (topicModalCancel) {
+    topicModalCancel.addEventListener('click', closeTopicModal);
+  }
+
+  if (topicModal) {
+    topicModal.addEventListener('click', function (event) {
+      if (event.target === topicModal) {
+        closeTopicModal();
+      }
+    });
+  }
+
+  // Inicializa eventos e dados estruturados das linhas já existentes
+  document.querySelectorAll('#topics-body tr').forEach((row, index) => {
+    const topicCell = row.querySelector('.topic-cell');
+    const topicText = topicCell ? topicCell.textContent.trim() : '';
+    const edge = Array.isArray(existingEdges[index]) ? existingEdges[index] : null;
+
+    if (edge && edge.length >= 3) {
+      row.dataset.source = String(edge[0] || '').trim();
+      row.dataset.target = String(edge[1] || '').trim();
+      row.dataset.relation = String(edge[2] || '').trim();
+      if (topicCell) {
+        topicCell.textContent = buildTopicText(row.dataset.source, row.dataset.relation, row.dataset.target);
+      }
+    } else {
+      const parsed = parseProposition(topicText);
+      row.dataset.source = parsed ? parsed.source : '';
+      row.dataset.relation = parsed ? parsed.relation : '';
+      row.dataset.target = parsed ? parsed.target : '';
+    }
+
+    const propositionKey = (row.dataset.source && row.dataset.relation && row.dataset.target)
+      ? buildTopicText(row.dataset.source, row.dataset.relation, row.dataset.target)
+      : topicText;
+    const rowWeightInput = row.querySelector('input[type="number"]');
+    if (rowWeightInput) {
+      rowWeightInput.value = Math.max(1, parseInt(existingWeights[propositionKey], 10) || 1);
+    }
+
+    adicionarEventosLinha(row);
+  });
+
+  refreshConceptSelects();
+
+  // Helper para obter CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+});
+</script>
+{% endblock %}

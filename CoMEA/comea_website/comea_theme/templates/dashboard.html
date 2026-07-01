@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block content %}
+<div class="hero min-h-screen">
+  <div class="hero-content text-center">
+    <div class="max-w-4xl">
+      <h1 class="text-5xl font-bold mb-8">{% trans "Welcome to CoMEA" %}</h1>
+      <p class="text-xl mb-12">{% trans "Choose an option to get started" %}</p>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Create New Rubric Option -->
+        <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+          <div class="card-body items-center text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h2 class="card-title text-2xl mb-4">{% trans "Create New Rubric" %}</h2>
+            <p class="mb-6">{% trans "Configure evaluation criteria, topics, and propositions for concept map assessment" %}</p>
+            <div class="card-actions">
+              <a href="{% url 'evaluation_rubric_config' %}" class="btn btn-primary btn-lg">
+                {% trans "Start Creating" %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evaluate with Existing Rubric Option -->
+        <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+          <div class="card-body items-center text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-secondary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            <h2 class="card-title text-2xl mb-4">{% trans "Evaluate Concept Map" %}</h2>
+            <p class="mb-6">{% trans "Upload a concept map and evaluate it using an existing rubric configuration" %}</p>
+            <div class="card-actions">
+              <a href="{% url 'select_rubric' %}" class="btn btn-secondary btn-lg">
+                {% trans "Start Evaluation" %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- View Evaluation History Option -->
+        <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+          <div class="card-body items-center text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-accent mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h2 class="card-title text-2xl mb-4">{% trans "Evaluation History" %}</h2>
+            <p class="mb-6">{% trans "View all your concept map evaluations and their current status" %}</p>
+            <div class="card-actions">
+              <a href="{% url 'evaluation_history' %}" class="btn btn-accent btn-lg">
+                {% trans "View History" %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

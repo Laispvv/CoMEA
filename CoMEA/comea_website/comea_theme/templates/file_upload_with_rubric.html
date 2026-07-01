@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold mb-4">{% trans "Upload Concept Map" %}</h1>
+      <p class="text-lg">{% trans "Upload your concept map file for evaluation" %}</p>
+    </div>
+
+    <!-- Selected Rubric Info -->
+    {% if rubric %}
+      <div class="alert shadow-lg mb-8">
+        <div>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          <div>
+            <h3 class="font-bold">{% trans "Selected Rubric" %}: {{ rubric.name }}</h3>
+            <div class="text-xs">
+              {% if rubric.semantic_analysis %}{% trans "Semantic" %} • {% endif %}
+              {% if rubric.topological_analysis %}{% trans "Topological" %} • {% endif %}
+              {% if rubric.proposition_analysis %}{% trans "Proposition" %}{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Evaluations in Progress Warning -->
+    {% if evaluations_in_progress %}
+      <div class="alert {% if evaluations_in_progress >= 3 %}alert-error{% elif evaluations_in_progress >= 2 %}alert-warning{% else %}alert-info{% endif %} shadow-lg mb-8">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div>
+            <h3 class="font-bold">
+              {% blocktrans count counter=evaluations_in_progress %}
+                {{ counter }} evaluation in progress
+              {% plural %}
+                {{ counter }} evaluations in progress
+              {% endblocktrans %}
+            </h3>
+            <div class="text-xs">
+              {% if evaluations_in_progress >= 3 %}
+                {% trans "You have reached the maximum limit. Please wait for an evaluation to complete before uploading a new concept map." %}
+              {% elif evaluations_in_progress == 2 %}
+                {% trans "You can upload 1 more concept map for evaluation." %}
+              {% elif evaluations_in_progress == 1 %}
+                {% trans "You can upload 2 more concept maps for evaluation." %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Upload Form -->
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <!-- Error Alert (hidden by default) -->
+        <div id="error-alert" class="alert alert-error shadow-lg mb-4" style="display: none;">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="error-message"></span>
+          </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="upload-form">
+          {% csrf_token %}
+          
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text text-lg font-semibold">{% trans "Concept Map File" %}</span>
+            </label>
+            <input 
+              type="file" 
+              name="mapa" 
+              accept=".excalidraw,.cxl" 
+              class="file-input file-input-bordered file-input-primary w-full" 
+              required
+              {% if evaluations_in_progress >= 3 %}disabled{% endif %}
+            />
+            <label class="label">
+              <span class="label-text-alt">{% trans "Accepted formats: .excalidraw and .cxl" %}</span>
+            </label>
+          </div>
+
+          <div class="form-control mt-6">
+            <button type="submit" class="btn btn-primary btn-lg" {% if evaluations_in_progress >= 3 %}disabled{% endif %}>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              {% if evaluations_in_progress >= 3 %}
+                {% trans "Maximum Limit Reached" %}
+              {% else %}
+                {% trans "Upload and Evaluate" %}
+              {% endif %}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-8">
+      <a href="{% url 'select_rubric' %}" class="btn btn-ghost">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        {% trans "Back to Rubric Selection" %}
+      </a>
+    </div>
+
+    <!-- Instructions -->
+    <div class="mt-8 prose">
+      <h3>{% trans "Instructions" %}</h3>
+      <ul>
+        <li>{% trans "Select your concept map file in CXL or EXCALIDRAW format" %}</li>
+        <li>{% trans "The map will be evaluated using the selected rubric configuration" %}</li>
+        <li>{% trans "You will be redirected to the evaluation results page after processing" %}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  'use strict';
+
+  const uploadForm = document.getElementById('upload-form');
+  const submitBtn = uploadForm.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  const errorAlert = document.getElementById('error-alert');
+  const errorMessage = document.getElementById('error-message');
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  function showError(message) {
+    errorMessage.textContent = message;
+    errorAlert.style.display = 'flex';
+    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function hideError() {
+    errorAlert.style.display = 'none';
+  }
+
+  uploadForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    hideError();
+
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> {% trans "Uploading" %}...';
+
+    const formData = new FormData(uploadForm);
+
+    fetch(uploadForm.action || window.location.href, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: formData,
+      redirect: 'manual'  // Não seguir redirects automaticamente
+    })
+    .then(response => {
+      // Se for redirect (3xx), seguir manualmente
+      if (response.type === 'opaqueredirect' || response.status === 302 || response.status === 301) {
+        window.location.href = '{% url "propositions_extraction_config" %}';
+        return null;
+      }
+      
+      // Se for erro, parsear JSON
+      if (!response.ok) {
+        return response.json().then(data => {
+          throw new Error(data.error || '{% trans "An error occurred" %}');
+        });
+      }
+      
+      // Tentar parsear como JSON
+      return response.json().catch(() => {
+        // Se não for JSON, assumir que foi sucesso
+        window.location.href = '{% url "propositions_extraction_config" %}';
+        return null;
+      });
+    })
+    .then(data => {
+      if (data === null) {
+        // Redirect já aconteceu
+        return;
+      }
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      // Sucesso - redirecionar
+      window.location.href = '{% url "propositions_extraction_config" %}';
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showError(error.message || '{% trans "An error occurred while uploading the file. Please try again." %}');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+    });
+  });
+})();
+</script>
+{% endblock %}

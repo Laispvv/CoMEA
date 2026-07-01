@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% load static i18n %}{% trans "Rubric Configuration" %} - {{ rubric.name }}</title>
+    <style>
+        @media print {
+            @page {
+                size: A4;
+                margin: 2cm;
+            }
+            
+            .no-print {
+                display: none;
+            }
+            
+            table {
+                page-break-inside: avoid;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #2c3e50;
+        }
+        
+        .header .subtitle {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .section h3 {
+            font-size: 16px;
+            color: #34495e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .checkbox-icon {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3498db;
+            border-radius: 3px;
+            margin-right: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+        
+        .checkbox-icon.checked {
+            background: #3498db;
+            color: white;
+        }
+        
+        .checkbox-icon.checked::after {
+            content: "✓";
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        
+        table th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        table td {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .topics-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .topics-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .topics-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .proposition-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #3498db;
+            border-radius: 3px;
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .print-button:hover {
+            background: #2980b9;
+        }
+        
+        .toggle-button {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-button:hover {
+            background: #27ae60;
+        }
+        
+        .toggle-button.hidden-reference {
+            background: #95a5a6;
+        }
+        
+        .toggle-button.hidden-reference:hover {
+            background: #7f8c8d;
+        }
+        
+        .weights-table {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .topological-criteria-table {
+            table-layout: fixed;
+        }
+
+        .topological-criteria-table th:nth-child(1),
+        .topological-criteria-table td:nth-child(1) {
+            width: 180px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .topological-criteria-table th:nth-child(2),
+        .topological-criteria-table td:nth-child(2) {
+            width: 220px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .topological-criteria-table th:nth-child(3),
+        .topological-criteria-table td:nth-child(3) {
+            text-align: left;
+        }
+
+        .topological-criteria-table .criterion-image {
+            width: 150px;
+            height: 110px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    {% load i18n %}
+    
+    <button class="toggle-button no-print" id="toggle-reference-btn" onclick="toggleReferenceSection()">
+        {% trans "Hide Topics" %}
+    </button>
+    
+    <button class="print-button no-print" onclick="window.print()">
+        🖨️ {% trans "Print" %}
+    </button>
+    
+    <div class="header">
+        <h1>{% trans "Assessment Rubric Configuration" %}</h1>
+    </div>
+    
+    <!-- Weights -->
+    {% if rubric.proposition_rubric_checkbox or rubric.topological_scoring_rubric_checkbox %}
+    <div class="section">
+        <h2>{% trans "Active Evaluation Criteria" %}</h2>
+        <div class="weights-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>{% trans "Criterion" %}</th>
+                        <th>{% trans "Weight" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if rubric.proposition_rubric_checkbox %}
+                    <tr>
+                        <td>{% trans "Proposition" %}</td>
+                        <td>{{ rubric.proposition_weight }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if rubric.topological_scoring_rubric_checkbox %}
+                    <tr>
+                        <td>{% trans "Topological Scoring" %}</td>
+                        <td>{{ rubric.topological_scoring_weight }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <span>{% trans "The final score is calculated by multiplying the weights of the active criteria and dividing by the sum of the weights." %}</span>
+    </div>
+    {% endif %}
+
+    {% if rubric.structure_classification or rubric.visual_aspects %}
+    <div class="section">
+        <h2>{% trans "Feedback" %}</h2>
+        <span>{% trans "The following criteria will also be evaluated in your map, to compose the feedback:" %}</span>
+        <ul>
+            {% if rubric.structure_classification %}
+                <li><strong>{% trans "Structure Classification Feedback" %}:</strong>
+                    {% trans "an assessment of the map's structure type, which evaluates the level of integration between knowledge areas." %}
+                </li>
+            {% endif %}
+
+            {% if rubric.visual_aspects %}
+                <li><strong>{% trans "Visual Aspects Feedback" %}:</strong>
+                    {% trans "Evaluation of visual aspects, such as the appropriate use of colors and shapes, and a clean organization, which facilitate reading and interpretation." %}
+                </li>
+            {% endif %}
+        </ul>
+        
+    </div>
+    {% endif %}
+
+    <!-- Topological Scoring Parameters -->
+    {% if rubric.topological_scoring_rubric_checkbox %}
+
+    <div class="section">
+        <h2>{% trans "Topological Scoring Parameters" %}</h2>
+
+        <p class="text-base leading-relaxed mb-3">
+            {% trans "The taxonomy evaluates 5 structural criteria:" %}
+        </p>
+        <div>
+            <table class="topological-criteria-table">
+            <thead>
+                <tr>
+                <th>{% trans "Example" %}</th>
+                <th>{% trans "Criterion" %}</th>
+                <th>{% trans "Description" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td>
+                    <img
+                    src="{% static 'images/concept_text.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="criterion-image"
+                    loading="lazy"
+                    />
+                </td>
+                <td>{% trans "Concept vs. Long Texts" %}</td>
+                <td>{% trans "Checks whether nodes contain short concepts or long explanations." %}</td>
+                </tr>
+                <tr>
+                <td>
+                    <img
+                    src="{% static 'images/linking_words.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="criterion-image"
+                    loading="lazy"
+                    />
+                </td>
+                <td>{% trans "Linking words" %}</td>
+                <td >{% trans "Checks whether words connecting concepts are present." %}</td>
+                </tr>
+                <tr>
+                <td>
+                    <img
+                    src="{% static 'images/branching.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="criterion-image"
+                    loading="lazy"
+                    />
+                </td>
+                <td>{% trans "Branching" %}</td>
+                <td >{% trans "Counts the number of nodes from which two or more connections emerge." %}</td>
+                </tr>
+                <tr>
+                <td>
+                    <img
+                    src="{% static 'images/depth_hierarchy.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="criterion-image"
+                    loading="lazy"
+                    />
+                </td>
+                <td>{% trans "Hierarchical Depth" %}</td>
+                <td >{% trans "Measures the number of levels between the root concept and the furthest concept." %}</td>
+                </tr>
+                <tr>
+                <td>
+                    <img
+                    src="{% static 'images/connections.png' %}"
+                    alt="{% trans 'Example image of a spoke structure inside a table cell.' %}"
+                    class="criterion-image"
+                    loading="lazy"
+                    />
+                </td>
+                <td>{% trans "Cross-links" %}</td>
+                <td >{% trans "Identifies connections between different branches of the map." %}</td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+
+        <p>
+            {% trans "Classification rules:" %}
+        </p>
+        <ul>
+            <li>
+            {% trans "To be classified at a given level, the map must meet all the criteria for that level." %}
+            </li>
+            <li>
+            {% trans "If a criterion is missing, the map is classified at the previous level." %}
+            </li>
+        </ul>
+
+        <table>
+            <thead>
+                <tr class="bg-blue-100 text-blue-900">
+                <th class="text-center">{% trans "Level" %}</th>
+                <th>{% trans "Concepts vs. Texts" %}</th>
+                <th>{% trans "Linking Words" %}</th>
+                <th>{% trans "Branching" %}</th>
+                <th>{% trans "Hierarchy" %}</th>
+                <th>{% trans "Cross-Links" %}</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <tr>
+                    <td>0: {% trans "Structure Absent" %}</td>
+                    <td>
+                        {% if topological_params.0.1.concept_long_text|floatformat:1 >= '.5'|floatformat:1 %}
+                            {% trans "Long texts predominate" %}
+                        {% elif topological_params.0.1.concept_long_text|floatformat:1 < '.5'|floatformat:1 and topological_params.0.1.concept_long_text|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "Concepts predominate" %}
+                        {% else %}
+                            {% trans "No long texts" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.0.1.linking_phrase|floatformat:1 == '1.0'|floatformat:1 %}
+                            {% trans "All Linking Phrases Absent" %}
+                        {% elif topological_params.0.1.linking_phrase|floatformat:1 == '0.5'|floatformat:1 %}
+                            {% trans "Half or more are missing" %}
+                        {% elif topological_params.0.1.linking_phrase|floatformat:1 == '0.4'|floatformat:1 %}
+                            {% trans "Less than half are missing" %}
+                        {% else %}
+                            {% trans "All present" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.0.1.branching|floatformat:1 == '0'|floatformat:1 %}
+                            {% trans "0–1 point" %}
+                        {% else %}
+                            {% trans "At least " %}{{topological_params.0.1.branching}}{% trans " points" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.0.1.hierarchy|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.0.1.hierarchy}}{% trans " levels deep" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.0.1.crosslinks|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.0.1.crosslinks}}{% trans " cross-links" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>1: {% trans "Initial Structure" %}</td>
+                
+                    <td>
+                        {% if topological_params.1.1.concept_long_text|floatformat:1 >= '.5'|floatformat:1 %}
+                            {% trans "Long texts predominate" %}
+                        {% elif topological_params.1.1.concept_long_text|floatformat:1 < '.5'|floatformat:1 and topological_params.1.1.concept_long_text|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "Concepts predominate" %}
+                        {% else %}
+                            {% trans "No long texts" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.1.1.linking_phrase|floatformat:1 == '1.0'|floatformat:1 %}
+                            {% trans "All Linking Phrases Absent" %}
+                        {% elif topological_params.1.1.linking_phrase|floatformat:1 == '0.5'|floatformat:1 %}
+                            {% trans "Half or more are missing" %}
+                        {% elif topological_params.1.1.linking_phrase|floatformat:1 == '0.4'|floatformat:1 %}
+                            {% trans "Less than half are missing" %}
+                        {% else %}
+                            {% trans "All present" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.1.1.branching|floatformat:1 == '0'|floatformat:1 %}
+                            {% trans "0–1 point" %}
+                        {% else %}
+                            {% trans "At least " %}{{topological_params.1.1.branching}}{% trans " points" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.1.1.hierarchy|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.1.1.hierarchy}}{% trans " levels deep" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.1.1.crosslinks|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.1.1.crosslinks}}{% trans " cross-links" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>2: {% trans "Basic Structure" %}</td>
+                    
+                    <td>
+                        {% if topological_params.2.1.concept_long_text|floatformat:1 >= '.5'|floatformat:1 %}
+                            {% trans "Long texts predominate" %}
+                        {% elif topological_params.2.1.concept_long_text|floatformat:1 < '.5'|floatformat:1 and topological_params.2.1.concept_long_text|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "Concepts predominate" %}
+                        {% else %}
+                            {% trans "No long texts" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.2.1.linking_phrase|floatformat:1 == '1.0'|floatformat:1 %}
+                            {% trans "All Linking Phrases Absent" %}
+                        {% elif topological_params.2.1.linking_phrase|floatformat:1 == '0.5'|floatformat:1 %}
+                            {% trans "Half or more are missing" %}
+                        {% elif topological_params.2.1.linking_phrase|floatformat:1 == '0.4'|floatformat:1 %}
+                            {% trans "Less than half are missing" %}
+                        {% else %}
+                            {% trans "All present" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.2.1.branching|floatformat:1 == '0'|floatformat:1 %}
+                            {% trans "0–1 point" %}
+                        {% else %}
+                            {% trans "At least " %}{{topological_params.2.1.branching}}{% trans " points" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.2.1.hierarchy|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.2.1.hierarchy}}{% trans " levels deep" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.2.1.crosslinks|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.2.1.crosslinks}}{% trans " cross-links" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>3: {% trans "Emerging Structure" %}</td>
+                    
+                    <td>
+                        {% if topological_params.3.1.concept_long_text|floatformat:1 >= '.5'|floatformat:1 %}
+                            {% trans "Long texts predominate" %}
+                        {% elif topological_params.3.1.concept_long_text|floatformat:1 < '.5'|floatformat:1 and topological_params.3.1.concept_long_text|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "Concepts predominate" %}
+                        {% else %}
+                            {% trans "No long texts" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.3.1.linking_phrase|floatformat:1 == '1.0'|floatformat:1 %}
+                            {% trans "All Linking Phrases Absent" %}
+                        {% elif topological_params.3.1.linking_phrase|floatformat:1 == '0.5'|floatformat:1 %}
+                            {% trans "Half or more are missing" %}
+                        {% elif topological_params.3.1.linking_phrase|floatformat:1 == '0.4'|floatformat:1 %}
+                            {% trans "Less than half are missing" %}
+                        {% else %}
+                            {% trans "All present" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.3.1.branching|floatformat:1 == '0'|floatformat:1 %}
+                            {% trans "0–1 point" %}
+                        {% else %}
+                            {% trans "At least " %}{{topological_params.3.1.branching}}{% trans " points" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.3.1.hierarchy|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.3.1.hierarchy}}{% trans " levels deep" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.3.1.crosslinks|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.3.1.crosslinks}}{% trans " cross-links" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>4: {% trans "Consolidated Structure" %}</td>
+                    
+                    <td>
+                        {% if topological_params.4.1.concept_long_text|floatformat:1 >= '.5'|floatformat:1 %}
+                            {% trans "Long texts predominate" %}
+                        {% elif topological_params.4.1.concept_long_text|floatformat:1 < '.5'|floatformat:1 and topological_params.4.1.concept_long_text|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "Concepts predominate" %}
+                        {% else %}
+                            {% trans "No long texts" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.4.1.linking_phrase|floatformat:1 == '1.0'|floatformat:1 %}
+                            {% trans "All Linking Phrases Absent" %}
+                        {% elif topological_params.4.1.linking_phrase|floatformat:1 == '0.5'|floatformat:1 %}
+                            {% trans "Half or more are missing" %}
+                        {% elif topological_params.4.1.linking_phrase|floatformat:1 == '0.4'|floatformat:1 %}
+                            {% trans "Less than half are missing" %}
+                        {% else %}
+                            {% trans "All present" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.4.1.branching|floatformat:1 == '0'|floatformat:1 %}
+                            {% trans "0–1 point" %}
+                        {% else %}
+                            {% trans "At least " %}{{topological_params.4.1.branching}}{% trans " points" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.4.1.hierarchy|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.4.1.hierarchy}}{% trans " levels deep" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.4.1.crosslinks|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.4.1.crosslinks}}{% trans " cross-links" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>5: {% trans "Integrated Structure" %}</td>
+
+                    <td>
+                        {% if topological_params.5.1.concept_long_text|floatformat:1 >= '.5'|floatformat:1 %}
+                            {% trans "Long texts predominate" %}
+                        {% elif topological_params.5.1.concept_long_text|floatformat:1 < '.5'|floatformat:1 and topological_params.5.1.concept_long_text|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "Concepts predominate" %}
+                        {% else %}
+                            {% trans "No long texts" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.5.1.linking_phrase|floatformat:1 == '1.0'|floatformat:1 %}
+                            {% trans "All Linking Phrases Absent" %}
+                        {% elif topological_params.5.1.linking_phrase|floatformat:1 == '0.5'|floatformat:1 %}
+                            {% trans "Half or more are missing" %}
+                        {% elif topological_params.5.1.linking_phrase|floatformat:1 == '0.4'|floatformat:1 %}
+                            {% trans "Less than half are missing" %}
+                        {% else %}
+                            {% trans "All present" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.5.1.branching|floatformat:1 == '0'|floatformat:1 %}
+                            {% trans "0–1 point" %}
+                        {% else %}
+                            {% trans "At least " %}{{topological_params.5.1.branching}}{% trans " points" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.5.1.hierarchy|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.5.1.hierarchy}}{% trans " levels deep" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.5.1.crosslinks|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.5.1.crosslinks}}{% trans " cross-links" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>6: {% trans "Advanced Structure" %}</td>
+
+                    <td>
+                        {% if topological_params.6.1.concept_long_text|floatformat:1 >= '.5'|floatformat:1 %}
+                            {% trans "Long texts predominate" %}
+                        {% elif topological_params.6.1.concept_long_text|floatformat:1 < '.5'|floatformat:1 and topological_params.6.1.concept_long_text|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "Concepts predominate" %}
+                        {% else %}
+                            {% trans "No long texts" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.6.1.linking_phrase|floatformat:1 == '1.0'|floatformat:1 %}
+                            {% trans "All Linking Phrases Absent" %}
+                        {% elif topological_params.6.1.linking_phrase|floatformat:1 == '0.5'|floatformat:1 %}
+                            {% trans "Half or more are missing" %}
+                        {% elif topological_params.6.1.linking_phrase|floatformat:1 == '0.4'|floatformat:1 %}
+                            {% trans "Less than half are missing" %}
+                        {% else %}
+                            {% trans "All present" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.6.1.branching|floatformat:1 == '0'|floatformat:1 %}
+                            {% trans "0–1 point" %}
+                        {% else %}
+                            {% trans "At least " %}{{topological_params.6.1.branching}}{% trans " points" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.6.1.hierarchy|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.6.1.hierarchy}}{% trans " levels deep" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if topological_params.6.1.crosslinks|floatformat:1 > '0'|floatformat:1 %}
+                            {% trans "At least " %}{{topological_params.6.1.crosslinks}}{% trans " cross-links" %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- <table>
+            <thead>
+                <tr>
+                    <th>{% trans "Level" %}</th>
+                    <th>{% trans "Concept vs. Texts" %}</th>
+                    <th>{% trans "Linking Phrases" %}</th>
+                    <th>{% trans "Branching" %}</th>
+                    <th>{% trans "Hierarchy" %}</th>
+                    <th>{% trans "Cross-links" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for level, config in topological_params %}
+                 <tr>
+                    <td><strong>{% trans "Level" %} {{ level }}</strong></td>
+                   
+                    <td>{% trans config.concept_long_text|default:"-" %}</td>
+                    <td>{% trans config.linking_phrase|default:"-" %}</td>
+                    <td>{{ config.branching|default:"0" }}</td>
+                    <td>{{ config.hierarchy|default:"0" }}</td>
+                    <td>{{ config.crosslinks|default:"0" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table> -->
+    </div>
+     
+    {% endif %}
+    
+    <!-- Reference Document -->
+    {% if rubric.reference_document %}
+    <div class="section" id="reference-document-section">
+        <h2>{% trans "Reference Document" %}</h2>
+        <span>{% trans "These are some of the expected topics/propositions extracted from the reference document that should be on the concept map." %}</span>
+        {% if rubric.reference_document.propositions %}
+        <h3>{% trans "Extracted Topics/Propositions" %}</h3>
+        <ul class="topics-list">
+            {% for concept in rubric.reference_document.nodes_data %}
+            <li>{{ forloop.counter }}. {{ concept }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div class="section" style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd;">
+        <p style="text-align: center; color: #7f8c8d; font-size: 12px;">
+            {% trans "Generated on" %} {{ now|date:"SHORT_DATETIME_FORMAT" }} | COMEA - Concept Map Evaluation Assistant
+        </p>
+    </div>
+    
+    <script>
+        function toggleReferenceSection() {
+            const section = document.getElementById('reference-document-section');
+            const button = document.getElementById('toggle-reference-btn');
+            
+            if (section) {
+                if (section.style.display === 'none') {
+                    section.style.display = 'block';
+                    button.textContent = '{% trans "Hide Topics" %}';
+                    button.classList.remove('hidden-reference');
+                } else {
+                    section.style.display = 'none';
+                    button.textContent = '{% trans "Show Topics" %}';
+                    button.classList.add('hidden-reference');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

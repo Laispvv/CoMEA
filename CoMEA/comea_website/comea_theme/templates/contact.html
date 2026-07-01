@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto mt-10 mb-20 p-6">
+    <h1 class="text-4xl font-bold text-center mb-12">{% trans "Contact" %}</h1>
+    
+    <div class="flex justify-center">
+        <div class="card bg-base-100 shadow-xl w-full max-w-3xl">
+            <div class="card-body">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <!-- Large Photo -->
+                    <div class="flex-shrink-0">
+                        <div class="avatar">
+                            <div class="w-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
+                                <img src="{% static 'images/lais.jpeg' %}" alt="{% trans "Profile photo" %}" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="flex-1 text-center md:text-left space-y-4">
+                        <div>
+                            <h2 class="text-3xl font-bold">Laís Pisetta van Vossen</h2>
+                            <p class="text-lg text-gray-500 mt-2">{% trans "Creator and Developer of CoMEA" %}</p>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <a href="mailto:lais@vvossen.lu" class="link link-hover text-base">lais@vvossen.lu</a>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                <a href="https://www.linkedin.com/in/lais-vossen/" target="_blank" class="link link-hover text-base">LinkedIn</a>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <a href="https://www.researchgate.net/profile/Lais-Vossen" target="_blank" class="link link-hover text-base">ResearchGate</a>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-base">{% trans "Master's Student in" %} UDESC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="flex justify-center">
+        <div class="card bg-base-100 shadow-xl w-full max-w-3xl">
+            <div class="card-body">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <!-- Large Photo -->
+                    <div class="flex-shrink-0">
+                        <div class="avatar">
+                            <div class="w-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
+                                <img src="{% static 'images/isa_gasp.jpg' %}" alt="{% trans "Profile photo" %}" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="flex-1 text-center md:text-left space-y-4">
+                        <div>
+                            <h2 class="text-3xl font-bold">Isabela Gasparini</h2>
+                            <p class="text-lg text-gray-500 mt-2">{% trans "Researcher Advisor" %}
+                            </p>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <a href="mailto:isabela.gasparini@udesc.br" class="link link-hover text-base">isabela.gasparini@udesc.br</a>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-base">{% trans "Professor at" %} UDESC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="flex justify-center">
+        <div class="card bg-base-100 shadow-xl w-full max-w-3xl">
+            <div class="card-body">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <!-- Large Photo -->
+                    <div class="flex-shrink-0">
+                        <div class="avatar">
+                            <div class="w-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
+                                <img src="{% static 'images/elaine_harada.jpg' %}" alt="{% trans "Profile photo" %}" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 text-center md:text-left space-y-4">
+                        <div>
+                            <h2 class="text-3xl font-bold">Elaine Harada</h2>
+                            <p class="text-lg text-gray-500 mt-2">{% trans "Researcher Co-Advisor" %}
+                            </p>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <a href="mailto:elaine@icomp.ufam.edu.br" class="link link-hover text-base">elaine@icomp.ufam.edu.br</a>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 justify-center md:justify-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-base">{% trans "Professor at" %} UFAM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-12 text-center">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline">{% trans "Back to Dashboard" %}</a>
+    </div>
+</div>
+
+{% endblock %}

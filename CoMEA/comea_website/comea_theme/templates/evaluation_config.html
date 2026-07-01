@@ -1,0 +1,1548 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n l10n %}
+
+{% block content %}
+<style>
+    .topic-filter-container .badge {
+        word-break: break-word;
+        height: auto;
+        min-height: 1.5rem;
+        padding: 0.25rem 0.5rem;
+        white-space: normal;
+    }
+    .remove-topic {
+        flex-shrink: 0;
+        margin-left: 0.25rem;
+    }
+    .dropdown-content.menu {
+        display: block !important;
+        overflow-y: auto;
+    }
+    .dropdown-content.menu li a {
+        white-space: normal;
+        word-break: break-word;
+    }
+    .classification-select.select-success {
+        border-color: #36d399;
+        background-color: #f0fdf4;
+    }
+    .classification-select.select-warning {
+        border-color: #fbbd23;
+        background-color: #fffbeb;
+    }
+    .classification-select.select-error {
+        border-color: #f87272;
+        background-color: #fef2f2;
+    }
+    .justification-textarea {
+        resize: vertical;
+        min-height: 4rem;
+    }
+</style>
+
+<div class="max-w-6xl mx-auto mt-10 space-y-8 p-6">
+    <!-- Header -->
+    <div class="text-center">
+        <h2 class="text-3xl font-semibold">{% trans "Evaluation Results" %}</h2>
+        <p class="text-gray-600 mt-2 dark:text-gray-400">{% trans "Concept Map Filename" %}: {{ concept_map.filename }}</p>
+    </div>
+
+    <div class="flex gap-4 justify-center mb-4">
+        <div class="form-control w-full max-w-xs">
+            <label class="label">
+                <span class="label-text font-semibold">{% trans "Student Name" %}</span>
+            </label>
+            <input type="text" id="student-name" name="student_name"
+                    class="input input-bordered validator w-full" required
+                    value="{{ evaluation.student_name|default:'' }}" placeholder="{% trans "Enter student name" %}" />
+        </div>
+
+        <div class="form-control w-full max-w-xs">
+            <label class="label">
+                <span class="label-text font-semibold">{% trans "Score" %}</span>
+            </label>
+            <div class="flex gap-2 items-center">
+                <input type="text" id="final-score" name="final_score"
+                        class="input input-bordered validator w-full" required
+                        value="{% if evaluation.final_score %}{{ evaluation.final_score|unlocalize }}{% endif %}" placeholder="{% trans "Enter score" %}" />
+                <button onclick="recalculateFinalScore()" class="btn btn-sm btn-secondary whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    {% trans "Recalculate" %}
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Additional Student Information -->
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h3 class="card-title text-lg mb-2">{% trans "Additional Student Information" %}</h3>
+            <div class="alert alert-info mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-sm">{% trans "This information will be collected and used solely for research purposes." %}</span>
+            </div>
+            <div class="space-y-4">
+                <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-3">
+                        <input type="checkbox" 
+                                id="student-suspected-dyslexia" 
+                                name="student_suspected_dyslexia"
+                                class="checkbox checkbox-primary" 
+                               {% if evaluation.student_suspected_dyslexia %}checked{% endif %} />
+                        <span class="label-text font-semibold">{% trans "Student has suspected dyslexia" %}</span>
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">{% trans "Other disabilities or special needs" %}</span>
+                    </label>
+                    <textarea 
+                        id="student-other-disabilities" 
+                        name="student_other_disabilities"
+                        class="textarea textarea-bordered w-full min-h-24" 
+                        placeholder="{% trans "Describe any other disabilities or special educational needs" %}..."
+                        >{{ evaluation.student_other_disabilities|default:'' }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Structure Classification Analysis -->
+    {% if rubric.structure_classification and evaluation.structure_rubric %}
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Structure Classification" %}</h2>
+
+            <!-- Interactive Structural Classification Map -->
+            <div class="mt-6">
+                <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 space-y-1">
+                    <p><strong>{% trans "Drag" %}</strong> {% trans "nodes to reposition" %} • <strong>🔍 {% trans "Zoom" %}</strong> {% trans "with mouse wheel" %}</p>
+                    <p><strong>🖱️ {% trans "Right-click" %}</strong> {% trans "on a white/blue/orange node to change its structural classification" %}</p>
+                    <p><strong>🖱️ {% trans "Right-click" %}</strong> {% trans "on a green node to edit its label or delete it" %}</p>
+                    <p><strong>🖱️ {% trans "Right-click" %}</strong> {% trans "on a green dashed connection to edit its label or delete it" %}</p>
+                    <div class="flex gap-2 mt-2">
+                        <span class="badge badge-sm" style="background-color: lightblue; border: 2px solid #1e40af;">🔵 {% trans "Chain" %}</span>
+                        <span class="badge badge-sm" style="background-color: orange; color: white; border: 2px solid #f97316;">🟠 {% trans "Spoke" %}</span>
+                        <span class="badge badge-sm" style="background-color: white; border: 2px solid #6b7280;">⚪ {% trans "Network" %}</span>
+                        <span class="badge badge-sm" style="background-color: white; border: 2px solid #22c55e; color: #22c55e;">🟢 {% trans "Added" %}</span>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <span class="badge badge-sm" style="background-color: #f3f4f6; border: 2px solid #6b7280;">━━ {% trans "Existing connections" %}</span>
+                        <span class="badge badge-sm" style="background-color: #f0fdf4; border: 2px dashed #22c55e; color: #16a34a;">╍╍ {% trans "Suggested connections" %}</span>
+                    </div>
+                </div>
+                
+                <!-- Container para o grafo estrutural -->
+                <div id="cy-structure" style="width: 100%; height: 600px; border: 1px solid #ccc; border-radius: 8px; background: white;"></div>
+                
+                <div class="flex gap-2 mt-4 justify-between">
+                    <div class="flex gap-2">
+                        <button type="button" id="reset-structure-layout-btn" class="btn btn-sm btn-outline">{% trans "Reset Layout" %}</button>
+                        <button type="button" id="fit-structure-graph-btn" class="btn btn-sm btn-outline">{% trans "Fit to View" %}</button>
+                        <button type="button" id="export-structure-png-btn" class="btn btn-sm btn-outline btn-primary">{% trans "Export as PNG" %}</button>
+                    </div>
+                    <button type="button" id="save-structure-colors-btn" class="btn btn-sm btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {% trans "Regenerate Comments" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- General Comments Section -->
+            <div class="mt-6">
+                <h3 class="font-bold text-lg mb-3">{% trans "General Comments on Structure Classification" %}</h3>
+                <textarea 
+                    id="structure-general-comments" 
+                    class="textarea textarea-bordered w-full min-h-32" 
+                    placeholder="{% trans "Add general observations, recommendations, or feedback about the structural classification" %}..."
+                    >{{ evaluation.comments_structure_classification|default:'' }}</textarea>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if rubric.visual_aspects %}
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Visual Aspects" %}</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{% trans "Comments about layout, readability, visual organization, and presentation quality." %}</p>
+            {% if concept_map_image_src %}
+            <div class="mb-4">
+                <p class="text-sm font-semibold mb-2">{% trans "Concept Map Preview" %}</p>
+                <div class="w-full h-[480px] rounded-lg border border-base-300 bg-white overflow-hidden">
+                    <img
+                        src="{{ concept_map_image_src }}"
+                        alt="{% trans 'Concept map preview image' %}"
+                        class="w-full h-full object-contain"
+                        draggable="false"
+                    />
+                </div>
+            </div>
+            {% endif %}
+            <textarea
+                id="visual-aspects-comments"
+                class="textarea textarea-bordered w-full min-h-32"
+                placeholder="{% trans "Add feedback about visual aspects of the concept map" %}..."
+            >{{ evaluation.comments_visual_aspects|default:'' }}</textarea>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Topological Scoring -->
+    {% if rubric.topological_scoring_rubric_checkbox and evaluation.topological_rubric %}
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 class="card-title">{% trans "Topological Scoring" %}</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{% trans "Structural properties and connectivity" %}</p>
+                </div>
+                <button onclick="RecalculateTopologicalValues()" class="btn btn-sm btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {% trans "Recalculate Score" %}
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="stat bg-base-200 rounded-lg p-4">
+                    <div class="stat-title">{% trans "Nodes" %}</div>
+                    <div class="stat-value text-xl">{{ evaluation.topological_rubric.concept_map.total_nodes }}</div>
+                    <div class="stat-desc">
+                        <label class="label">
+                            <span class="label-text text-xs">{% trans "Number of nodes with long texts" %}</span>
+                        </label>
+                        <input type="number" 
+                               class="input input-xs input-bordered w-20" 
+                               id="topo-long-text-nodes"
+                               value="{{ evaluation.topological_rubric.long_text_nodes }}"
+                               min="0" />
+                    </div>
+                </div>
+                <div class="stat bg-base-200 rounded-lg p-4">
+                    <div class="stat-title">{% trans "Edges" %}</div>
+                    <div class="stat-value text-xl">{{ evaluation.topological_rubric.concept_map.total_edges }}</div>
+                    <div class="stat-desc">
+                        <label class="label">
+                            <span class="label-text text-xs">{% trans "Number of edges without linking-words" %}</span>
+                        </label>
+                        <input type="number" 
+                               class="input input-xs input-bordered w-20" 
+                               id="topo-edges-without-link"
+                               value="{{ evaluation.topological_rubric.edges_without_link_word }}"
+                               min="0" />
+                    </div>
+                </div>
+                <div class="stat bg-base-200 rounded-lg p-4">
+                    <div class="stat-title">{% trans "Branching" %}</div>
+                    <input type="number" 
+                           class="input input-bordered w-full stat-value text-xl text-center" 
+                           id="topo-branching"
+                           value="{{ evaluation.topological_rubric.branching_points }}"
+                           min="0" />
+                </div>
+                <div class="stat bg-base-200 rounded-lg p-4">
+                    <div class="stat-title">{% trans "Hierarchical Depth" %}</div>
+                    <input type="number" 
+                           class="input input-bordered w-full stat-value text-xl text-center" 
+                           id="topo-depth"
+                           value="{{ evaluation.topological_rubric.hierarchical_depth }}"
+                           min="0" />
+                </div>
+                <div class="stat bg-base-200 rounded-lg p-4">
+                    <div class="stat-title">{% trans "Cross Links" %}</div>
+                    <input type="number" 
+                           class="input input-bordered w-full stat-value text-xl text-center" 
+                           id="topo-crosslinks"
+                           value="{{ evaluation.topological_rubric.cross_links }}"
+                           min="0" />
+                </div>
+                <div class="stat bg-base-200 rounded-lg p-4" style="border: 3px solid #570df8;">
+                    <div class="flex items-center justify-around gap-4 mt-2">
+                        <div class="text-center">
+                            <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{% trans "Level" %}</div>
+                            <div class="stat-value text-3xl" id="topo-level-display">{{ evaluation.topological_rubric.topological_score }}</div>
+                        </div>
+                        <div class="divider divider-horizontal"></div>
+                        <div class="text-center flex-1">
+                            <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{% trans "Score" %} (/10)</div>
+                            <input type="number" 
+                                   class="input input-bordered w-full stat-value text-3xl text-center" 
+                                   id="topo-score-normalized-display"
+                                   value="{{ evaluation.topological_rubric.topological_score_normalized|floatformat:2 }}"
+                                   min="0"
+                                   max="10"
+                                   step="0.01" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topological scoring general comments -->
+        <div class="card-body">
+            <h3 class="font-bold text-lg mb-3">{% trans "General Comments on Topological Scoring" %}</h3>
+            <textarea 
+                id="topological-general-comments" 
+                class="textarea textarea-bordered w-full min-h-32" 
+                placeholder="{% trans "Add general observations, recommendations, or feedback about the topological structure" %}..."
+            >{{ evaluation.comments_topological_scoring|default:'' }}</textarea>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Proposition Analysis -->
+    {% if rubric.proposition_rubric_checkbox and evaluation.proposition_rubric %}
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 class="card-title">{% trans "Proposition Analysis" %}</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{% trans "Quality and correctness" %}</p>
+                </div>
+                <button onclick="savePropositionChanges()" class="btn btn-sm btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {% trans "Recalculate Score" %}
+                </button>
+            </div>
+                
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="stat bg-base-200 rounded-lg p-4">
+                    <div class="stat-title">{% trans "Completeness Score" %}</div>
+                    <input type="number"
+                           class="input input-bordered w-full stat-value text-xl text-center"
+                           id="prop-rubric-completeness-score"
+                           value="{{ evaluation.proposition_rubric.completeness_score|floatformat:2 }}"
+                           min="0"
+                           max="10"
+                           step="0.01" />
+                </div>
+                <div class="stat bg-base-200 rounded-lg p-4">
+                    <div class="stat-title">{% trans "Correctness Score" %}</div>
+                    <input type="number"
+                           class="input input-bordered w-full stat-value text-xl text-center"
+                           id="prop-rubric-correctness-score"
+                           value="{{ evaluation.proposition_rubric.correctness_score|floatformat:2 }}"
+                           min="0"
+                           max="10"
+                           step="0.01" />
+                </div>
+                <div class="stat bg-base-200 rounded-lg p-4" style="border: 3px solid #570df8;">
+                    <div class="stat-title">{% trans "Score" %}</div>
+                    <input type="number"
+                           class="input input-bordered w-full stat-value text-xl text-center"
+                           id="prop-rubric-total-score"
+                           value="{{ evaluation.proposition_rubric.proposition_score|floatformat:2 }}"
+                           min="0"
+                           max="10"
+                           step="0.01" />
+                </div>
+            </div>
+
+            <!-- Propositions Table -->
+            {% if evaluation.proposition_rubric.proposition_specification %}
+            <div class="overflow-x-auto">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th class="w-1/6">{% trans "Proposition" %}</th>
+                            <th class="w-1/6">{% trans "Classification" %}</th>
+                            <th class="w-1/3">{% trans "Related Topics" %}</th>
+                            <th class="w-1/3">{% trans "Justification" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prop_key, prop_data in evaluation.proposition_rubric.proposition_specification.items %}
+                        <tr class="proposition-row" data-proposition="{{ prop_key }}">
+                            <td class="font-medium align-top">{{ prop_key }}</td>
+                            <td class="align-top">
+                                <select class="select select-bordered select-sm classification-select" data-original="{{ prop_data.classification }}" onchange="updateClassificationBadge(this)">
+                                    <option value="Correct" {% if prop_data.classification == 'correct' or prop_data.classification == 'Correct' %}selected{% endif %}>{% trans "Correct" %}</option>
+                                    <option value="Partially Correct" {% if prop_data.classification == 'partially correct' or prop_data.classification == 'Partially Correct' %}selected{% endif %}>{% trans "Partially Correct" %}</option>
+                                    <option value="Incorrect" {% if prop_data.classification == 'incorrect' or prop_data.classification == 'Incorrect' %}selected{% endif %}>{% trans "Incorrect" %}</option>
+                                </select>
+                            </td>
+                            <td class="align-top">
+                                <div class="topic-filter-container" data-proposition="{{ prop_key }}">
+                                    <!-- Selected topics badges -->
+                                    <div class="flex flex-col gap-1 mb-2 min-h-[24px] max-h-32 overflow-y-auto">
+                                        {% if prop_data.related_topic %}
+                                            {% for topic in prop_data.related_topic %}
+                                            <span class="badge badge-outline badge-sm gap-1 whitespace-normal text-left w-full" data-topic="{{ topic }}">
+                                                <span class="flex-1">{{ topic }}</span>
+                                                <button type="button" class="remove-topic" onclick="removeTopic(this)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-3 h-3 stroke-current cursor-pointer">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <!-- Dropdown selector -->
+                                    <details class="dropdown">
+                                        <summary class="btn btn-xs btn-outline">+ Add Topic</summary>
+                                        <ul class="dropdown-content menu bg-base-100 rounded-box z-[1] w-80 p-2 shadow max-h-60 overflow-y-auto block">
+                                            {% if rubric.reference_document and rubric.reference_document.propositions %}
+                                                {% for topic in rubric.reference_document.propositions %}
+                                                <li><a onclick="addTopic(this, '{{ prop_key|escapejs }}', '{{ topic|escapejs }}'); return false;" class="whitespace-normal">{{ topic }}</a></li>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </ul>
+                                    </details>
+                                </div>
+                            </td>
+                            <td class="align-top">
+                                <textarea class="textarea textarea-bordered textarea-sm w-full justification-textarea" rows="3" placeholder="{% trans "Enter justification" %}...">{{ prop_data.justification }}</textarea>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Proposition general comments -->
+        <div class="card-body">
+            <h3 class="font-bold text-lg mb-3">{% trans "General Comments on Propositions" %}</h3>
+            <textarea 
+                id="proposition-general-comments" 
+                class="textarea textarea-bordered w-full min-h-32" 
+                placeholder="{% trans "Add general observations, recommendations, or feedback about the propositions" %}..."
+            >{{ evaluation.comments_proposition|default:'' }}</textarea>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- Navigation -->
+    <div class="flex justify-center gap-4">
+        <!-- <a href="{% url 'file_upload_with_rubric' rubric.id %}" class="btn btn-outline">{% trans "Return to Upload" %}</a> -->
+        <button onclick="saveAll()" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            {% trans "Save All Changes" %}
+        </button>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline">{% trans "Go to Dashboard" %}</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+{{ structure_graph_data|json_script:"structure-graph-data-json" }}
+
+<script>
+let cyStructure = null;
+
+// Topic management functions
+function addTopic(element, propositionText, topicText) {
+    const container = element.closest('.topic-filter-container');
+    const badgeContainer = container.querySelector('.flex.flex-col');
+    
+    // Check if topic already exists
+    const existingBadges = badgeContainer.querySelectorAll('.badge[data-topic]');
+    for (let badge of existingBadges) {
+        if (badge.dataset.topic === topicText) {
+            // Topic already added, just highlight it briefly
+            badge.classList.add('badge-warning');
+            setTimeout(() => badge.classList.remove('badge-warning'), 500);
+            return;
+        }
+    }
+    
+    // Create new badge
+    const badge = document.createElement('span');
+    badge.className = 'badge badge-outline badge-sm gap-1 whitespace-normal text-left w-full';
+    badge.dataset.topic = topicText;
+    badge.innerHTML = `
+        <span class="flex-1">${topicText}</span>
+        <button type="button" class="remove-topic cursor-pointer" onclick="removeTopic(this)">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-3 h-3 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    `;
+    
+    badgeContainer.appendChild(badge);
+    
+    // Close the dropdown
+    const details = container.querySelector('details');
+    if (details) details.removeAttribute('open');
+}
+
+function removeTopic(button) {
+    const badge = button.closest('.badge');
+    if (badge) {
+        badge.classList.add('opacity-0', 'transition-opacity');
+        setTimeout(() => badge.remove(), 200);
+    }
+}
+
+// Classification select handler
+function updateClassificationBadge(selectElement) {
+    const value = selectElement.value;
+    let badgeClass = 'select-success';
+    
+    if (value === 'Incorrect') {
+        badgeClass = 'select-error';
+    } else if (value === 'Partially Correct') {
+        badgeClass = 'select-warning';
+    }
+    
+    selectElement.className = `select select-bordered select-sm classification-select ${badgeClass}`;
+}
+
+function recalculateFinalScore(){
+    const topoValue = document.getElementById('topo-score-normalized-display').value || '0';
+    const propValue = document.getElementById('prop-rubric-total-score').value || '0';
+    
+    const scores = {
+        topological_final_score: parseFloat(topoValue.replace(',', '.')) || 0,
+        proposition_final_score: parseFloat(propValue.replace(',', '.')) || 0
+    };
+    const fd = new FormData();
+    fd.append('scores', JSON.stringify(scores));
+    fd.append('evaluation_id', JSON.stringify({{evaluation.id}}));
+    fd.append('concept_map_id', JSON.stringify({{evaluation.concept_map.id}}));
+
+    fetch('{% url "recalculate_final_score" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        body: fd
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.status === 'success') {
+            document.getElementById('final-score').value = parseFloat(d.recalculated_score);
+        } else {
+            throw new Error(d.message || 'Error');
+        }
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+
+function saveAll() {
+    const fd = new FormData();
+
+    const infos_save = {
+        student_name: document.getElementById('student-name').value || "",
+        final_score: parseFloat(document.getElementById('final-score').value.replace(',', '.')) || 0.0,
+        student_suspected_dyslexia: document.getElementById('student-suspected-dyslexia').checked,
+        student_other_disabilities: document.getElementById('student-other-disabilities').value || ""
+    };
+
+    {% if rubric.visual_aspects %}
+        infos_save['comments_visual_aspects'] = document.getElementById('visual-aspects-comments').value || "";
+    {% endif %}
+
+    fd.append('evaluation_id', JSON.stringify({{evaluation.id}}));
+    fd.append('concept_map_id', JSON.stringify({{evaluation.concept_map.id}}));
+
+
+    {% if rubric.topological_scoring_rubric_checkbox %}
+        const topologicalData = {
+            long_text_nodes: parseInt(document.getElementById('topo-long-text-nodes').value) || 0,
+            edges_without_link_word: parseInt(document.getElementById('topo-edges-without-link').value) || 0,
+            branching_points: parseInt(document.getElementById('topo-branching').value) || 0,
+            hierarchical_depth: parseInt(document.getElementById('topo-depth').value) || 0,
+            cross_links: parseInt(document.getElementById('topo-crosslinks').value) || 0,
+            topological_general_comments: document.getElementById('topological-general-comments').value || "",
+            topological_score_normalized: parseFloat(document.getElementById('topo-score-normalized-display').value.replace(',', '.')) || 0
+        };
+        infos_save['topological_general_comments'] = document.getElementById('topological-general-comments').value || "";
+        fd.append('topological_data', JSON.stringify(topologicalData));
+    
+    {% endif %}
+
+    {% if rubric.proposition_rubric_checkbox %}
+        const propositionScores = {
+            completeness_score: parseFloat(document.getElementById('prop-rubric-completeness-score').value.replace(',', '.')) || 0,
+            correctness_score: parseFloat(document.getElementById('prop-rubric-correctness-score').value.replace(',', '.')) || 0,
+            proposition_score: parseFloat(document.getElementById('prop-rubric-total-score').value.replace(',', '.')) || 0
+        };
+
+        const propositionsData = [];
+        document.querySelectorAll('.proposition-row').forEach(row => {
+            const proposition = row.dataset.proposition;
+            
+            // Get classification
+            const classificationSelect = row.querySelector('.classification-select');
+            const classification = classificationSelect ? classificationSelect.value : '';
+            
+            // Get justification
+            const justificationTextarea = row.querySelector('.justification-textarea');
+            const justification = justificationTextarea ? justificationTextarea.value : '';
+            
+            // Get topics
+            const topicContainer = row.querySelector('.topic-filter-container');
+            const topics = [];
+            if (topicContainer) {
+                topicContainer.querySelectorAll('.badge[data-topic]').forEach(badge => {
+                    topics.push(badge.dataset.topic);
+                });
+            }
+            
+            propositionsData.push({
+                proposition: proposition,
+                classification: classification,
+                justification: justification,
+                topics: topics
+            });
+        });
+
+        infos_save['proposition_general_comments'] = document.getElementById('proposition-general-comments').value || "";
+        fd.append('propositions_data', JSON.stringify(propositionsData));
+        fd.append('proposition_scores', JSON.stringify(propositionScores));
+    {% endif %}
+
+    {% if rubric.structure_classification %}
+        const updatedColors = {};
+        
+        cyStructure.nodes().forEach(node => {
+            updatedColors[node.data('originalId')] = node.data('structureColor');
+        });
+        
+        const addedConnections = [];
+        cyStructure.edges('[type="suggested"]').forEach(edge => {
+            addedConnections.push({
+                source: edge.source().id(),
+                target: edge.target().id(),
+                label: edge.data('label') || ''
+            });
+        });
+
+        const addedNodes = {};
+        cyStructure.nodes('[structureColor="green"]').forEach(node => {
+            addedNodes[node.id()] = node.data('label') || '';
+        });
+
+        const structurePngBase64 = cyStructure.png({
+            output: 'base64',
+            bg: 'white',
+            full: true,
+            scale: 2
+        });
+
+        const structure_data = {
+            added_connections: addedConnections,
+            added_nodes: addedNodes,
+            updated_colors: updatedColors,
+            concept_map_image: structurePngBase64,
+        };
+
+        infos_save['comments_structure_classification'] = document.getElementById('structure-general-comments').value || "";
+        fd.append('structure_data', JSON.stringify(structure_data));
+    {% endif %}
+
+    fd.set('infos_save', JSON.stringify(infos_save));
+    
+
+    fetch('{% url "evaluation_save" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        body: fd
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.status === 'success') {
+            alert('{% trans "Changes saved successfully! \n\nRedirecting to evaluation history" %}...');
+            window.location.href = '{% url "evaluation_history" %}';
+        } else {
+            throw new Error(d.message || 'Error');
+        }
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+
+// Save all proposition changes (topics, classifications, justifications)
+function savePropositionChanges(reloadAfter = true) {
+    const propositionsData = [];
+    
+    document.querySelectorAll('.proposition-row').forEach(row => {
+        const proposition = row.dataset.proposition;
+        
+        // Get classification
+        const classificationSelect = row.querySelector('.classification-select');
+        const classification = classificationSelect ? classificationSelect.value : '';
+        
+        // Get justification
+        const justificationTextarea = row.querySelector('.justification-textarea');
+        const justification = justificationTextarea ? justificationTextarea.value : '';
+        
+        // Get topics
+        const topicContainer = row.querySelector('.topic-filter-container');
+        const topics = [];
+        if (topicContainer) {
+            topicContainer.querySelectorAll('.badge[data-topic]').forEach(badge => {
+                topics.push(badge.dataset.topic);
+            });
+        }
+        
+        propositionsData.push({
+            proposition: proposition,
+            classification: classification,
+            justification: justification,
+            topics: topics
+        });
+    });
+    
+    // Send to server via AJAX
+    const fd = new FormData();
+    fd.append('propositions_data', JSON.stringify(propositionsData));
+    fd.append('evaluation_id', JSON.stringify({{evaluation.id}}));
+    fd.append('concept_map_id', JSON.stringify({{evaluation.concept_map.id}}));
+    
+    fetch('{% url "save_proposition_changes" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        body: fd
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.status === 'success') {
+                document.getElementById('prop-rubric-correctness-score').value = d.correctness_score;
+                document.getElementById('prop-rubric-completeness-score').value = d.completeness_score;
+                document.getElementById('prop-rubric-total-score').value = d.total_score;
+                document.getElementById('proposition-general-comments').value = d.comments;
+            }
+        else {
+            throw new Error(d.message || 'Error');
+        }
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+
+// Initialize classification select colors on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.classification-select').forEach(select => {
+        updateClassificationBadge(select);
+    });
+});
+
+// Save topological scoring values
+function RecalculateTopologicalValues(reloadAfter = true) {
+    const topologicalData = {
+        long_text_nodes: parseInt(document.getElementById('topo-long-text-nodes').value) || 0,
+        edges_without_link_word: parseInt(document.getElementById('topo-edges-without-link').value) || 0,
+        branching_points: parseInt(document.getElementById('topo-branching').value) || 0,
+        hierarchical_depth: parseInt(document.getElementById('topo-depth').value) || 0,
+        cross_links: parseInt(document.getElementById('topo-crosslinks').value) || 0,
+        topological_general_comments: document.getElementById('topological-general-comments').value || ""
+    };
+    
+    const fd = new FormData();
+    fd.append('topological_data', JSON.stringify(topologicalData));
+    fd.append('evaluation_id', {{evaluation.id}});
+    fd.append('concept_map_id', {{evaluation.concept_map.id}});
+    
+    fetch('{% url "save_topological_values" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        body: fd
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.status === 'success') {
+            // Update level display if returned
+            if (d.new_level !== undefined) {
+                document.getElementById('topo-level-display').textContent = d.new_level;
+                document.getElementById('topo-score-normalized-display').value = d.new_normalized_score;
+                document.getElementById('topological-general-comments').value = d.topological_general_comments;
+            }
+        } else {
+            throw new Error(d.message || 'Error');
+        }
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+
+// ============================================================================
+// STRUCTURE CLASSIFICATION GRAPH - Interactive Cytoscape
+// ============================================================================
+document.addEventListener('DOMContentLoaded', function () {
+    // Modal para mudança de cor
+    const colorModal = document.createElement('div');
+    colorModal.className = 'modal';
+    colorModal.id = 'color-modal';
+    colorModal.innerHTML = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">{% trans "Change Node Color" %}</h3>
+            <div class="py-4">
+                <p class="text-sm mb-2">{% trans "Node:" %} <strong id="color-node-label"></strong></p>
+                <p class="text-sm mb-4">{% trans "Current color:" %} <strong id="color-current"></strong></p>
+                <div class="flex gap-2">
+                    <button class="btn btn-outline color-choice" data-color="white" style="background-color: white; border: 2px solid gray;">⚪ {% trans "White (Network)" %}</button>
+                    <button class="btn btn-outline color-choice" data-color="orange" style="background-color: orange; color: white;">🟠 {% trans "Orange (Spoke)" %}</button>
+                    <button class="btn btn-outline color-choice" data-color="blue" style="background-color: lightblue;">🔵 {% trans "Blue (Chain)" %}</button>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button id="color-cancel-btn" class="btn">{% trans "Cancel" %}</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(colorModal);
+    
+    // Modal para adicionar conexão
+    const addConnectionModal = document.createElement('div');
+    addConnectionModal.className = 'modal';
+    addConnectionModal.id = 'add-connection-modal';
+    addConnectionModal.innerHTML = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">{% trans "Add Suggested Connection" %}</h3>
+            <div class="py-4">
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">{% trans "Source Node:" %}</span>
+                    </label>
+                    <select id="connection-source" class="select select-bordered w-full"></select>
+                </div>
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">{% trans "Link Label (optional):" %}</span>
+                    </label>
+                    <input type="text" id="connection-label" class="input input-bordered w-full" placeholder="{% trans "e.g., relates to, causes, etc." %}" />
+                </div>
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">{% trans "Target Node:" %}</span>
+                    </label>
+                    <select id="connection-target" class="select select-bordered w-full"></select>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button id="connection-cancel-btn" class="btn">{% trans "Cancel" %}</button>
+                <button id="connection-add-btn" class="btn btn-primary">{% trans "Add Connection" %}</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(addConnectionModal);
+    
+    // Modal para adicionar novo nó
+    const addNodeModal = document.createElement('div');
+    addNodeModal.className = 'modal';
+    addNodeModal.id = 'add-node-modal';
+    addNodeModal.innerHTML = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">{% trans "Add New Node" %}</h3>
+            <div class="py-4">
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">{% trans "Node Label:" %}</span>
+                    </label>
+                    <input type="text" id="new-node-label" class="input input-bordered w-full" placeholder="{% trans "Enter concept name" %}..." />
+                </div>
+            </div>
+            <div class="modal-action">
+                <button id="node-cancel-btn" class="btn">{% trans "Cancel" %}</button>
+                <button id="node-add-btn" class="btn btn-primary">{% trans "Add Node" %}</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(addNodeModal);
+    
+    // Modal para editar texto de nó verde
+    const editNodeModal = document.createElement('div');
+    editNodeModal.className = 'modal';
+    editNodeModal.id = 'edit-node-modal';
+    editNodeModal.innerHTML = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">{% trans "Edit Node Label" %}</h3>
+            <div class="py-4">
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">{% trans "Node Label:" %}</span>
+                    </label>
+                    <input type="text" id="edit-node-label-input" class="input input-bordered w-full" />
+                </div>
+            </div>
+            <div class="modal-action">
+                <button id="edit-node-cancel-btn" class="btn">{% trans "Cancel" %}</button>
+                <button id="edit-node-save-btn" class="btn btn-primary">{% trans "Save" %}</button>
+                <button id="edit-node-delete-btn" class="btn btn-error">{% trans "Delete" %}</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(editNodeModal);
+    
+    // Modal para editar texto de edge sugerida
+    const editEdgeModal = document.createElement('div');
+    editEdgeModal.className = 'modal';
+    editEdgeModal.id = 'edit-edge-modal';
+    editEdgeModal.innerHTML = `
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">{% trans "Edit Connection Label" %}</h3>
+            <div class="py-4">
+                <p class="text-sm mb-2">{% trans "Connection:" %} <strong id="edit-edge-description"></strong></p>
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">{% trans "Link Label:" %}</span>
+                    </label>
+                    <input type="text" id="edit-edge-label-input" class="input input-bordered w-full" />
+                </div>
+            </div>
+            <div class="modal-action">
+                <button id="edit-edge-cancel-btn" class="btn">{% trans "Cancel" %}</button>
+                <button id="edit-edge-save-btn" class="btn btn-primary">{% trans "Save" %}</button>
+                <button id="edit-edge-delete-btn" class="btn btn-error">{% trans "Delete" %}</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(editEdgeModal);
+    
+    let currentColorNode = null;
+    let currentEditNode = null;
+    let currentEditEdge = null;
+    let edgeCounter = 0;
+    let nodeCounter = 0;
+    
+    function openColorModal(node) {
+        currentColorNode = node;
+        document.getElementById('color-node-label').textContent = node.data('label');
+        const currentColor = node.data('structureColor');
+        let colorDisplay = currentColor;
+        if (currentColor === 'blue') colorDisplay = '🔵 Blue (Chain)';
+        else if (currentColor === 'orange') colorDisplay = '🟠 Orange (Spoke)';
+        else if (currentColor === 'white') colorDisplay = '⚪ White (Network)';
+        document.getElementById('color-current').textContent = colorDisplay;
+        colorModal.classList.add('modal-open');
+    }
+    
+    function closeColorModal() {
+        colorModal.classList.remove('modal-open');
+        currentColorNode = null;
+    }
+    
+    function openAddConnectionModal() {
+        const sourceSelect = document.getElementById('connection-source');
+        const targetSelect = document.getElementById('connection-target');
+        
+        // Limpar selects
+        sourceSelect.innerHTML = '<option value="">{% trans "Select source node" %}...</option>';
+        targetSelect.innerHTML = '<option value="">{% trans "Select target node" %}...</option>';
+        
+        // Preencher com nós disponíveis
+        cyStructure.nodes().forEach(node => {
+            // console.log(node.structureColor !== 'green');
+            // if (node.data('structureColor') !== 'green'){
+                // console.log(node);
+            const option1 = document.createElement('option');
+            option1.value = node.id();
+            option1.textContent = node.data('label');
+            sourceSelect.appendChild(option1);
+            
+            const option2 = document.createElement('option');
+            option2.value = node.id();
+            option2.textContent = node.data('label');
+            targetSelect.appendChild(option2);
+            // }
+        });
+        
+        document.getElementById('connection-label').value = '';
+        addConnectionModal.classList.add('modal-open');
+    }
+    
+    function closeAddConnectionModal() {
+        addConnectionModal.classList.remove('modal-open');
+    }
+    
+    function openAddNodeModal() {
+        document.getElementById('new-node-label').value = '';
+        addNodeModal.classList.add('modal-open');
+    }
+    
+    function closeAddNodeModal() {
+        addNodeModal.classList.remove('modal-open');
+    }
+    
+    function openEditNodeModal(node) {
+        currentEditNode = node;
+        document.getElementById('edit-node-label-input').value = node.data('label');
+        editNodeModal.classList.add('modal-open');
+    }
+    
+    function closeEditNodeModal() {
+        editNodeModal.classList.remove('modal-open');
+        currentEditNode = null;
+    }
+    
+    function openEditEdgeModal(edge) {
+        currentEditEdge = edge;
+        const sourceLabel = edge.source().data('label');
+        const targetLabel = edge.target().data('label');
+        document.getElementById('edit-edge-description').textContent = `${sourceLabel} → ${targetLabel}`;
+        document.getElementById('edit-edge-label-input').value = edge.data('label') || '';
+        editEdgeModal.classList.add('modal-open');
+    }
+    
+    function closeEditEdgeModal() {
+        editEdgeModal.classList.remove('modal-open');
+        currentEditEdge = null;
+    }
+
+    function saveStructureFunction(reloadAfter = true){
+        // Coletar cores atualizadas
+        const updatedColors = {};
+        
+        cyStructure.nodes().forEach(node => {
+            updatedColors[node.data('originalId')] = node.data('structureColor');
+        });
+        
+        // Coletar todas as conexões sugeridas adicionadas pelo usuário
+        const addedConnections = [];
+        cyStructure.edges('[type="suggested"]').forEach(edge => {
+            addedConnections.push({
+                source: edge.source().id(),
+                target: edge.target().id(),
+                label: edge.data('label') || ''
+            });
+        });
+        
+        // Coletar todos os nós verdes adicionados
+        const addedNodes = {};
+        cyStructure.nodes('[structureColor="green"]').forEach(node => {
+            addedNodes[node.id()] = node.data('label') || '';
+        });
+        
+        // Exportar imagem do gráfico estrutural como PNG em base64
+        const pngBase64 = cyStructure.png({
+            output: 'base64',
+            bg: 'white',
+            full: true,
+            scale: 2
+        });
+        
+        // Preparar dados para envio
+        const formData = new FormData();
+        formData.append('node_colors', JSON.stringify(updatedColors));
+        formData.append('added_connections', JSON.stringify(addedConnections));
+        formData.append('accepted_nodes', JSON.stringify(addedNodes));
+        formData.append('concept_map_image', pngBase64);
+        formData.append('evaluation_id', '{{ evaluation.id }}');
+        
+        
+        // Enviar para o servidor
+        fetch('{% url "generate_comments_structure_colors" %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': getCookie('csrftoken')},
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('structure-general-comments').value = data.comments;
+            } else {
+                throw new Error(data.message || 'Error saving colors');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error:', error);
+            alert('{% trans "Error saving changes:" %} ' + error.message);
+        });
+    }
+    
+    // Event listeners para modais
+    document.getElementById('color-cancel-btn').addEventListener('click', closeColorModal);
+    document.getElementById('connection-cancel-btn').addEventListener('click', closeAddConnectionModal);
+    document.getElementById('node-cancel-btn').addEventListener('click', closeAddNodeModal);
+    document.getElementById('edit-node-cancel-btn').addEventListener('click', closeEditNodeModal);
+    document.getElementById('edit-edge-cancel-btn').addEventListener('click', closeEditEdgeModal);
+    
+    document.querySelectorAll('.color-choice').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const newColor = this.getAttribute('data-color');
+            if (currentColorNode) {
+                currentColorNode.data('structureColor', newColor);
+                
+                // Atualizar cor visual
+                let bgColor = newColor;
+                if (newColor === 'blue') bgColor = 'lightblue';
+                else if (newColor === 'white') bgColor = 'white';
+                else if (newColor === 'orange') bgColor = 'orange';
+                
+                let borderColor = '#6b7280';
+                if (newColor === 'blue') borderColor = '#1e40af';
+                else if (newColor === 'orange') borderColor = '#f97316';
+                
+                currentColorNode.style({
+                    'background-color': bgColor,
+                    'border-color': borderColor
+                });
+            }
+            closeColorModal();
+        });
+    });
+    
+    document.getElementById('connection-add-btn').addEventListener('click', function() {
+        const sourceId = document.getElementById('connection-source').value;
+        const targetId = document.getElementById('connection-target').value;
+        const label = document.getElementById('connection-label').value.trim();
+        
+        if (!sourceId || !targetId) {
+            alert('{% trans "Please select both source and target nodes" %}');
+            return;
+        }
+        
+        cyStructure.add({
+            group: 'edges',
+            data: {
+                id: `edge-structure-suggested-${edgeCounter++}`,
+                source: sourceId,
+                target: targetId,
+                label: label,
+                type: 'suggested'
+            }
+        });
+        
+        closeAddConnectionModal();
+    });
+    
+    // Event listener para adicionar novo nó
+    document.getElementById('node-add-btn').addEventListener('click', function() {
+        const label = document.getElementById('new-node-label').value.trim();
+        
+        if (!label) {
+            alert('{% trans "Please enter a label for the node" %}');
+            return;
+        }
+        
+        // Adicionar novo nó com structureColor='green'
+        const nodeId = `manual-node-${nodeCounter++}`;
+        
+        cyStructure.add({
+            group: 'nodes',
+            data: {
+                id: nodeId,
+                label: label,
+                structureColor: 'green',
+                originalId: nodeId,
+                type: 'suggested'
+            }
+        });
+        
+        // Re-executar layout para acomodar o novo nó
+        cyStructure.layout({
+            name: 'cose',
+            animate: true,
+            animationDuration: 500,
+            nodeDimensionsIncludeLabels: true,
+            padding: 50,
+            nodeOverlap: 20,
+            idealEdgeLength: 100
+        }).run();
+        
+        closeAddNodeModal();
+    });
+    
+    // Event listener para editar nó verde
+    document.getElementById('edit-node-save-btn').addEventListener('click', function() {
+        if (currentEditNode) {
+            const newLabel = document.getElementById('edit-node-label-input').value.trim();
+            
+            if (!newLabel) {
+                alert('{% trans "Please enter a label for the node" %}');
+                return;
+            }
+            
+            currentEditNode.data('label', newLabel);
+        }
+        closeEditNodeModal();
+    });
+    
+    // Event listener para deletar nó verde
+    document.getElementById('edit-node-delete-btn').addEventListener('click', function() {
+        if (currentEditNode) {
+            if (confirm('{% trans "Delete this node and all its connections?" %}')) {
+                cyStructure.remove(currentEditNode);
+            }
+        }
+        closeEditNodeModal();
+    });
+    
+    // Event listener para editar edge sugerida
+    document.getElementById('edit-edge-save-btn').addEventListener('click', function() {
+        if (currentEditEdge) {
+            const newLabel = document.getElementById('edit-edge-label-input').value.trim();
+            currentEditEdge.data('label', newLabel);
+        }
+        closeEditEdgeModal();
+    });
+    
+    // Event listener para deletar edge sugerida
+    document.getElementById('edit-edge-delete-btn').addEventListener('click', function() {
+        if (currentEditEdge) {
+            if (confirm('{% trans "Delete this connection?" %}')) {
+                cyStructure.remove(currentEditEdge);
+            }
+        }
+        closeEditEdgeModal();
+    });
+    
+    // Botões para adicionar conexão e nó (adicionar ao HTML se ainda não existirem)
+    const saveBtn = document.getElementById('save-structure-colors-btn');
+    if (saveBtn && !document.getElementById('add-connection-btn')) {
+        const addNodeBtn = document.createElement('button');
+        addNodeBtn.type = 'button';
+        addNodeBtn.id = 'add-node-btn';
+        addNodeBtn.className = 'btn btn-sm btn-success';
+        addNodeBtn.innerHTML = '{% trans "+ Add Node" %}';
+        addNodeBtn.addEventListener('click', openAddNodeModal);
+        saveBtn.parentElement.insertBefore(addNodeBtn, saveBtn);
+        
+        const addConnBtn = document.createElement('button');
+        addConnBtn.type = 'button';
+        addConnBtn.id = 'add-connection-btn';
+        addConnBtn.className = 'btn btn-sm btn-success';
+        addConnBtn.innerHTML = '{% trans "+ Add Connection" %}';
+        addConnBtn.addEventListener('click', openAddConnectionModal);
+        saveBtn.parentElement.insertBefore(addConnBtn, saveBtn);
+    }
+    
+    // Inicializar Cytoscape para estrutura
+    const structureGraphDataJson = document.getElementById('structure-graph-data-json');
+    
+    if (structureGraphDataJson) {
+        const structureData = JSON.parse(structureGraphDataJson.textContent);
+        
+        // Converter dados para formato Cytoscape
+        const elements = [];
+        let nodesWithPosition = 0;
+        let fallbackPositionIndex = 0;
+        
+        // Adicionar nodes com cores
+        structureData.nodes.forEach(node => {
+            const nodeStyle = node.style || {};
+            const nodeX = Number(nodeStyle.x) / 2;
+            const nodeY = Number(nodeStyle.y) / 2;
+            const hasValidPosition = Number.isFinite(nodeX) && Number.isFinite(nodeY);
+
+            if (hasValidPosition) {
+                nodesWithPosition += 1;
+            }
+
+            // Mantem coordenadas extraidas quando disponiveis.
+            // Para nos sem coordenadas (ex.: sugestoes), cria fallback em grade.
+            let position;
+            if (hasValidPosition) {
+                position = { x: nodeX, y: nodeY };
+            } else {
+                const col = fallbackPositionIndex % 6;
+                const row = Math.floor(fallbackPositionIndex / 6);
+                position = { x: 120 + (col * 170), y: 120 + (row * 120) };
+                fallbackPositionIndex += 1;
+            }
+
+            elements.push({
+                data: {
+                    id: node.id,
+                    label: node.label,
+                    structureColor: node.color,
+                    originalId: node.id
+                },
+                position: position
+            });
+        });
+
+        const hasPresetPositions = nodesWithPosition > 0;
+        
+        // Adicionar edges
+        structureData.edges.forEach((edge, idx) => {
+            elements.push({
+                data: {
+                    id: `edge-structure-${idx}`,
+                    source: edge.source,
+                    target: edge.target,
+                    label: edge.label,
+                    type: edge.type || 'existing'
+                }
+            });
+            edgeCounter = idx + 1;
+        });
+        
+        // Inicializar Cytoscape
+        cyStructure = cytoscape({
+            container: document.getElementById('cy-structure'),
+            
+            elements: elements,
+            
+            style: [
+                // Estilo dos nodes - cor baseada em structureColor
+                {
+                    selector: 'node[structureColor="white"]',
+                    style: {
+                        'background-color': 'white',
+                        'border-color': '#6b7280',
+                        'border-width': 2,
+                        'label': 'data(label)',
+                        'color': '#000000',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'font-size': '14px',
+                        'font-weight': 'bold',
+                        'width': 'label',
+                        'height': 'label',
+                        'padding': '12px',
+                        'shape': 'roundrectangle',
+                        'text-wrap': 'wrap',
+                        'text-max-width': '120px'
+                    }
+                },
+                {
+                    selector: 'node[structureColor="blue"]',
+                    style: {
+                        'background-color': 'lightblue',
+                        'border-color': '#1e40af',
+                        'border-width': 2,
+                        'label': 'data(label)',
+                        'color': '#000000',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'font-size': '14px',
+                        'font-weight': 'bold',
+                        'width': 'label',
+                        'height': 'label',
+                        'padding': '12px',
+                        'shape': 'roundrectangle',
+                        'text-wrap': 'wrap',
+                        'text-max-width': '120px'
+                    }
+                },
+                {
+                    selector: 'node[structureColor="orange"]',
+                    style: {
+                        'background-color': 'orange',
+                        'border-color': '#f97316',
+                        'border-width': 2,
+                        'label': 'data(label)',
+                        'color': '#ffffff',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'font-size': '14px',
+                        'font-weight': 'bold',
+                        'width': 'label',
+                        'height': 'label',
+                        'padding': '12px',
+                        'shape': 'roundrectangle',
+                        'text-wrap': 'wrap',
+                        'text-max-width': '120px'
+                    }
+                },
+                {
+                    selector: 'node[structureColor="green"]',
+                    style: {
+                        'background-color': 'white',
+                        'border-color': '#22c55e',
+                        'border-width': 2,
+                        'label': 'data(label)',
+                        'color': '#22c55e',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'font-size': '14px',
+                        'font-weight': 'bold',
+                        'width': 'label',
+                        'height': 'label',
+                        'padding': '12px',
+                        'shape': 'roundrectangle',
+                        'text-wrap': 'wrap',
+                        'text-max-width': '120px'
+                    }
+                },
+                // Estilo das edges existentes
+                {
+                    selector: 'edge[type="existing"]',
+                    style: {
+                        'width': 3,
+                        'line-color': '#6b7280',
+                        'target-arrow-color': '#6b7280',
+                        'target-arrow-shape': 'triangle',
+                        'curve-style': 'bezier',
+                        'label': 'data(label)',
+                        'font-size': '12px',
+                        'text-rotation': 'autorotate',
+                        'text-margin-y': -10,
+                        'color': '#1f2937',
+                        'text-background-opacity': 1,
+                        'text-background-color': '#ffffff',
+                        'text-background-padding': '4px',
+                        'text-border-opacity': 1,
+                        'text-border-color': '#d1d5db',
+                        'text-border-width': 1
+                    }
+                },
+                // Estilo das edges sugeridas (linhas pontilhadas verdes)
+                {
+                    selector: 'edge[type="suggested"]',
+                    style: {
+                        'width': 3,
+                        'line-color': '#22c55e',
+                        'target-arrow-color': '#22c55e',
+                        'target-arrow-shape': 'triangle',
+                        'curve-style': 'bezier',
+                        'line-style': 'dashed',
+                        'line-dash-pattern': [6, 3],
+                        'label': 'data(label)',
+                        'font-size': '12px',
+                        'text-rotation': 'autorotate',
+                        'text-margin-y': -10,
+                        'color': '#16a34a',
+                        'text-background-opacity': 1,
+                        'text-background-color': '#f0fdf4',
+                        'text-background-padding': '4px',
+                        'text-border-opacity': 1,
+                        'text-border-color': '#86efac',
+                        'text-border-width': 1
+                    }
+                },
+                // Estilo para elementos selecionados
+                {
+                    selector: ':selected',
+                    style: {
+                        'border-width': 4,
+                        'border-color': '#3b82f6'
+                    }
+                }
+            ],
+            
+            layout: hasPresetPositions
+                ? {
+                    name: 'preset',
+                    fit: true,
+                    padding: 50,
+                    animate: false
+                }
+                : {
+                    name: 'cose',
+                    animate: true,
+                    animationDuration: 500,
+                    nodeDimensionsIncludeLabels: true,
+                    padding: 50,
+                    nodeOverlap: 20,
+                    idealEdgeLength: 100
+                }
+        });
+        
+        // Click direito em node - diferente para nós verdes vs outros
+        cyStructure.on('cxttap', 'node', function(evt) {
+            const node = evt.target;
+            const nodeColor = node.data('structureColor');
+            
+            // Se o nó é verde, permitir edição do texto
+            if (nodeColor === 'green') {
+                openEditNodeModal(node);
+            } else {
+                // Para outros nós, abrir modal de mudança de cor
+                openColorModal(node);
+            }
+        });
+        
+        // Click direito em edge sugerida para editar/deletar
+        cyStructure.on('cxttap', 'edge[type="suggested"]', function(evt) {
+            const edge = evt.target;
+            openEditEdgeModal(edge);
+        });
+        
+        // Highlight ao passar o mouse em edges sugeridas
+        cyStructure.on('mouseover', 'edge[type="suggested"]', function(evt) {
+            const edge = evt.target;
+            edge.style({
+                'width': 5,
+                'line-color': '#16a34a'
+            });
+        });
+        
+        cyStructure.on('mouseout', 'edge[type="suggested"]', function(evt) {
+            const edge = evt.target;
+            edge.style({
+                'width': 3,
+                'line-color': '#22c55e'
+            });
+        });
+        
+        // Highlight ao passar o mouse em nodes
+        cyStructure.on('mouseover', 'node', function(evt) {
+            const node = evt.target;
+            node.style({
+                'border-width': 3
+            });
+        });
+        
+        cyStructure.on('mouseout', 'node', function(evt) {
+            const node = evt.target;
+            if (!node.selected()) {
+                node.style({
+                    'border-width': 2
+                });
+            }
+        });
+        
+        // Botões de controle
+        const resetStructureLayoutBtn = document.getElementById('reset-structure-layout-btn');
+        const fitStructureGraphBtn = document.getElementById('fit-structure-graph-btn');
+        const exportStructurePngBtn = document.getElementById('export-structure-png-btn');
+        const saveStructureColorsBtn = document.getElementById('save-structure-colors-btn');
+        
+        if (resetStructureLayoutBtn) {
+            resetStructureLayoutBtn.addEventListener('click', () => {
+                if (hasPresetPositions) {
+                    cyStructure.layout({
+                        name: 'preset',
+                        animate: false,
+                        fit: true,
+                        padding: 50
+                    }).run();
+                    return;
+                }
+
+                cyStructure.layout({
+                    name: 'cose',
+                    animate: true,
+                    animationDuration: 500,
+                    nodeDimensionsIncludeLabels: true,
+                    padding: 50
+                }).run();
+            });
+        }
+        
+        if (fitStructureGraphBtn) {
+            fitStructureGraphBtn.addEventListener('click', () => {
+                cyStructure.fit(null, 50);
+            });
+        }
+        
+        if (exportStructurePngBtn) {
+            exportStructurePngBtn.addEventListener('click', () => {
+                const png = cyStructure.png({
+                    output: 'blob',
+                    bg: 'white',
+                    full: true,
+                    scale: 2
+                });
+                
+                const url = URL.createObjectURL(png);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'structure-classification-map.png';
+                link.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+        
+        if (saveStructureColorsBtn) {
+            saveStructureColorsBtn.addEventListener('click', () => saveStructureFunction());
+        }
+    }
+});
+</script>
+{% csrf_token %}
+{% endblock %}

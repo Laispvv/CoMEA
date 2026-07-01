@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static tailwind_tags i18n %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto mt-10 mb-20 p-6">
+    <h1 class="text-4xl font-bold mb-6">{% trans "Privacy Policy" %}</h1>
+    
+    <div class="prose max-w-none">
+        <p class="text-lg mb-6">
+            {% trans "This Privacy Policy describes how the CoMEA platform handles information collected during the evaluation of concept maps. Our commitment is to ensure transparency and protection of user data." %}
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "1. Data Collection" %}</h2>
+        <p class="mb-4">{% trans "At CoMEA:" %}</p>
+        <ul class="list-disc pl-6 mb-6 space-y-2">
+            <li>{% trans "We do not collect any data from the user's browser (such as cookies, history, IP address, location information, or browsing metadata)." %}</li>
+            <li>{% trans "The only data collection occurs from information provided directly by the user during the use of the platform, specifically related to concept map evaluation." %}</li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "2. Purpose of Data Use" %}</h2>
+        <p class="mb-6">
+            {% trans "All data entered on the platform will be used exclusively for academic and scientific research purposes. Aggregated research results may be published in scientific papers, reports, or presentations, always maintaining anonymity and confidentiality." %}
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "3. Anonymization and Confidentiality" %}</h2>
+        <p class="mb-4">{% trans "We commit to:" %}</p>
+        <ul class="list-disc pl-6 mb-6 space-y-2">
+            <li>{% trans "Not identifying any individual in the research conducted, whether the platform user or any student whose name may be entered by the user during use." %}</li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "4. User's Right to Data Deletion" %}</h2>
+        <p class="mb-4">
+            {% trans "The user has the right, at any time, to request the complete deletion of their data from the platform and the cessation of use of this data in research. To do so, simply send an email to:" %}
+        </p>
+        <p class="mb-4 text-center">
+            <a href="mailto:lais@vvossen.lu" class="text-primary font-semibold">📧 lais@vvossen.lu</a>
+        </p>
+        <p class="mb-6">
+            {% trans "The request will be fulfilled within a maximum of 30 days, at no cost to the user." %}
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "5. Security and Storage" %}</h2>
+        <p class="mb-6">
+            {% trans "We adopt technical and organizational measures to protect data against unauthorized access, alteration, or destruction. Data will be stored in a secure environment and accessible only by the research team." %}
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "6. Changes to This Policy" %}</h2>
+        <p class="mb-6">
+            {% trans "This Privacy Policy may be updated periodically. Any modifications will be communicated through a visible notification on the website." %}
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "7. Contact" %}</h2>
+        <p class="mb-4">
+            {% trans "For questions, clarifications, or requests related to this policy or data handling, please contact via email:" %}
+        </p>
+        <p class="mb-6 text-center">
+            <a href="mailto:lais@vvossen.lu" class="text-primary font-semibold">📧 lais@vvossen.lu</a>
+        </p>
+
+        <div class="mt-8 p-4 bg-base-200 rounded-lg">
+            <p class="text-sm text-center">
+                {% trans "This policy applies exclusively to the use of the CoMEA platform." %}
+            </p>
+            <p class="text-sm text-center mt-2">
+                {% trans "Last updated: February 2026" %}
+            </p>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="{% url 'dashboard' %}" class="btn btn-primary">{% trans "Back to Dashboard" %}</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

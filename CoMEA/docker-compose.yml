@@ -1,0 +1,20 @@
+version: '3.5'
+
+name: comea
+
+services:
+  website:
+    image: comea:1
+    build: ./
+    restart: unless-stopped
+    ports:
+      - "80:8000"
+    environment:
+      DJANGO_SUPERUSER_EMAIL: "example@email.com"
+      DJANGO_SUPERUSER_USERNAME: "example_user"
+      DJANGO_SUPERUSER_PASSWORD: "example_password"
+#      DJANGO_DEBUG: "False"
+#      DJANGO_SECRET: "django_secret"
+#      DEEPSEEK_API_KEY: "api_key"
+    volumes:
+      - "./database:/app/database"

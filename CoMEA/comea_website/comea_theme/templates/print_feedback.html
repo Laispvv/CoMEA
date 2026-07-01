@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% load i18n %}{% trans "Feedback Report" %} - {{ student_name }}</title>
+    <style>
+        @media print {
+            @page {
+                size: A4;
+                margin: 2cm;
+            }
+            
+            .no-print {
+                display: none;
+            }
+            
+            table {
+                page-break-inside: avoid;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            
+            #structure-graph {
+                page-break-before: always;
+            }
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #2c3e50;
+        }
+        
+        .header .subtitle {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .student-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+        
+        .student-info .info-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 10px;
+        }
+        
+        .student-info .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .student-info .info-value {
+            color: #333;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .section h3 {
+            font-size: 16px;
+            color: #34495e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .score-card {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .score-card .score-label {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .score-card .score-value {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        
+        table th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        table td {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .metric-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .metric-card h4 {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .metric-card p {
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        #structure-graph {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin: 20px 0;
+            background: white;
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: #2980b9;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .badge-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .badge-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .badge-error {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .badge-info {
+            background-color: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    {% load i18n %}
+    
+    <button class="print-button no-print" onclick="window.print()">
+        🖨️ {% trans "Print" %}
+    </button>
+    
+    <div class="header">
+        <h1>{% trans "Concept Map Evaluation Report" %}</h1>
+        <div class="subtitle">{% trans "Automated Assessment Feedback" %}</div>
+    </div>
+    
+    <!-- Student Information -->
+    <div class="student-info">
+        <div class="info-grid">
+            <div class="info-label">{% trans "Student" %}:</div>
+            <div class="info-value">{{ student_name }}</div>
+            
+            <div class="info-label">{% trans "Evaluation Date" %}:</div>
+            <div class="info-value">{{ evaluation.created_at|date:"SHORT_DATETIME_FORMAT" }}</div>
+            
+            {% if evaluation.final_score is not None %}
+            <div class="info-label">{% trans "Final Score" %}:</div>
+            <div class="info-value">{{ evaluation.final_score|floatformat:2 }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+
+    <!-- Structure Classification -->
+    {% if structure_graph_image or comments_structure_classification_list %}
+    <div class="section">
+        <h2>{% trans "Structure Classification" %}</h2>
+        <p style="margin-bottom: 15px; color: #555;">
+            {% trans "Visual representation of the concept map with node classifications and suggested connections (green dashed lines)." %}
+        </p>
+        {% if structure_graph_image %}
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="data:image/png;base64,{{ structure_graph_image }}" alt="Structure Graph" style="max-width: 100%; border: 2px solid #ddd; border-radius: 5px;">
+        </div>
+        {% endif %}
+        
+        <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+            <h4 style="color: #2c3e50; margin-bottom: 10px;">{% trans "Legend" %}:</h4>
+            <ul style="list-style: none; padding-left: 0;">
+                <li style="margin-bottom: 8px;">
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: #ffffff; border: 2px solid #9ca3af; border-radius: 50%; vertical-align: middle; margin-right: 8px;"></span>
+                    <strong style="color: #9ca3af;">{% trans "White nodes" %}:</strong> {% trans "Network structure" %}
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: #f97316; border: 2px solid #333; border-radius: 50%; vertical-align: middle; margin-right: 8px;"></span>
+                    <strong style="color: #f97316;">{% trans "Orange nodes" %}:</strong> {% trans "Spoke structure" %}
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <span style="color: #3b82f6; display: inline-block; width: 20px; height: 20px; background-color: #3b82f6; border: 2px solid #333; border-radius: 50%; vertical-align: middle; margin-right: 8px; "></span>
+                    <strong style="color: #3b82f6;">{% trans "Blue nodes" %}:</strong> {% trans "Chain structure" %}
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <span style="display: inline-block; width: 30px; height: 2px; background-color: #9ca3af; vertical-align: middle; margin-right: 8px;"></span>
+                    <strong>{% trans "Solid lines" %}:</strong> {% trans "Existing connections" %}
+                </li>
+                <li>
+                    <span style="display: inline-block; width: 30px; height: 2px; background-color: #10b981; border-top: 2px dashed #10b981; vertical-align: middle; margin-right: 8px;"></span>
+                    <strong style="color: #10b981;">{% trans "Dashed green lines" %}:</strong> {% trans "Suggested connections" %}
+                </li>
+            </ul>
+        </div>
+        
+        {% if comments_structure_classification_list %}
+        <h3>{% trans "General Comments" %}</h3>
+        <p style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #3498db;">
+            {% for coment in comments_structure_classification_list %}
+                {{ coment }} <br/>
+            {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+
+    <!-- Topological Metrics -->
+    {% if evaluation.topological_rubric %}
+    <div class="section">
+        <h2>{% trans "Topological Scoring" %}</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h4>{% trans "Total Nodes" %}</h4>
+                <p>{{ evaluation.topological_rubric.concept_map.total_nodes }}</p>
+            </div>
+            <div class="metric-card">
+                <h4>{% trans "Long Text Nodes" %}</h4>
+                <p>{{ evaluation.topological_rubric.long_text_nodes }}</p>
+            </div>
+            <div class="metric-card">
+                <h4>{% trans "Total Edges" %}</h4>
+                <p>{{ evaluation.topological_rubric.concept_map.total_edges }}</p>
+            </div>
+            <div class="metric-card">
+                <h4>{% trans "Edges Without Link" %}</h4>
+                <p>{{ evaluation.topological_rubric.edges_without_link_word }}</p>
+            </div>
+            <div class="metric-card">
+                <h4>{% trans "Branching Points" %}</h4>
+                <p>{{ evaluation.topological_rubric.branching_points }}</p>
+            </div>
+            <div class="metric-card">
+                <h4>{% trans "Hierarchical Depth" %}</h4>
+                <p>{{ evaluation.topological_rubric.hierarchical_depth }}</p>
+            </div>
+            <div class="metric-card">
+                <h4>{% trans "Cross Links" %}</h4>
+                <p>{{ evaluation.topological_rubric.cross_links }}</p>
+            </div>
+            <div class="metric-card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="text-align: center; border-right: 1px solid #ddd; padding-right: 10px;">
+                    <h4>{% trans "Topological Level" %}</h4>
+                    <p style="color: #3498db;">{{ evaluation.topological_rubric.topological_score }}</p>
+                </div>
+                <div style="text-align: center; padding-left: 10px;">
+                    <h4>{% trans "Score" %} (/10)</h4>
+                    <p style="color: #3498db;">{{ evaluation.topological_rubric.topological_score_normalized }}</p>
+                </div>
+            </div>
+        </div>
+        
+        {% if comments_topological_list %}
+        <h3>{% trans "General Comments" %}</h3>
+        <p style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #3498db;">
+            {% for coment in comments_topological_list %}
+                {{ coment }} <br/>
+            {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Propositions Section -->
+    {% if evaluation.proposition_rubric %}
+    <div class="section">
+        <h2>{% trans "Propositions Evaluation" %}</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+            <h4>{% trans "Completeness Score" %}</h4>
+            <p>{{ evaluation.proposition_rubric.completeness_score|floatformat:2 }}</p>
+            <div style="font-size: 12px; color: #7f8c8d; margin-top: 5px;">{% trans "Coverage of essential topics" %}</div>
+            </div>
+            
+            <div class="metric-card">
+            <h4>{% trans "Correctness Score" %}</h4>
+            <p>{{ evaluation.proposition_rubric.correctness_score|floatformat:2 }}</p>
+            <div style="font-size: 12px; color: #7f8c8d; margin-top: 5px;">{% trans "Accuracy of propositions" %}</div>
+            </div>
+            
+            <div class="metric-card">
+            <h4>{% trans "Overall Proposition Score" %}</h4>
+            <p style="color: #3498db;">{{ evaluation.proposition_rubric.proposition_score|floatformat:2 }}</p>
+            <div style="font-size: 12px; color: #7f8c8d; margin-top: 5px;">{% trans "Combined metric" %}</div>
+            </div>
+        </div>
+
+        {% if evaluation.proposition_rubric.propositions_correction %}
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{% trans "Proposition" %}</th>
+                    <th>{% trans "Evaluation" %}</th>
+                    <th>{% trans "Justification" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prop in evaluation.proposition_rubric.propositions_correction %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ prop.0 }}</td>
+                    <td>
+                        {% if prop.1 == "Correct" or prop.1 == "Correto" %}
+                            <span class="badge badge-success">{% trans "Correct" %}</span>
+                        {% elif prop.1 == "Partially Correct" or prop.1 == "Parcialmente Correto" %}
+                            <span class="badge badge-warning">{% trans "Partially Correct" %}</span>
+                        {% elif prop.1 == "Incorrect" or prop.1 == "Incorreto" %}
+                            <span class="badge badge-error">{% trans "Incorrect" %}</span>
+                        {% else %}
+                            <span class="badge badge-info">{{ prop.1 }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ prop.2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        
+        {% if comments_proposition_list %}
+        <h3>{% trans "General Comments" %}</h3>
+        <p style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #3498db;">
+            {% for coment in comments_proposition_list %}
+                {{ coment }} <br/>
+            {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if rubric.visual_aspects %}
+    <div class="section">
+        <h2>{% trans "Visual Aspects" %}</h2>
+        <p style="margin-bottom: 15px; color: #555;">
+            {% trans "Comments about layout, readability, visual organization, and presentation quality." %}
+        </p>
+        {% if concept_map_image_src %}
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="{{ concept_map_image_src }}" alt="{% trans 'Concept map preview image' %}" style="max-width: 100%; max-height: 500px; border: 2px solid #ddd; border-radius: 5px; background: #fff;">
+        </div>
+        {% endif %}
+        {% if comments_visual_aspects %}
+        <p style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #3498db;">
+            {{ comments_visual_aspects }}
+        </p>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div class="section" style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd;">
+        <p style="text-align: center; color: #7f8c8d; font-size: 12px;">
+            {% trans "Generated on" %} {{ now|date:"SHORT_DATETIME_FORMAT" }} | COMEA - Concept Map Evaluation Assistant
+        </p>
+    </div>
+</body>
+</html>
